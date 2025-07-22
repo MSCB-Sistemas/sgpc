@@ -110,7 +110,7 @@ Se busca desarrollar un sistema capaz de gestionar la emisión de permisos de ci
 #### Recorridos permiso
 | Atributo | Tipo |
 |----------|----------|
-| id_recorrido_permiso |
+| id_recorrido_permiso | int (FK)|
 | fk_id_permiso | int (FK) |
 | fk_id_recorrido | int (FK) |
 
