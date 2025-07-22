@@ -1,4 +1,4 @@
-#Sistema de Gestión de Permisos de Circulación#
+#Sistema de Gestión de Permisos de Circulación
 
 ```mermaid
 erDiagram
