@@ -1,4 +1,4 @@
-#Sistema de Gestión de Permisos de Circulación
+Sistema de Gestión de Permisos de Circulación
 
 ```mermaid
 erDiagram
@@ -58,7 +58,6 @@ erDiagram
         int id_punto PK
         int fk_id_calle FK
         string nombre
-        bool es_hotel
     }
 
     recorrido {
@@ -72,8 +71,15 @@ erDiagram
         int fk_id_calles FK
     }
 
+    hoteles {
+        int id_hotel PK
+        string nombre
+        string direccion
+    }
+
     reserva_punto {
         int id_reserva PK
+        int fk_id_hotel FK
         int fk_id_punto_detencion FK
         int fk_id_permiso FK
         time horario
@@ -90,6 +96,7 @@ erDiagram
     empresa ||--o{ servicio : "fk_id_empresa"
     usuarios ||--o{ permisos : "fk_id_usuario"
     permisos ||--o{ servicio : "fk_id_servicio"
+    hoteles ||--o{ reserva_punto : "fk_id_hotel"
     permisos ||--o{ reserva_punto : "fk_id_permiso"
     permisos ||--o{ recorridos_permiso : "fk_id_permiso"
     calles ||--o{ punto_detencion : "fk_id_calle"
