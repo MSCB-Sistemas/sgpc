@@ -22,6 +22,12 @@ Se busca desarrollar un sistema capaz de gestionar la emisión de permisos de ci
 | id_nacionalidad | int (PK) |
 | nombre | string |
 
+#### Tipos usuarios
+| Atributo | Tipo |
+|----------|----------|
+| id_tipo_usuario | int (PK) |
+| nombre | string |
+
 #### Usuarios
 | Atributo | Tipo |
 |----------|----------|
@@ -29,7 +35,7 @@ Se busca desarrollar un sistema capaz de gestionar la emisión de permisos de ci
 | nombre | string |
 | contraseña | string |
 | activo | bool |
-| tipo | string |
+| fk_id_tipo_usuario | int (FK) |
 
 #### Permisos
 | Atributo | Tipo |
@@ -38,7 +44,6 @@ Se busca desarrollar un sistema capaz de gestionar la emisión de permisos de ci
 | fk_id_usuario | int (FK) |
 | fk_id_chofer | int (FK) |
 | fk_id_servicio | int (FK) |
-| nro_permiso | int |
 | tipo | string |
 | fecha_reserva | date |
 | fecha_emision | date |
