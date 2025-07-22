@@ -127,10 +127,17 @@ erDiagram
 
     usuarios {
         int id_usuario PK
+        int fk_id_tipo_usuario FK
         string nombre
         string contraseña
+        string cargo
+        string sector
         bool activo
-        string tipo
+    }
+
+    tipos_usuarios {
+        int id_tipo_usuario PK
+        string nombre
     }
 
     permisos {
@@ -138,7 +145,6 @@ erDiagram
         int fk_id_usuario FK
         int fk_id_chofer FK
         int fk_id_servicio FK
-        int nro_permiso
         string tipo
         date fecha_reserva
         date fecha_emision
@@ -205,6 +211,7 @@ erDiagram
     chofer ||--o{ permisos : "fk_id_chofer"
     empresa ||--o{ servicio : "fk_id_empresa"
     usuarios ||--o{ permisos : "fk_id_usuario"
+    tipos_usuarios ||--o{ usuarios : "fk_tipo_usuario"
     permisos ||--o{ servicio : "fk_id_servicio"
     hoteles ||--o{ reserva_punto : "fk_id_hotel"
     permisos ||--o{ reserva_punto : "fk_id_permiso"
