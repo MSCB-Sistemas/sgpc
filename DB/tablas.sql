@@ -46,7 +46,7 @@ CREATE TABLE `recorridos` (
 
 -- sgpc.usuarios_tipos definition
 
-CREATE TABLE `usuarios_tipos` (
+CREATE TABLE `tipos_usuarios` (
   `id_tipo_usuario` int NOT NULL AUTO_INCREMENT,
   `tipo_usuario` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
   PRIMARY KEY (`id_tipo_usuario`)
@@ -120,7 +120,7 @@ CREATE TABLE `usuarios` (
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id_usuario`),
   KEY `usuarios_FK` (`id_tipo_usuario`),
-  CONSTRAINT `usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `usuarios_tipos` (`id_tipo_usuario`)
+  CONSTRAINT `usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 
