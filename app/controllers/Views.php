@@ -10,6 +10,14 @@
       $this->load_view('inicio', $datos);
     }
 
+    public function login()
+    {
+      $datos = [
+        "title" => "Login"
+      ];
+      $this->load_view('login', $datos);
+    }
+
     public function update($id)
     {
       echo "Update view " . $id;

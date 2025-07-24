@@ -7,5 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="<?= URL . '/css/bootstrap.min.css' ?>">
   <title><?= $datos['title'] ?></title>
+  <meta charset="utf-8">
+  <title>Signin</title>
+  <script href="<?= URL . '/js/color-modes.js' ?>"></script>
+  <meta name="theme-color" content="#712cf9">
+  <link href="sign-in.css" rel="stylesheet">
 </head>
 <body>
