@@ -1,87 +1,87 @@
 <?php
 require_once __DIR__ . '/../models/CalleModel.php';
 /**
- * Controller de CalleModel.php.
+ *  Controlador de CalleModel.php
+ * 
  */
 class CalleController
 {
     private CalleModel $model;
 
-    public function __construct() // Constructor.
+    public function __construct()
     {
         $this->model = new CalleModel();
     }
 
-    // Obtiene todas las calles
-    public function getAllCalles()
+    // Mostrar todas las calles en una vista.
+    public function index()
     {
         $calles = $this->model->getAllCalles();
-        // Establece la respuesta en modo JSON.
-        header('Content-Type: application/json');
-        // Imprime como respuesta del servidor el contenido de $calles.
-        echo json_encode($calles);
+        // Muestreo de datos.
+        require __DIR__ . '/../views/calles/index.php';
     }
 
-
-    // Obtener una sola calle por ID
-    public function getCalle($id)
+    // Mostrar una calle específica.
+    public function show($id)
     {
         $calle = $this->model->getCalle($id);
-        if (empty($calle)) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Calle no encontrada']);
+        if (!$calle) {
+            // En caso de no encontrar la calle, imprime el error y se sale de la funcion.
+            echo "Calle no encontrada";
             return;
         }
-        // Establece la respuesta en modo JSON.
-        header('Content-Type: application/json');
-        // Imprime como respuesta del servidor el contenido de $calle.
-        echo json_encode($calle);
+        require __DIR__ . '/../views/calles/show.php';
     }
 
-
-    // Insertar una nueva calle
-    public function insertCalle()
+    // Mostrar formulario para crear una calle nueva.
+    public function create()
     {
-        $input = json_decode(file_get_contents("php://input"), true);
-        if (!isset($input['nombre'])) {
-            // Codigo del estado del http del cliente (400 = BadRequest).
-            http_response_code(400);
-            // Mensaje de respuesta del servidor.
-            echo json_encode(['error' => 'El nombre de la calle es obligatorio']);
-            return;
-        }
-
-        $id = $this->model->insertCalle($input['nombre']);
-        // Imprime el mensaje y el valor del id nuevo .
-        echo json_encode(['id_insertado' => $id]);
+        require __DIR__ . '/../views/calles/create.php';
     }
 
-
-    // Actualizar una calle existente
-    public function updateCalle($id)
+    // Procesar el formulario para guardar calle nueva.
+    public function store()
     {
-        // lee todo el contenido de la peticion con el file_get_contents y crea un array asociativo
-        // indicando con true que sea array y no objeto.
-        $input = json_decode(file_get_contents("php://input"), true);
-        if (!isset($input['nombre'])) {
-            // Codigo del estado del http del cliente (400 = BadRequest).
-            http_response_code(400);
-            // Crea un array asociativo, con el valor de la cadena y lo devuelve como respuesta del servidor.
-            echo json_encode(['error' => 'El nombre de la calle es obligatorio']);
-            // Termina la ejecucion.
+        if (empty($_POST['nombre'])) {
+            // Si el nombre esta vacio imprime el mensaje y sale de la funcion.
+            echo "El nombre es obligatorio";
             return;
         }
+        $id_calle = $this->model->insertCalle($_POST['nombre']);
+        // Redirigir a la lista o mostrar mensaje
+        header("Location: /calles"); // ejemplo ruta
+        exit();
+    }
 
-        $resultado = $this->model->updateCalle($id, $input['nombre']);
-        // devuelve el mensaje como respuesta del servidor y el valor de $resultado.
-        echo json_encode(['actualizado' => $resultado]);
+    // Mostrar formulario para editar una calle.
+    public function edit($id_calle)
+    {
+        $calle = $this->model->getCalle($id_calle);
+        if (!$calle) {
+            echo "Calle no encontrada";
+            return;
+        }
+        require __DIR__ . '/../views/calles/edit.php';
+    }
+
+    // Procesar la actualización de calle.
+    public function update($id_calle)
+    {
+        // Condicional en caso de que este vacio.
+        if (empty($_POST['nombre'])) {
+            echo "El nombre es obligatorio";
+            return;
+        }
+        $this->model->updateCalle($id_calle, $_POST['nombre']);
+        header("Location: /calles");
+        exit();
     }
 
     // Eliminar una calle
-    public function deleteCalle($id)
+    public function delete($id_calle)
     {
-        $resultado = $this->model->deleteCalle($id);
-        // imprime el mensaje "eliminado" y el valor de $resultado(de tipo bool).
-        echo json_encode(['eliminado' => $resultado]);
+        $this->model->deleteCalle($id_calle);
+        header("Location: /calles");
+        exit();
     }
 }

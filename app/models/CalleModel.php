@@ -43,10 +43,7 @@ class CalleModel
     {
         $stmt = $this->db->prepare("SELECT * FROM calles WHERE id_calle = :id_calle");
         $stmt->execute(['id_calle' => $id_calle]);
-        // Se modifico para que en vez de true o false devuelva un array no genere errores en el controller.
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        // Si no encontró resultados, devuelve un array vacio.
-        return $result ?: [];
+        return $stmt->fetch();
     }
 
     /** 
