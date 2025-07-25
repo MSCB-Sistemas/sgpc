@@ -1,9 +1,15 @@
 <?php
+  require_once APP . '/helpers/authHelper.php';
   class Views extends Control
   {
-
+    
     public function inicio()
     {
+      require_login();
+      if (!is_logged_in_admin()) {
+        echo "No autorizado";
+        exit;
+      }
       $datos = [
         "title" => "Inicio"
       ];
