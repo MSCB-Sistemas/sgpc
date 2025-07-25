@@ -1,70 +1,68 @@
 <?php
 
-  require_once __DIR__ . '/../app/models/CalleModel.php';
-  require_once __DIR__ . '/../app/models/EmpresaModel.php';
+  require_once __DIR__ . '/../app/controllers/CalleController.php';
 
-
-// Habilita CORS si vas a probar con frontend
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
-
-// Métodos permitidos para CORS (opcional)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type");
-    exit(0);
-}
-
-// Importa el controlador
-require_once realpath(__DIR__ . '/../app/controllers/CalleController.php');
-
-
-// Instancia del controlador
 $controller = new CalleController();
 
-// Detecta método HTTP y URI
-$method = $_SERVER['REQUEST_METHOD'];
-$uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+$action = $_GET['action'] ?? '';
 
-// Ajusta el índice si estás en subcarpeta
-// Ejemplo: http://localhost/calle-api/index.php/calles/1
-// Entonces $uri = ['calle-api', 'index.php', 'calles', '1']
-$pathIndex = array_search('index.php', $uri);
-$path = array_slice($uri, $pathIndex + 1);
+require_once __DIR__ . '/../app/controllers/CalleController.php';
 
-// Enrutamiento
-if ($path[0] === 'calles') {
-    // GET /calles o GET /calles/1
-    if ($method === 'GET') {
-        if (isset($path[1])) {
-            $controller->getCalle($path[1]);
+$controller = new CalleController();
+$action = $_GET['action'] ?? 'index';
+$id_calle = $_GET['id_calle'] ?? null;
+
+switch ($action) {
+    case 'index':
+        $controller->index();
+        break;
+
+    case 'show':
+        if ($id_calle) {
+            $controller->show($id_calle);
         } else {
-            $controller->getAllCalles();
+            echo "ID requerido";
         }
-    }
+        break;
 
-    // POST /calles
-    elseif ($method === 'POST') {
-        $controller->insertCalle();
-    }
+    case 'create':
+        $controller->create();
+        break;
 
-    // PUT /calles/1
-    elseif ($method === 'PUT' && isset($path[1])) {
-        $controller->updateCalle($path[1]);
-    }
+    case 'store':
+        $controller->store();
+        break;
 
-    // DELETE /calles/1
-    elseif ($method === 'DELETE' && isset($path[1])) {
-        $controller->deleteCalle($path[1]);
-    }
+    case 'edit':
+        if ($id_calle) {
+            $controller->edit($id_calle);
+        } else {
+            echo "ID requerido";
+        }
+        break;
 
-    else {
-        http_response_code(400);
-        echo json_encode(['error' => 'Método o ruta no válida']);
-    }
-} else {
-    http_response_code(404);
-    echo json_encode(['error' => 'Ruta no encontrada']);
-}
+    case 'update':
+        if ($id_calle) {
+            $controller->update($id_calle);
+        } else {
+            echo "ID requerido";
+        }
+        break;
+
+    case 'delete':
+        if ($id_calle) {
+            $controller->delete($id_calle);
+        } else {
+            echo "ID requerido";
+        }
+        break;
+
+    default:
+        echo "accion no reconocida";
+        break;
+ }
+
+include __DIR__ . '/../app/views/CalleView.php';
+
 
 ?>
