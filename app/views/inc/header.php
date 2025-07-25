@@ -12,5 +12,6 @@
   <script href="<?= URL . '/js/color-modes.js' ?>"></script>
   <meta name="theme-color" content="#712cf9">
   <link href="sign-in.css" rel="stylesheet">
+  <link href="sidebars.css" rel="stylesheet">
 </head>
 <body>
