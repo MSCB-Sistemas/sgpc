@@ -12,5 +12,6 @@
   <script href="<?= URL . '/js/color-modes.js' ?>"></script>
   <meta name="theme-color" content="#712cf9">
   <link href="sign-in.css" rel="stylesheet">
+  <a href="<?= URL ?>/auth/logout" class="btn btn-danger">Cerrar sesión</a>
 </head>
 <body>
