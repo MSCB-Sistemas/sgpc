@@ -24,14 +24,6 @@
       $this->load_view('login', $datos);
     }
 
-    public function pginicio()
-    {
-      $datos = [
-        "title" => "Página de Inicio"
-      ];
-      $this->load_view('pginicio', $datos);
-    }
-
     public function update($id)
     {
       echo "Update view " . $id;

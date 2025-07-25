@@ -34,7 +34,13 @@
     form.classList.replace('bg-dark', 'bg-white');
     form.classList.replace('text-white', 'text-dark');
   }
-</script>
+  </script>
+  <div class="position-fixed bottom-0 end-0 mb-3 me-3 d-flex align-items-center gap-2">
+    <button type="button" class="btn btn-outline-secondary" id="toggleTheme">
+        Cambiar tema
+    </button>
+    <a href="<?= URL ?>/auth/logout" class="btn btn-danger">Cerrar sesión</a>
+  </div>
 </body>
 </html>
 

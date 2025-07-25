@@ -26,13 +26,6 @@
             <?php if (!empty($error)): ?>
                 <div class="alert alert-danger"><?= $error ?></div>
             <?php endif; ?>
-
-        <!-- Botón cambio de tema -->
-            <div class="d-flex justify-content-end mb-3">
-                <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleTheme">
-                    Cambiar tema
-                </button>
-            </div>
         </form>
     </main>
 
