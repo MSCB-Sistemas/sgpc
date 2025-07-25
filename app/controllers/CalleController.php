@@ -27,6 +27,11 @@ class CalleController
     public function getCalle($id)
     {
         $calle = $this->model->getCalle($id);
+        if (empty($calle)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Calle no encontrada']);
+            return;
+        }
         // Establece la respuesta en modo JSON.
         header('Content-Type: application/json');
         // Imprime como respuesta del servidor el contenido de $calle.
