@@ -20,7 +20,7 @@ class Auth extends Control
                 $_SESSION['usuario_id'] = $usuario['id_usuario'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
                 $_SESSION['usuario_tipo'] = $usuario['id_tipo_usuario'];
-                $this->load_view("inicio");
+                header("Location: " . URL . "/views/inicio");
                 exit;
             } else {
                 $this->load_view('login', ['error' => 'Credenciales incorrectas']);
