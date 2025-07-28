@@ -3,6 +3,7 @@ class Auth extends Control
 {
     public function login()
     {
+        $datos = ["title" => "Login"];
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $_POST['user'] ?? '';
             $password = trim($_POST['password'] ?? '');
@@ -23,10 +24,11 @@ class Auth extends Control
                 header("Location: " . URL . "/views/inicio");
                 exit;
             } else {
-                $this->load_view('login', ['error' => 'Credenciales incorrectas']);
+                $datos['error'] = 'Credenciales incorrectas';
+                $this->load_view('login', $datos);
             }
         } else {
-            $this->load_view('login');
+            $this->load_view('login',$datos);
         }
     }
 
