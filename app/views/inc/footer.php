@@ -39,7 +39,11 @@
     <button type="button" class="btn btn-outline-secondary" id="toggleTheme">
         Cambiar tema
     </button>
-    <a href="<?= URL ?>/auth/logout" class="btn btn-danger">Cerrar sesión</a>
+    <?php 
+      if (isset($datos['title']) && $datos['title'] != "Login"){
+        echo'<a href="<?= URL ?>/auth/logout" class="btn btn-danger">Cerrar sesión</a>';
+      }
+    ?>
   </div>
 </body>
 </html>
