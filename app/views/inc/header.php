@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="<?= URL . '/css/bootstrap.min.css' ?>">
   <title><?= $datos['title'] ?></title>
+  <?php if (isset($datos['error'])){$error = $datos['error'];}?>
   <meta charset="utf-8">
   <title>Sign in</title>
   <script href="<?= URL . '/js/color-modes.js' ?>"></script>

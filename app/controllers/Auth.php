@@ -9,7 +9,8 @@ class Auth extends Control
             $password = trim($_POST['password'] ?? '');
 
             if (empty($user) || empty($password)) {
-                echo "Usuario y contraseña requeridos.";
+                $datos['error'] = 'Debe ingresar usuario y contraseña';
+                $this->load_view('login', $datos);
                 exit;
             }
 
