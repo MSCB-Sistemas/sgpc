@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const sidebar = document.getElementById('sidebar');
         const form = document.getElementById('loginForm');
+        const logo = document.getElementById('logo');
         const navLinks = document.querySelectorAll('.nav-link');
 
         if (theme === 'dark') {
@@ -35,6 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (form) {
                 form.classList.add('bg-dark', 'text-white');
                 form.classList.remove('bg-light', 'text-dark');
+            }
+
+            if (logo) {
+                logo.src = logo.dataset.logoLight;
             }
 
             navLinks.forEach(link => {
@@ -54,6 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (form) {
                 form.classList.add('bg-light', 'text-dark');
                 form.classList.remove('bg-dark', 'text-white');
+            }
+
+            if (logo) {
+                logo.src = logo.dataset.logoDark;
             }
 
             navLinks.forEach(link => {

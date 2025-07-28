@@ -96,7 +96,8 @@
             <h1 class="visually-hidden">Barra inicio</h1>
             <div id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-light text-dark" style="width: 289px;">
                 <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none" href="/">
-                    <img src="<?= URL . '/img/logo.png' ?>" alt="Logo" width="240" height="80" class="pe-none me-2">
+                    <img id="logo" src="<?= URL . '/img/logo_oscuro.png' ?>" data-logo-light="<?= URL . '/img/logo_claro.png' ?>"
+                    data-logo-dark="<?= URL . '/img/logo_oscuro.png' ?>" alt="logo" width="240" height="80" class="pe-none me-2">
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
