@@ -91,17 +91,17 @@
             }
         </style>
     </head>
-    <body>
-        <main class="d-flex flex-nowrap" style="min-height: 100vh">
+    <body id="body" class="bg-light text-dark d-flex flex-column min-vh-100">
+        <main id="barra" class="d-flex flex-nowrap" style="min-height: 100vh">
             <h1 class="visually-hidden">Barra inicio</h1>
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 289px;">
-                <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="/">
+            <div id="barra" class="bg-light d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 289px;">
+                <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none" href="/">
                     <img src="<?= URL . '/img/logo.png' ?>" alt="Logo" width="240" height="80" class="pe-none me-2">
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" aria-current="page">
+                        <a class="nav-link active text-dark" href="#" aria-current="page">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#home">
                                     <symbol id="home" viewBox="0 0 16 16">
@@ -113,7 +113,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-dark" href="#">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#speedometer2">
                                     <symbol id="speedometer2" viewBox="0 0 16 16">
@@ -126,7 +126,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-dark" href="#">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#table">
                                     <symbol id="table" viewBox="0 0 16 16">
@@ -138,7 +138,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-dark" href="#">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#grid">
                                     <symbol id="grid" viewBox="0 0 16 16">
@@ -150,7 +150,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-dark" href="#">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#people-circle">
                                     <symbol id="people-circle" viewBox="0 0 16 16">
@@ -165,7 +165,7 @@
                 </ul>
                 <hr>
                 <div class="dropdown">
-                    <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <img class="rounded-circle me-2" src="https://github.com/mdo.png" alt="" width="32" height="32">
                         <strong>Galo Orellana</strong>
                     </a>
