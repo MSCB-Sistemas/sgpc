@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
     <head>
         <meta charset="utf-8">
         <title>Inicio</title>
@@ -92,16 +92,16 @@
         </style>
     </head>
     <body id="body" class="bg-light text-dark d-flex flex-column min-vh-100">
-        <main id="barra" class="d-flex flex-nowrap" style="min-height: 100vh">
+        <main class="d-flex flex-nowrap" style="min-height: 100vh">
             <h1 class="visually-hidden">Barra inicio</h1>
-            <div id="barra" class="bg-light d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 289px;">
+            <div id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 bg-light text-dark" style="width: 289px;">
                 <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none" href="/">
                     <img src="<?= URL . '/img/logo.png' ?>" alt="Logo" width="240" height="80" class="pe-none me-2">
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
-                        <a class="nav-link active text-dark" href="#" aria-current="page">
+                        <a class="nav-link active" href="#" aria-current="page">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#home">
                                     <symbol id="home" viewBox="0 0 16 16">
