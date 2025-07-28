@@ -44,10 +44,10 @@ class CalleRecorridoModel
      * @param int|string $id ID del registro en `calles_recorridos`.
      * @return array Arreglo asociativo con los datos del registro correspondiente.
      */
-    public function getCalleRecorrido($id): array
+    public function getCalleRecorrido($id_calle_recorrido): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM calles_recorridos WHERE id_calle_recorrido = :id");
-        $stmt->execute(['id' => $id]);
+        $stmt = $this->db->prepare("SELECT * FROM calles_recorridos WHERE id_calle_recorrido = :id_calle_recorrido");
+        $stmt->execute(['id_calle_recorrido' => $id_calle_recorrido]);
         return $stmt->fetch();
     }
 

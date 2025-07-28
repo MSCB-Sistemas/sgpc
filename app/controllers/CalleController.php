@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../models/CalleModel.php';
+
 /**
  *  Controlador de CalleModel.php
- * 
  */
 class CalleController
 {
@@ -11,13 +11,15 @@ class CalleController
     public function __construct()
     {
         $this->model = new CalleModel();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }        
     }
 
     // Mostrar todas las calles en una vista.
     public function index()
     {
         $calles = $this->model->getAllCalles();
-        // Muestreo de datos.
         require __DIR__ . '/../views/calles/index.php';
     }
 
@@ -26,9 +28,9 @@ class CalleController
     {
         $calle = $this->model->getCalle($id);
         if (!$calle) {
-            // En caso de no encontrar la calle, imprime el error y se sale de la funcion.
-            echo "Calle no encontrada";
-            return;
+            $_SESSION['error'] = "Calle no encontrada.";
+            header("Location: calles.php?action=index");
+            exit();
         }
         require __DIR__ . '/../views/calles/show.php';
     }
@@ -43,13 +45,12 @@ class CalleController
     public function store()
     {
         if (empty($_POST['nombre'])) {
-            // Si el nombre esta vacio imprime el mensaje y sale de la funcion.
-            echo "El nombre es obligatorio";
-            return;
+            $_SESSION['error'] = "El nombre es obligatorio.";
+            header("Location: calles.php?action=create");
+            exit();
         }
         $id_calle = $this->model->insertCalle($_POST['nombre']);
-        // Redirigir a la lista o mostrar mensaje
-        header("Location: /calles"); // ejemplo ruta
+        header("Location: calles.php?action=index");
         exit();
     }
 
@@ -58,8 +59,9 @@ class CalleController
     {
         $calle = $this->model->getCalle($id_calle);
         if (!$calle) {
-            echo "Calle no encontrada";
-            return;
+            $_SESSION['error'] = "Calle no encontrada.";
+            header("Location: calles.php?action=index");
+            exit();
         }
         require __DIR__ . '/../views/calles/edit.php';
     }
@@ -67,21 +69,21 @@ class CalleController
     // Procesar la actualización de calle.
     public function update($id_calle)
     {
-        // Condicional en caso de que este vacio.
         if (empty($_POST['nombre'])) {
-            echo "El nombre es obligatorio";
-            return;
+            $_SESSION['error'] = "El nombre es obligatorio.";
+            header("Location: calles.php?action=edit&id=$id_calle");
+            exit();
         }
         $this->model->updateCalle($id_calle, $_POST['nombre']);
-        header("Location: /calles");
+        header("Location: calles.php?action=index");
         exit();
     }
 
-    // Eliminar una calle
+    // Eliminar una calle.
     public function delete($id_calle)
     {
         $this->model->deleteCalle($id_calle);
-        header("Location: /calles");
+        header("Location: calles.php?action=index");
         exit();
     }
 }
