@@ -27,7 +27,7 @@ class ChoferesModel {
      *
      * @return array Arreglo asociativo con todos los choferes.
      */
-    public function getAllReservasPuntos(): array {
+    public function getAllChoferes(): array {
         $stmt = $this->db->prepare("SELECT * FROM choferes");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

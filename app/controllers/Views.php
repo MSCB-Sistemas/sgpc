@@ -11,7 +11,7 @@
         exit;
       }
       $datos = [
-        "title" => "Inicio"
+          'title' => 'Inicio'
       ];
       $this->load_view('inicio', $datos);
     }

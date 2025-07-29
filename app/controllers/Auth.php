@@ -10,7 +10,7 @@ class Auth extends Control
 
             if (empty($user) || empty($password)) {
                 $datos['error'] = 'Debe ingresar usuario y contraseña';
-                $this->load_view('login', $datos);
+                $this->load_view('login', $datos, false);
                 exit;
             }
 
@@ -21,15 +21,16 @@ class Auth extends Control
                 session_start();
                 $_SESSION['usuario_id'] = $usuario['id_usuario'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
+                $_SESSION['usuario_apellido'] = $usuario['apellido'];
                 $_SESSION['usuario_tipo'] = $usuario['id_tipo_usuario'];
                 header("Location: " . URL . "/views/inicio");
                 exit;
             } else {
                 $datos['error'] = 'Credenciales incorrectas';
-                $this->load_view('login', $datos);
+                $this->load_view('login', $datos,false);
             }
         } else {
-            $this->load_view('login',$datos);
+            $this->load_view('login',$datos, false);
         }
     }
 
