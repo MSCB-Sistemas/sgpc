@@ -15,6 +15,7 @@ class EmpresaModel
     {
         $this->db = Database::connect();
     }
+    
 
     /**
         * Funcion para obtener todos los datos de la tabla empresa de la base de datos.
