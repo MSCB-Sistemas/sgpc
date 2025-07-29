@@ -38,6 +38,15 @@ class ServicioModel
         return $stmt->fetchAll();
     }
 
+    public function getAllServiciosWithNombre(): array
+    {
+        $stmt = $this->db->prepare("SELECT s.*, e.nombre as nombre_empresa 
+                                    FROM servicios s 
+                                    JOIN empresas e ON s.id_empresa = e.id_empresa");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     /**
      * Obtiene un servicio específico por su ID.
      *
