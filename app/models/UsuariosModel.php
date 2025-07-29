@@ -42,7 +42,13 @@ class UsuariosModel {
     public function getUsuario($id_usuario) : array {
         $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id_usuario = :id_usuario");
         $stmt->execute(['id_usuario' => $id_usuario]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getUsuarioByNombreUsuario($nombre_usuario) : array|bool {
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE usuario = :usuario");
+        $stmt->execute(['usuario' => $nombre_usuario]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**

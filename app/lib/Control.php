@@ -8,15 +8,19 @@
       return new $model;
     }
 
-    public function load_view($view, $datos = [])
+    public function load_view($view, $datos = [], $layout = 'main')
     {
-      if(file_exists('../app/views/pages/' . $view . '.php'))
-      {
-        require_once '../app/views/pages/' . $view . '.php';
-      }
-      else
-      {
-        die("404 NOT FOUND");
+      $viewFile = APP . '/views/pages/' . $view . '.php';
+
+      if (file_exists($viewFile)) {
+        if ($layout) {
+          $viewPath = $viewFile;
+          require_once APP . "/views/layout/{$layout}.php";
+        } else {
+          require_once $viewFile;
+        }
+      } else {
+        die($viewFile);
       }
     }
   }
