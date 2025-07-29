@@ -10,6 +10,10 @@
 
     public function load_view($view, $datos = [], $layout = 'main')
     {
+      if (session_status() === PHP_SESSION_NONE) {
+          session_start();
+      }
+      
       $viewFile = APP . '/views/pages/' . $view . '.php';
 
       if (file_exists($viewFile)) {

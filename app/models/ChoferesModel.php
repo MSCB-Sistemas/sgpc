@@ -28,7 +28,7 @@ class ChoferesModel {
      * @return array Arreglo asociativo con todos los choferes.
      */
     public function getAllChoferes(): array {
-        $stmt = $this->db->prepare("SELECT * FROM choferes");
+        $stmt = $this->db->prepare("SELECT c.*, n.nacionalidad FROM choferes c inner join nacionalidades n on c.id_nacionalidad = n.id_nacionalidad");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
