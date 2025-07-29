@@ -24,9 +24,9 @@ class CalleController
     }
 
     // Mostrar una calle específica.
-    public function show($id)
+    public function show($id_calle)
     {
-        $calle = $this->model->getCalle($id);
+        $calle = $this->model->getCalle($id_calle);
         if (!$calle) {
             $_SESSION['error'] = "Calle no encontrada.";
             header("Location: calles.php?action=index");
