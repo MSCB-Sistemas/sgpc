@@ -100,6 +100,5 @@ class UsuariosModel {
         $stmt->execute(['id_usuario' => $id_usuario]);
         return $stmt->rowCount() > 0;
     }
-}
-
+} 
 ?>
