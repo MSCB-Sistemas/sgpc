@@ -11,7 +11,22 @@ class Chofer extends Control
     public function index()
     {
         $choferes = $this->modelo->getAllChoferes();
-        $this->load_view('choferes/index', ['choferes' => $choferes, 'title' => 'Listado de Choferes']);
+        $datos = [
+            'title' => 'Listado de Choferes',
+            'urlCrear' => URL . '/chofer/create',
+            'columnas' => ['Nombre', 'Apellido', 'DNI', 'Nacionalidad'],
+            'columnas_claves' => ['nombre', 'apellido', 'dni', 'nacionalidad'],
+            'data' => $choferes,
+            'acciones' => function($fila) {
+                $id = $fila['id_chofer'];
+                $url = URL . '/chofer';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este chofer?\');">Eliminar</a>
+                ';
+            }
+        ];    
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     public function edit($id)
