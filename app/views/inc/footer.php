@@ -7,46 +7,10 @@
     ?>
   </div>
 
+  <script src="<?= URL ?>/public/js/theme-toggle.js"></script>
+
   <!-- ✅ Solo una vez Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- ✅ Script de tema -->
-  <script>
-    const body = document.getElementById('body');
-    const form = document.getElementById('loginForm');
-    const toggleBtn = document.getElementById('toggleTheme');
-
-    if (toggleBtn && body && form) {
-      // Cargar tema guardado
-      if (localStorage.getItem('theme') === 'dark') {
-        activarModoOscuro();
-      }
-
-      toggleBtn.addEventListener('click', () => {
-        if (body.classList.contains('bg-light')) {
-          activarModoOscuro();
-          localStorage.setItem('theme', 'dark');
-        } else {
-          activarModoClaro();
-          localStorage.setItem('theme', 'light');
-        }
-      });
-
-      function activarModoOscuro() {
-        body.classList.replace('bg-light', 'bg-dark');
-        body.classList.replace('text-dark', 'text-white');
-        form.classList.replace('bg-white', 'bg-dark');
-        form.classList.replace('text-dark', 'text-white');
-      }
-
-      function activarModoClaro() {
-        body.classList.replace('bg-dark', 'bg-light');
-        body.classList.replace('text-white', 'text-dark');
-        form.classList.replace('bg-dark', 'bg-white');
-        form.classList.replace('text-white', 'text-dark');
-      }
-    }
-  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

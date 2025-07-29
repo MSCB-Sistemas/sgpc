@@ -33,11 +33,11 @@ class Auth extends Control
                 exit;
             } else {
                 $datos['error'] = 'Credenciales incorrectas';
-                $this->load_view('login', $datos,false);
+                $this->load_view('login', $datos, false);
             }
         } else {
             $this->checkRememberMeToken();
-            $this->load_view('login',$datos, false);
+            $this->load_view('login', $datos, false);
         }
     }
 
