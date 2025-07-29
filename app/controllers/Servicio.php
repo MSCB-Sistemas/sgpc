@@ -15,7 +15,7 @@ class Servicio extends Control
     // Mostrar todos los servicios
     public function index()
     {
-        $servicios = $this->model->getAllServiciosWithNombre();
+        $servicios = $this->model->getAllServicios();
         $datos = [
             'title' => 'Listado de Servicios',
             'urlCrear' => URL . '/servicio/create',

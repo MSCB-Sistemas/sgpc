@@ -34,12 +34,6 @@ class ServicioModel
      */
     public function getAllServicios(): array
     {
-        $stmt = $this->db->query("SELECT * FROM servicios");
-        return $stmt->fetchAll();
-    }
-
-    public function getAllServiciosWithNombre(): array
-    {
         $stmt = $this->db->prepare("SELECT s.*, e.nombre as nombre_empresa 
                                     FROM servicios s 
                                     JOIN empresas e ON s.id_empresa = e.id_empresa");
