@@ -11,13 +11,13 @@ class Chofer extends Control
     public function index()
     {
         $choferes = $this->modelo->getAllChoferes();
-        $this->load_view('choferes/index', ['choferes' => $choferes]);
+        $this->load_view('choferes/index', ['choferes' => $choferes, 'title' => 'Listado de Choferes']);
     }
 
-    public function editar($id)
+    public function edit($id)
     {
         // lógica para mostrar vista de edición de un chofer
-        $chofer = $this->modelo->obtenerPorId($id);
-        $this->load_view('choferes/edit', ['chofer' => $chofer]);
+        $chofer = $this->modelo->getChofer($id);
+        $this->load_view('choferes/edit', ['chofer' => $chofer, 'title' => 'Editar Chofer']);
     }
 }

@@ -1,7 +1,7 @@
 <h1 class="visually-hidden">Barra inicio</h1>
 <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark " style="width: 289px; background-color: #ff6900 !important;">
     <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="https://www.bariloche.gov.ar/" target="_blank">
-        <img src="<?= URL . '/img/logo.png' ?>" alt="Logo" width="240" height="80" class="pe-none me-2">
+        <img src="<?= URL . '/img/logo_claro.png' ?>" alt="Logo" width="240" height="80" class="pe-none me-2">
     </a>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">

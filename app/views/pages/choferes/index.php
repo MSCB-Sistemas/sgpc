@@ -4,7 +4,6 @@
         <table class="table table-dark table-striped table-bordered align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>DNI</th>
@@ -14,12 +13,11 @@
             <tbody>
                 <?php foreach ($datos['choferes'] as $chofer): ?>
                     <tr>
-                        <td><?= $chofer['id'] ?></td>
                         <td><?= htmlspecialchars($chofer['nombre']) ?></td>
                         <td><?= htmlspecialchars($chofer['apellido']) ?></td>
                         <td><?= htmlspecialchars($chofer['dni']) ?></td>
                         <td>
-                            <a href="<?= URL ?>/choferes/editar/<?= $chofer['id'] ?>" class="btn btn-sm btn-primary">
+                            <a href="<?= URL ?>/chofer/edit/<?= $chofer['id_chofer'] ?>" class="btn btn-sm btn-primary">
                                 Editar
                             </a>
                         </td>
