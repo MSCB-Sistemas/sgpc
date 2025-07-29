@@ -97,7 +97,7 @@
     </ul>
     <hr>
     <div class="d-flex justify-content-center align-items-center">
-        <strong><?=ucfirst($_SESSION['usuario_nombre'])." ".ucfirst($_SESSION['usuario_apellido'])?></strong>
+        <strong><?php echo ucfirst($_SESSION['usuario_nombre'])." ".ucfirst($_SESSION['usuario_apellido']);?></strong>
         </a>
     </div>
 </div>
