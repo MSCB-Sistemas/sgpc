@@ -15,7 +15,22 @@ class Hoteles extends Control
     public function index()
     {
         $hoteles = $this->model->getAllHoteles();
-        $this->load_view('hoteles/index', ['hoteles' => $hoteles]);
+        $datos = [
+            'title' => 'Listado de Hoteles',
+            'urlCrear' => URL . '/hoteles/create',
+            'columnas' => ['Nombre de Hotel'],
+            'columnas_claves' => ['nombre', 'direccion'],
+            'data' => $hoteles,
+            'acciones' => function($fila) {
+                $id = $fila['id_hotel'];
+                $url = URL . '/hoteles';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
+                ';
+            }
+        ];
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar un hotel específico.
