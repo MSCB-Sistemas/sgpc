@@ -16,7 +16,22 @@ class Servicio extends Control
     public function index()
     {
         $servicios = $this->model->getAllServicios();
-        $this->load_view('servicios/index', ['servicios' => $servicios]);
+        $datos = [
+            'title' => 'Listado de Servicios',
+            'urlCrear' => URL . '/servicios/create',
+            'columnas' => ['Nombre','Dominio','Empresa'],
+            'columnas_claves' => ['nombre','dominio','empresa'],
+            'data' => $servicios,
+            'acciones' => function($fila) {
+                $id = $fila['id_servicio'];
+                $url = URL . '/servicios';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
+                ';
+            }
+        ];    
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar detalles de un servicio

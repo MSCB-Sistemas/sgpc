@@ -28,7 +28,20 @@ class UsuariosModel {
      * @return array Arreglo asociativo con todos los usuarios.
      */
     public function getAllUsuarios(): array {
-        $stmt = $this->db->prepare("SELECT * FROM usuarios");
+        $stmt = $this->db->prepare("SELECT 
+            u.id_usuario,
+            u.usuario,
+            u.nombre,
+            u.apellido,
+            u.cargo,
+            u.sector,
+            tu.tipo_usuario,
+            u.activo
+        FROM 
+            usuarios u
+        JOIN 
+            tipos_usuarios tu ON u.id_tipo_usuario = tu.id_tipo_usuario;
+        ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

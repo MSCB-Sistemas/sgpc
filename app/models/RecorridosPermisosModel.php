@@ -23,7 +23,15 @@ class RecorridosPermisosModel
      */ 
     public function getAllRecorridosPermisos(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM recorridos_permisos");
+        $stmt = $this->db->prepare("SELECT 
+            rp.id_recorrido_permiso,
+            rp.id_permiso,
+            r.nombre AS recorrido
+        FROM 
+            recorridos_permisos rp
+        JOIN 
+            recorridos r ON rp.id_recorrido = r.id_recorrido;
+        ");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo

@@ -15,7 +15,23 @@ class Usuarios extends Control
     public function index()
     {
         $usuarios = $this->model->getAllUsuarios();
-        $this->load_view('usuarios/index', ['usuarios' => $usuarios]);
+        $datos = [
+        'title' => 'Listado de Usuarios',
+        'urlCrear' => URL . '/usuarios/create',
+        'columnas' => ['Usuario', 'Nombre', 'Apellido', 'Cargo', 'Sector', 'Tipo', 'Activo'],
+        'columnas_claves' => ['usuario', 'nombre', 'apellido', 'cargo', 'sector', 'tipo_usuario', 'activo'],
+        'data' => $usuarios,
+        'acciones' => function($fila) {
+            $id = $fila['id_usuario'];
+            $url = URL . '/usuarios';
+            return '
+                <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este usuario?\');">Eliminar</a>
+            ';
+        
+        }
+        ];
+    $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar detalles de un usuario específico

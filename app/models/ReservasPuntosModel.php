@@ -28,7 +28,17 @@ class ReservasPuntosModel {
      * @return array Arreglo asociativo con todas las reservas de puntos.
      */
     public function getAllReservasPuntos(): array {
-        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos");
+        $stmt = $this->db->prepare("SELECT 
+            rp.id_reserva_punto,
+            rp.fecha_horario,
+            h.nombre AS hotel,
+            pd.nombre AS punto_detencion,
+            rp.id_permiso
+        FROM 
+            reservas_puntos rp
+        JOIN hoteles h ON rp.id_hotel = h.id_hotel
+        JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion;
+        ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
