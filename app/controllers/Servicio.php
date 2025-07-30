@@ -18,19 +18,19 @@ class Servicio extends Control
         $servicios = $this->model->getAllServicios();
         $datos = [
             'title' => 'Listado de Servicios',
-            'urlCrear' => URL . '/servicios/create',
-            'columnas' => ['Nombre','Dominio','Empresa'],
-            'columnas_claves' => ['nombre','dominio','empresa'],
+            'urlCrear' => URL . '/servicio/create',
+            'columnas' => ['Nro Servicio', 'Empresa', 'Interno', 'Dominio'],
+            'columnas_claves' => ['id_servicio', 'nombre_empresa', 'interno', 'dominio'],
             'data' => $servicios,
             'acciones' => function($fila) {
                 $id = $fila['id_servicio'];
-                $url = URL . '/servicios';
+                $url = URL . '/servicio';
                 return '
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
                 ';
             }
-        ];    
+        ];
         $this->load_view('partials/tablaAbm', $datos);
     }
 

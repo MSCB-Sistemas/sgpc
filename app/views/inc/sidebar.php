@@ -90,7 +90,7 @@
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/abm/calles" class="nav-link text-white">Calles</a></li>
-                    <li><a href="<?= URL ?>/abm/vehiculos" class="nav-link text-white">Vehículos</a></li>
+                    <li><a href="<?= URL ?>/Servicio/index" class="nav-link text-white">Servicios</a></li>
                 </ul>
             </div>
         </li>
