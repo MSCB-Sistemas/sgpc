@@ -51,6 +51,13 @@ class PermisoModel
         return $stmt->fetch();
     }
 
+    public function getPermisosByChofer($id_chofer): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_chofer = :id");
+        $stmt->execute(['id' => $id_chofer]);
+        return $stmt->fetchAll();
+    }
+
     /**
      * Inserta un nuevo permiso en la base de datos.
      *
