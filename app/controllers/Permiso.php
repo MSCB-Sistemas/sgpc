@@ -16,21 +16,47 @@ class Permiso extends Control
     {
         $permisos = $this->model->getAllPermisos();
         $datos = [
-            'title' => 'Listado de Permisos',
-            'urlCrear' => URL . '/hoteles/create',
-            'columnas' => ['Nombre de Hotel'],
-            'columnas_claves' => ['nombre', 'direccion'],
-            'data' => $permisos,
-            'acciones' => function($fila) {
-                $id = $fila['id_hotel'];
-                $url = URL . '/hoteles';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
-                ';
-            }
-        ];
-        $this->load_view('partials/tablaAbm', $datos);
+        'title' => 'Listado de Permisos',
+        'urlCrear' => URL . '/permisos/create',
+        'columnas' => [
+            'Tipo',
+            'Fecha Reserva',
+            'Fecha Emisión',
+            'Chofer',
+            'Nacionalidad',
+            'Usuario',
+            'Cargo',
+            'Servicio',
+            'Dominio',
+            'Empresa',
+            'Observación',
+            'Arribo'
+        ],
+        'columnas_claves' => [
+            'tipo',
+            'fecha_reserva',
+            'fecha_emision',
+            'chofer',
+            'chofer_nacionalidad',
+            'usuario',
+            'usuario_cargo',
+            'servicio_interno',
+            'servicio_dominio',
+            'empresa_nombre',
+            'observacion',
+            'arribo'
+        ],
+        'data' => $permisos,
+        'acciones' => function($fila) {
+            $id = $fila['id_permiso'];
+            $url = URL . '/permisos';
+            return '
+                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este permiso?\');">Eliminar</a>
+            ';
+        }
+    ];
+
+$this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar detalles de un permiso específico

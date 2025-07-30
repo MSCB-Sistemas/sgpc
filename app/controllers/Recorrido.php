@@ -16,7 +16,22 @@ class Recorrido extends Control
     public function index()
     {
         $recorridos = $this->model->getAllRecorridos();
-        $this->load_view('recorridos/index', ['recorridos' => $recorridos]);
+        $datos = [
+            'title' => 'Listado de Recorridos',
+            'urlCrear' => URL . '/recorridos/create',
+            'columnas' => ['Nombre'],
+            'columnas_claves' => ['nombre'],
+            'data' => $recorridos,
+            'acciones' => function($fila) {
+                $id = $fila['id_recorrido'];
+                $url = URL . '/recorridos';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
+                ';
+            }
+        ];    
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar un recorrido específico
