@@ -136,7 +136,7 @@ class Chofer extends Control
             }
 
             if ($this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad)) {
-                header("Location: " . URL . "/chofer/index");
+                header("Location: " . URL . "/chofer");
                 exit;
             } else {
                 die("Error al guardar el chofer");
@@ -149,7 +149,7 @@ class Chofer extends Control
         $permisos = $permisosModel->getPermisosByChofer($id);
         if (empty($permisos)) {
             $this->modelo->deleteChofer($id);
-            header("Location: " . URL . "/chofer/index");
+            header("Location: " . URL . "/chofer");
             exit;
         }
             die("No se puede eliminar al chofer, tiene permisos asignados.");
