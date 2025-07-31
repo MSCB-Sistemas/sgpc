@@ -22,8 +22,8 @@ class Recorrido extends Control
         $datos = [
             'title' => 'Listado de Recorridos',
             'urlCrear' => URL . '/recorrido/create',
-            'columnas' => ['ID', 'Nombre', 'Calles'],
-            'columnas_claves' => ['id_recorrido', 'nombre', 'calles'],
+            'columnas' => ['ID', 'Nombre'],
+            'columnas_claves' => ['id_recorrido', 'nombre'],
             'data' => $recorridos,
             'acciones' => function($fila) {
                 $id = $fila['id_recorrido'];

@@ -20,7 +20,7 @@ class PuntosDetencion extends Control
         $datos = [
             'title' => 'Listado de Puntos de Detencion',
             'urlCrear' => URL . '/puntosDetencion/create',
-            'columnas' => ['Nombre del Punto', 'Calle'],  
+            'columnas' => ['Punto', 'Calle'],  
             'columnas_claves' => ['nombre_punto', 'nombre_calle'], 
             'data' => $puntos,
             'acciones' => function($fila) {
