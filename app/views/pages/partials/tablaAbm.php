@@ -44,7 +44,7 @@
                         let coincide = false;
 
                         for (let celda of celdas) {
-                            if (celda.textContent.toLowerCase().includes(filtro)) {
+                            if (!(celda.firstElementChild && celda.firstElementChild.tagName === "A") && celda.textContent.toLowerCase().includes(filtro)) {
                                 coincide = true;
                                 break;
                             }

@@ -17,13 +17,13 @@ class Empresa extends Control
         $empresas = $this->model->getAllEmpresas();
         $datos = [
             'title' => 'Listado de Empresas',
-            'urlCrear' => URL . '/empresas/create',
+            'urlCrear' => URL . '/empresa/create',
             'columnas' => ['Nombre de Empresa'],
             'columnas_claves' => ['nombre'],
             'data' => $empresas,
             'acciones' => function($fila) {
                 $id = $fila['id_empresa'];
-                $url = URL . '/empresas';
+                $url = URL . '/empresa';
                 return '
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>
@@ -32,98 +32,101 @@ class Empresa extends Control
         ];
         $this->load_view('partials/tablaAbm', $datos);
     }
-
-    // Mostrar formulario para crear empresa.
-    public function create()
-    {
-        $this->load_view('empresas/create');
-    }
-
-    // Formulario para guardar una empresa.
-    public function store()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : '';
-
-            if ($nombre !== '') {
-                $this->model->insertEmpresa($nombre);
-                $this->load_view('empresas/create', [
-                    'message' => 'Empresa creada exitosamente.'
-                ]);
-            } else {
-                $this->load_view('empresas/create', [
-                    'error' => 'El nombre no puede estar vacío.'
-                ]);
-            }
-        } else {
-            $this->load_view('empresas/create', [
-                'error' => 'Solicitud inválida.'
-            ]);
-        }
-    }
-
-
-    // Mostrar formulario para editar empresa.
     public function edit($id)
     {
         $empresa = $this->model->getEmpresa($id);
 
         if (!$empresa) {
-            $this->load_view('empresas/index', [
-                'error' => 'Empresa no encontrada.'
-            ]);
-            return;
+            die("Empresa no encontrada");
         }
 
-        $this->load_view('empresas/edit', [
-            'empresa' => $empresa
+        $this->load_view('empresas/form', [
+            'title' => 'Editar empresa',
+            'action' => URL . '/empresa/update/' . $id,
+            'values' => [
+                'nombre' => $empresa['nombre']
+            ],
+            'errores' => [],
         ]);
     }
 
-
-    // Actualizar empresa (desde formulario).
-    public function update()
+    public function update($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_empresa'], $_POST['nombre'])) {
-            $id = intval($_POST['id_empresa']);
-            $nombre = trim($_POST['nombre']);
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
 
-            if ($nombre !== '') {
-                $this->model->updateEmpresa($id, $nombre);
+            $errores = [];
+            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
 
-                // Obtener todas las empresas para mostrar el index con mensaje
-                $empresas = $this->model->getAllEmpresas(); 
-                $this->load_view('empresas/index', [
-                    'message' => 'Empresa actualizada correctamente.',
-                    'empresas' => $empresas
+            if (!empty($errores)) {
+                $empresa = [
+                    'id_empresa' => $id,
+                    'nombre' => $nombre
+                ];
+                $this->load_view('empresas/form', [
+                    'title' => 'Editar empresa',
+                    'action' => URL . '/empresa/update/' . $id,
+                    'values' => $empresa,
+                    'errores' => $errores
                 ]);
-            } else {
-                // Obtener la empresa para volver a mostrar el formulario con error
-                $empresa = $this->model->getEmpresa($id);
-                $this->load_view('empresas/edit', [
-                    'empresa' => $empresa,
-                    'error' => 'El nombre no puede estar vacío.'
-                ]);
+                return;
             }
-        } else {
-            $empresas = $this->model->getAllEmpresas(); 
-            $this->load_view('empresas/index', [
-                'error' => 'Solicitud inválida.',
-                'empresas' => $empresas
-            ]);
+
+            if ($this->model->updateEmpresa($id,$nombre)) {
+                header("Location: " . URL . "/empresa");
+                exit;
+            } else {
+                die("Error al actualizar la empresa");
+            }
         }
     }
 
-
-    // Eliminar empresa.
-    public function delete($id)
+    public function create()
     {
-        $this->model->deleteEmpresa($id);
-        $empresas = $this->model->getAllEmpresas();
-        $this->load_view('empresas/index', [
-        'message' => 'Empresa eliminada correctamente.',
-        'empresas' => $empresas
+        $this->load_view('empresas/form', [
+            'title' => 'Crear nueva empresa',
+            'action' => URL . '/empresa/save',
+            'values' => [],
+            'errores' => [],
         ]);
+    }
+    
+    public function save()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
 
+            // Validaciones simples
+            $errores = [];
+            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+
+            if (!empty($errores)) {
+                $this->load_view('empresas/form', [
+                    'title' => 'Crear nueva empresa',
+                    'action' => URL . '/empresa/save',
+                    'values' => $_POST,
+                    'errores' => $errores
+                ]);
+                return;
+            }
+
+            if ($this->model->insertEmpresa($nombre)) {
+                header("Location: " . URL . "/empresa");
+                exit;
+            } else {
+                die("Error al guardar la empresa");
+            }
+        }
+    }
+
+    public function delete($id){
+        $serviciosModel = $this->load_model("ServicioModel");
+        $servicios = $serviciosModel->getServicioByEmpresa($id);
+        if (empty($servicios)) {
+            $this->model->deleteEmpresa($id);
+            header("Location: " . URL . "/empresa");
+            exit;
+        }
+            die("No se puede eliminar la empresa, tiene servicios asignados.");
     }
 }

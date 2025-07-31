@@ -54,6 +54,12 @@ class ServicioModel
         return $stmt->fetch();
     }
 
+    public function getServicioByEmpresa($id): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM servicios WHERE id_empresa = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchAll();
+    }
     /**
      * Inserta un nuevo servicio en la base de datos.
      *

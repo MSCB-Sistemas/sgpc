@@ -88,7 +88,7 @@ class Chofer extends Control
             }
 
             if ($this->modelo->updateChofer($id, $dni, $nombre, $apellido, $nacionalidad)) {
-                header("Location: " . URL . "/chofer/index");
+                header("Location: " . URL . "/chofer");
                 exit;
             } else {
                 die("Error al actualizar el chofer");
@@ -127,7 +127,7 @@ class Chofer extends Control
                 $nacionalidades = $this->modeloNacionalidades->getAll();
                 $this->load_view('choferes/form', [
                     'title' => 'Crear nuevo chofer',
-                    'action' => URL . '/chofer/guardar',
+                    'action' => URL . '/chofer/save',
                     'values' => $_POST,
                     'errores' => $errores,
                     'nacionalidades' => $nacionalidades
@@ -152,6 +152,6 @@ class Chofer extends Control
             header("Location: " . URL . "/chofer");
             exit;
         }
-            die("No se puede eliminar al chofer, tiene permisos asignados.");
+            die("No se puede eliminar la chofer, tiene permisos asignados.");
     }
 }

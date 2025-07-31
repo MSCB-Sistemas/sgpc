@@ -88,9 +88,13 @@
 
             <div class="collapse ps-3" id="submenuABM">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <? if ($_SESSION['usuario_tipo'] == '1') : ?>
+                        <li><a href="<?= URL ?>/usuarios" class="nav-link text-white">Usuarios</a></li>
+                    <? endif; ?>
                     <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/abm/calles" class="nav-link text-white">Calles</a></li>
                     <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/empresa" class="nav-link text-white">Empresas</a></li>
                 </ul>
             </div>
         </li>
