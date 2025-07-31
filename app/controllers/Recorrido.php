@@ -23,7 +23,7 @@ class Recorrido extends Control
             'title' => 'Listado de Recorridos',
             'urlCrear' => URL . '/recorrido/create',
             'columnas' => ['ID', 'Nombre'],
-            'columnas_claves' => ['id_recorrido', 'nombre'],
+            'columnas_claves' => ['id_recorrido', 'calles', 'nombre'],
             'data' => $recorridos,
             'acciones' => function($fila) {
                 $id = $fila['id_recorrido'];
