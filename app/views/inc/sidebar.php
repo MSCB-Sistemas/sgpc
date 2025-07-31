@@ -91,9 +91,11 @@
                     <? if ($_SESSION['usuario_tipo'] == '1') : ?>
                         <li><a href="<?= URL ?>/usuarios" class="nav-link text-white">Usuarios</a></li>
                     <? endif; ?>
-                    <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
-                    <li><a href="<?= URL ?>/abm/calles" class="nav-link text-white">Calles</a></li>
-                    <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/Chofer" class="nav-link text-white">Choferes</a></li>
+                    <li><a href="<?= URL ?>/Calle" class="nav-link text-white">Calles</a></li>
+                    <li><a href="<?= URL ?>/Servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/Recorrido" class="nav-link text-white">Recorridos</a></li>
+                    <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
                     <li><a href="<?= URL ?>/empresa" class="nav-link text-white">Empresas</a></li>
                 </ul>
             </div>
