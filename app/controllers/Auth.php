@@ -79,10 +79,10 @@ class Auth extends Control
 
             if (!$hasSession && $hasTokenCookie && $hasIdUsuarioCookie) {
                 $token = $_COOKIE['remember_token'];
-                $id_usuario = $_COOKIE['id_usuario'];
+                $usuario = $_COOKIE['id_usuario'];
 
                 $tokenModel = $this->load_model('RememberTokensModel');
-                $token = $tokenModel->validateRememberMeToken($id_usuario, $token);
+                $token = $tokenModel->validateRememberMeToken($usuario, $token);
 
                 if ($usuario) {
                     session_start();
@@ -91,7 +91,7 @@ class Auth extends Control
                     $_SESSION['usuario_apellido'] = $usuario['apellido'];
                     $_SESSION['usuario_tipo'] = $usuario['id_tipo_usuario'];
 
-                    $this->createRememberMeToken($id_usuario);
+                    $this->createRememberMeToken($usuario);
                     header("Location: " . URL . "/views/inicio");
                     exit;
                 }
