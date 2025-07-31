@@ -75,12 +75,11 @@ class UsuariosModel {
      * @param string $sector Nuevo sector.
      * @param string $contrasenia Nueva contraseña.
      * @param int $id_tipo_usuario Nuevo tipo de usuario.
-     * @param int $activo Estado de actividad del usuario.
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
-    public function updateUsuario($id_usuario, $usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $id_tipo_usuario, $activo) : bool {
-        $stmt = $this->db->prepare("UPDATE usuarios SET usuario = :usuario, nombre = :nombre, apellido = :apellido, cargo = :cargo, sector = :sector, contrasenia = :contrasenia, id_tipo_usuario = :id_tipo_usuario, activo = :activo WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'contrasenia' => $contrasenia, 'id_tipo_usuario' => $id_tipo_usuario, 'activo' => $activo]);
+    public function updateUsuario($id_usuario, $usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $id_tipo_usuario) : bool {
+        $stmt = $this->db->prepare("UPDATE usuarios SET usuario = :usuario, nombre = :nombre, apellido = :apellido, cargo = :cargo, sector = :sector, contrasenia = :contrasenia, id_tipo_usuario = :id_tipo_usuario WHERE id_usuario = :id_usuario");
+        $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'contrasenia' => $contrasenia, 'id_tipo_usuario' => $id_tipo_usuario]);
         return $stmt->rowCount() > 0;
     }
 
@@ -110,6 +109,18 @@ class UsuariosModel {
      */
     public function deleteUsuario($id_usuario) : bool {
         $stmt = $this->db->prepare("UPDATE usuarios SET activo = 0 WHERE id_usuario = :id_usuario");
+        $stmt->execute(['id_usuario' => $id_usuario]);
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Activa un usuario de la base de datos por su ID.
+     *
+     * @param int $id_usuario ID del usuario a activar.
+     * @return bool True si se activó el usuario, false en caso contrario.
+     */
+    public function activateUsuario($id_usuario) : bool {
+        $stmt = $this->db->prepare("UPDATE usuarios SET activo = 1 WHERE id_usuario = :id_usuario");
         $stmt->execute(['id_usuario' => $id_usuario]);
         return $stmt->rowCount() > 0;
     }
