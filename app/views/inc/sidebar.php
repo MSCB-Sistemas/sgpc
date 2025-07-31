@@ -6,7 +6,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item ">
-            <a class="nav-link text-white" href="#" aria-current="page">
+            <a class="nav-link text-white" href="/SGPC" aria-current="page">
                 <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                     <use xlink:href="#home">
                         <symbol id="home" viewBox="0 0 16 16">
@@ -93,6 +93,7 @@
                     <? endif; ?>
                     <li><a href="<?= URL ?>/Chofer" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/Calle" class="nav-link text-white">Calles</a></li>
+                    <li><a href="<?= URL ?>/Hoteles" class="nav-link text-white">Hoteles</a></li>
                     <li><a href="<?= URL ?>/Servicio" class="nav-link text-white">Servicios</a></li>
                     <li><a href="<?= URL ?>/Recorrido" class="nav-link text-white">Recorridos</a></li>
                     <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>

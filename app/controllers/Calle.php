@@ -18,13 +18,13 @@ class Calle extends Control
         $calles = $this->model->getAllCalles();
         $datos = [
             'title' => 'Listado de Calles',
-            'urlCrear' => URL . '/calles/create',
+            'urlCrear' => URL . '/calle/create',
             'columnas' => ['Nombre'],
             'columnas_claves' => ['nombre'],
             'data' => $calles,
             'acciones' => function($fila) {
                 $id = $fila['id_calle'];
-                $url = URL . '/calles';
+                $url = URL . '/calle';
                 return '
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>
@@ -35,89 +35,125 @@ class Calle extends Control
     }
 
     // Mostrar una calle específica.
-    public function show($id_calle)
+    public function show($id)
     {
-        $calle = $this->model->getCalle($id_calle);
+        $calle = $this->model->getCalle($id);
 
         if (!$calle) {
             $calles = $this->model->getAllCalles();
-            $this->load_view('calles/index', [
+            $this->load_view('calle/index', [
                 'error' => 'Calle no encontrada.',
                 'calles' => $calles
             ]);
             return;
         }
 
-        $this->load_view('calles/show', ['calle' => $calle]);
+        $this->load_view('calle/show', ['calle' => $calle]);
     }
 
     // Mostrar formulario para crear una calle nueva.
     public function create()
     {
-        $this->load_view('calles/create');
+        $this->load_view('calle/form', [
+            'title' => 'Crear nueva calle',
+            'action' => URL . '/calle/save',
+            'values' => [],
+            'errores' => [],
+        ]);
     }
 
     // Procesar el formulario para guardar calle nueva.
-    public function store()
+    public function save()
     {
-        if (empty($_POST['nombre'])) {
-            $this->load_view('calles/create', [
-                'error' => 'El nombre es obligatorio.'
-            ]);
-            return;
-        }
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
 
-        $this->model->insertCalle($_POST['nombre']);
-        $calles = $this->model->getAllCalles();
-        $this->load_view('calles/index', [
-            'message' => 'Calle creada correctamente.',
-            'calles' => $calles
-        ]);
+            // Validaciones simples
+            $errores = [];
+            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+
+            if (!empty($errores)) {
+                $this->load_view('calle/form', [
+                    'title' => 'Crear nuevo calle',
+                    'action' => URL . '/calle/guardar',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]);
+                return;
+            }
+
+            if ($this->model->insertCalle( $nombre)) {
+                header("Location: " . URL . "/calle");
+                exit;
+            } else {
+                die("Error al guardar calle");
+            }
+        }
     }
 
     // Mostrar formulario para editar una calle.
-    public function edit($id_calle)
+    public function edit($id)
     {
-        $calle = $this->model->getCalle($id_calle);
+        $calle = $this->model->getCalle($id);  
+
         if (!$calle) {
-            $calles = $this->model->getAllCalles();
-            $this->load_view('calles/index', [
-                'error' => 'Calle no encontrada.',
-                'calles' => $calles
-            ]);
-            return;
+            die("Calle no encontrada");
         }
-        $this->load_view('calles/edit', ['calle' => $calle]);
+
+        $this->load_view('calle/form', [
+            'title' => 'Editar calle',
+            'action' => URL . '/calle/update/' . $id,
+            'values' => [
+                'nombre' => $calle['nombre']
+            ],
+            'errores' => [],
+        ]);
     }
 
     // Procesar la actualización de calle.
-    public function update($id_calle)
+    public function update($id)
     {
-        if (empty($_POST['nombre'])) {
-            $calle = $this->model->getCalle($id_calle);
-            $this->load_view('calles/edit', [
-                'error' => 'El nombre es obligatorio.',
-                'calle' => $calle
-            ]);
-            return;
-        }
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
 
-        $this->model->updateCalle($id_calle, $_POST['nombre']);
-        $calles = $this->model->getAllCalles();
-        $this->load_view('calles/index', [
-            'message' => 'Calle actualizada correctamente.',
-            'calles' => $calles
-        ]);
+
+            $errores = [];
+            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+
+            if (!empty($errores)) {
+                $calle = [
+                    'nombre' => $nombre
+                ];
+                $this->load_view('calle/form', [
+                    'title' => 'Editar calle',
+                    'action' => URL . '/calle/update/' . $id,
+                    'values' => $calle,
+                    'errores' => $errores,
+                ]);
+                return;
+            }
+
+            if ($this->model->updateCalle($id,  $nombre)) {
+                header("Location: " . URL . "/calle/index");
+                exit;
+            } else {
+                die("Error al actualizar calle");
+            }
+        }
     }
 
     // Eliminar una calle.
-    public function delete($id_calle)
+    public function delete($id)
     {
-        $this->model->deleteCalle($id_calle);
-        $calles = $this->model->getAllCalles();
-        $this->load_view('calles/index', [
-            'message' => 'Calle eliminada correctamente.',
-            'calles' => $calles
-        ]);
+        $eliminado = $this->model->deleteCalle($id);
+        if (!$eliminado) {
+            die("No se puede eliminar la calle.");
+        }
+        $this->model->deleteCalle($id);
+            header("Location: " . URL . "/calle");
+            exit;
+        
+        
     }
 }
+

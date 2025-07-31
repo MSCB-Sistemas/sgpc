@@ -18,7 +18,7 @@ class Hoteles extends Control
         $datos = [
             'title' => 'Listado de Hoteles',
             'urlCrear' => URL . '/hoteles/create',
-            'columnas' => ['Nombre de Hotel'],
+            'columnas' => ['Nombre de Hotel','Direccion'],
             'columnas_claves' => ['nombre', 'direccion'],
             'data' => $hoteles,
             'acciones' => function($fila) {
@@ -51,98 +51,110 @@ class Hoteles extends Control
     // Mostrar formulario para crear hotel.
     public function create()
     {
-        $this->load_view('hoteles/create');
+        $this->load_view('hoteles/form', [
+            'title' => 'Crear nuevo hotel',
+            'action' => URL . '/hoteles/save',
+            'values' => [],
+            'errores' => [],
+        ]);
     }
 
     // Procesar creación de hotel.
     public function store()
     {
-        $nombre = trim($_POST['nombre'] ?? '');
-        $direccion = trim($_POST['direccion'] ?? '');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
+            $direccion = trim($_POST["direccion"] ?? '');   
+            // Validaciones simples
+            $errores = [];
+            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+            if (empty($direccion)) $errores[] = "La dirección es obligatoria.";
 
-        if ($nombre === '' || $direccion === '') {
-            $this->load_view('hoteles/create', [
-                'error' => 'El nombre y la dirección son obligatorios.',
-                'nombre' => $nombre,
-                'direccion' => $direccion
-            ]);
-            return;
+            if (!empty($errores)) {
+                $this->load_view('hoteles/form', [
+                    'title' => 'Crear nuevo hotel',
+                    'action' => URL . '/hoteles/guardar',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]);
+                return;
+            }
+
+            if ($this->model->insertHotel($nombre, $direccion)) {
+                header("Location: " . URL . "/hoteles");
+                exit;
+            } else {
+                die("Error al guardar hotel");
+            }
         }
-
-        $this->model->insertHotel($nombre, $direccion);
-
-        $hoteles = $this->model->getAllHoteles();
-        $this->load_view('hoteles/index', [
-            'message' => 'Hotel creado exitosamente.',
-            'hoteles' => $hoteles
-        ]);
     }
 
     // Mostrar formulario para editar hotel.
     public function edit($id)
     {
-        $hotel = $this->model->getHotel($id);
+        $hotel = $this->model->getHotel($id);  
+
         if (!$hotel) {
-            $hoteles = $this->model->getAllHoteles();
-            $this->load_view('hoteles/index', [
-                'error' => 'Hotel no encontrado.',
-                'hoteles' => $hoteles
-            ]);
-            return;
+            die("Hotel no encontrado");
         }
-        $this->load_view('hoteles/edit', ['hotel' => $hotel]);
+
+        $this->load_view('hoteles/form', [
+            'title' => 'Editar hotel',
+            'action' => URL . '/hoteles/update/' . $id,
+            'values' => [
+                'nombre' => $hotel['nombre'],
+                'direccion' => $hotel['direccion']  
+            ],
+            'errores' => [],
+
+        ]);
     }
 
     // Procesar actualización de hotel.
     public function update($id)
     {
-        $nombre = trim($_POST['nombre'] ?? '');
-        $direccion = trim($_POST['direccion'] ?? '');
+         if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
+            $direccion = trim($_POST['direccion'] ??'');
 
-        if ($nombre === '' || $direccion === '') {
-            $hotel = $this->model->getHotel($id);
-            $this->load_view('hoteles/edit', [
-                'error' => 'El nombre y la dirección no pueden estar vacíos.',
-                'hotel' => $hotel
-            ]);
-            return;
+
+            $errores = [];
+            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+            if (empty($direccion)) $errores[] = "La dirección es obligatoria.";
+
+            if (!empty($errores)) {
+                $hotel = [
+                    'id_hotel' => $id,
+                    'nombre' => $nombre,
+                    'direccion'=> $direccion 
+                ];
+                $this->load_view('hoteles/form', [
+                    'title' => 'Editar hotel',
+                    'action' => URL . '/hoteles/update/' . $id,
+                    'values' => $hotel,
+                    'errores' => $errores,
+                ]);
+                return;
+            }
+
+            if ($this->model->updateHotel($id, $nombre, $direccion)) { 
+                header("Location: " . URL . "/hoteles/index");
+                exit;
+            } else {
+                die("Error al actualizar el hotel");
+            }
         }
-
-        $actualizado = $this->model->updateHotel($id, $nombre, $direccion);
-
-        $hoteles = $this->model->getAllHoteles();
-
-        if (!$actualizado) {
-            $this->load_view('hoteles/index', [
-                'error' => 'No se pudo actualizar el hotel o no hubo cambios.',
-                'hoteles' => $hoteles
-            ]);
-            return;
-        }
-
-        $this->load_view('hoteles/index', [
-            'message' => 'Hotel actualizado correctamente.',
-            'hoteles' => $hoteles
-        ]);
     }
 
     // Eliminar hotel.
     public function delete($id)
     {
         $eliminado = $this->model->deleteHotel($id);
-        $hoteles = $this->model->getAllHoteles();
-
         if (!$eliminado) {
-            $this->load_view('hoteles/index', [
-                'error' => 'No se pudo eliminar el hotel o no existe.',
-                'hoteles' => $hoteles
-            ]);
-            return;
+            die("No se puede eliminar la calle.");
         }
-
-        $this->load_view('hoteles/index', [
-            'message' => 'Hotel eliminado correctamente.',
-            'hoteles' => $hoteles
-        ]);
+        $this->model->deleteHotel($id);
+            header("Location: " . URL . "/hoteles");
+            exit;
     }
 }
