@@ -34,7 +34,37 @@ class PermisoModel
      */
     public function getAllPermisos(): array
     {
-        $stmt = $this->db->query("SELECT * FROM permisos");
+        $stmt = $this->db->query("SELECT
+            p.id_permiso,
+            p.tipo,
+            p.fecha_reserva,
+            p.fecha_emision,
+            p.es_arribo,
+            p.observacion,
+
+            -- Datos del chofer
+            c.dni AS chofer_dni,
+            c.nombre AS chofer_nombre,
+            c.apellido AS chofer_apellido,
+            n.nacionalidad AS chofer_nacionalidad,
+
+            -- Datos del usuario
+            u.nombre AS usuario_nombre,
+            u.apellido AS usuario_apellido,
+            u.cargo AS usuario_cargo,
+
+            -- Datos del servicio
+            s.interno AS servicio_interno,
+            s.dominio AS servicio_dominio,
+            e.nombre AS empresa_nombre
+
+        FROM permisos p
+        JOIN choferes c ON p.id_chofer = c.id_chofer
+        JOIN nacionalidades n ON c.id_nacionalidad = n.id_nacionalidad
+        JOIN usuarios u ON p.id_usuario = u.id_usuario
+        JOIN servicios s ON p.id_servicio = s.id_servicio
+        JOIN empresas e ON s.id_empresa = e.id_empresa;
+        ");
         return $stmt->fetchAll();
     }
 
@@ -49,6 +79,13 @@ class PermisoModel
         $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_permiso = :id");
         $stmt->execute(['id' => $id]);
         return $stmt->fetch();
+    }
+
+    public function getPermisosByChofer($id_chofer): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_chofer = :id");
+        $stmt->execute(['id' => $id_chofer]);
+        return $stmt->fetchAll();
     }
 
     /**

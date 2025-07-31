@@ -17,6 +17,7 @@ class Recorrido extends Control
     public function index()
     {
         $recorridos = $this->model->getAllRecorridos();
+<<<<<<< HEAD
         $calleRecorrido = $this->calleRecorridoModel->getAllCallesRecorridos();
 
         $datos = [
@@ -28,12 +29,27 @@ class Recorrido extends Control
             'acciones' => function($fila) {
                 $id = $fila['id_recorrido'];
                 $url = URL . '/recorrido';
+=======
+        $datos = [
+            'title' => 'Listado de Recorridos',
+            'urlCrear' => URL . '/recorridos/create',
+            'columnas' => ['Nombre'],
+            'columnas_claves' => ['nombre'],
+            'data' => $recorridos,
+            'acciones' => function($fila) {
+                $id = $fila['id_recorrido'];
+                $url = URL . '/recorridos';
+>>>>>>> abm-jonas
                 return '
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
                 ';
             }
+<<<<<<< HEAD
         ];
+=======
+        ];    
+>>>>>>> abm-jonas
         $this->load_view('partials/tablaAbm', $datos);
     }
 

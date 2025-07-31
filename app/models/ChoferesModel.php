@@ -56,7 +56,7 @@ class ChoferesModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updateChofer($id_chofer, $dni, $nombre, $apellido, $nacionalidad) : bool {
-        $stmt = $this->db->prepare("UPDATE choferes SET dni = :dni, nombre = :nombre, apellido = :apellido, nacionalidad = :nacionalidad WHERE id_chofer = :id_chofer");
+        $stmt = $this->db->prepare("UPDATE choferes SET dni = :dni, nombre = :nombre, apellido = :apellido, id_nacionalidad = :nacionalidad WHERE id_chofer = :id_chofer");
         $stmt->execute(['id_chofer' => $id_chofer, 'dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad]);
         return $stmt->rowCount() > 0;
     }
@@ -71,7 +71,7 @@ class ChoferesModel {
      * @return int|string ID del chofer insertado.
      */
     public function insertChofer($dni, $nombre, $apellido, $nacionalidad) {
-        $stmt = $this->db->prepare("INSERT INTO choferes (dni, nombre, apellido, nacionalidad) VALUES (:dni, :nombre, :apellido, :nacionalidad)");
+        $stmt = $this->db->prepare("INSERT INTO choferes (dni, nombre, apellido, id_nacionalidad) VALUES (:dni, :nombre, :apellido, :nacionalidad)");
         $stmt->execute(['dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad]);
         return $this->db->lastInsertId();
     }

@@ -16,7 +16,22 @@ class Calle extends Control
     public function index()
     {
         $calles = $this->model->getAllCalles();
-        $this->load_view('calles/index', ['calles' => $calles]);
+        $datos = [
+            'title' => 'Listado de Calles',
+            'urlCrear' => URL . '/calles/create',
+            'columnas' => ['Nombre'],
+            'columnas_claves' => ['nombre'],
+            'data' => $calles,
+            'acciones' => function($fila) {
+                $id = $fila['id_calle'];
+                $url = URL . '/calles';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>
+                ';
+            }
+        ];    
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar una calle específica.

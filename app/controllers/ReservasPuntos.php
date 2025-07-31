@@ -15,7 +15,22 @@ class ReservasPuntos extends Control
     public function index()
     {
         $reservas = $this->model->getAllReservasPuntos();
-        $this->load_view('reservas_puntos/index', ['reservas' => $reservas]);
+        $datos = [
+            'title' => 'Listado de Puntos Reservados',
+            'urlCrear' => URL . '/reservaspuntos/create',
+            'columnas' => ['Fecha', 'Hotel','Punto de Detencion'.'Permiso'],
+            'columnas_claves' => ['fecha_horario','hotel','punto_detencion','id_permiso'],
+            'data' => $reservas,
+            'acciones' => function($fila) {
+                $id = $fila['id_reserva_punto'];
+                $url = URL . '/reservaspuntos';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
+                ';
+            }
+        ];    
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar una reserva específica

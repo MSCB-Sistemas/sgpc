@@ -28,7 +28,14 @@ class PuntosDetencionModel {
      * @return array Arreglo asociativo con todos los puntos de detención.
      */
     public function getAllPuntosDetencion(): array {
-        $stmt = $this->db->prepare("SELECT * FROM puntos_detencion");
+        $stmt = $this->db->prepare("SELECT 
+            pd.id_punto_detencion,
+            pd.nombre AS nombre_punto,
+            c.nombre AS nombre_calle
+        FROM 
+            puntos_detencion pd
+        JOIN 
+            calles c ON pd.id_calle = c.id_calle;");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

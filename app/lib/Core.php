@@ -2,7 +2,7 @@
   class Core
   {
     protected $controller;
-    protected $method;
+    protected $method = 'index';
     protected $parameters = [];
 
     public function __construct()

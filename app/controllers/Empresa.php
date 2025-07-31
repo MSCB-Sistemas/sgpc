@@ -15,7 +15,22 @@ class Empresa extends Control
     public function index()
     {
         $empresas = $this->model->getAllEmpresas();
-        $this->load_view('/empresas/list');
+        $datos = [
+            'title' => 'Listado de Empresas',
+            'urlCrear' => URL . '/empresas/create',
+            'columnas' => ['Nombre de Empresa'],
+            'columnas_claves' => ['nombre'],
+            'data' => $empresas,
+            'acciones' => function($fila) {
+                $id = $fila['id_empresa'];
+                $url = URL . '/empresas';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>
+                ';
+            }
+        ];
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar formulario para crear empresa.

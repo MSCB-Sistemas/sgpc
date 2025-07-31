@@ -15,7 +15,48 @@ class Permiso extends Control
     public function index()
     {
         $permisos = $this->model->getAllPermisos();
-        $this->load_view('permisos/index', ['permisos' => $permisos]);
+        $datos = [
+        'title' => 'Listado de Permisos',
+        'urlCrear' => URL . '/permisos/create',
+        'columnas' => [
+            'Tipo',
+            'Fecha Reserva',
+            'Fecha Emisión',
+            'Chofer',
+            'Nacionalidad',
+            'Usuario',
+            'Cargo',
+            'Servicio',
+            'Dominio',
+            'Empresa',
+            'Observación',
+            'Arribo'
+        ],
+        'columnas_claves' => [
+            'tipo',
+            'fecha_reserva',
+            'fecha_emision',
+            'chofer',
+            'chofer_nacionalidad',
+            'usuario',
+            'usuario_cargo',
+            'servicio_interno',
+            'servicio_dominio',
+            'empresa_nombre',
+            'observacion',
+            'arribo'
+        ],
+        'data' => $permisos,
+        'acciones' => function($fila) {
+            $id = $fila['id_permiso'];
+            $url = URL . '/permisos';
+            return '
+                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este permiso?\');">Eliminar</a>
+            ';
+        }
+    ];
+
+$this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar detalles de un permiso específico
