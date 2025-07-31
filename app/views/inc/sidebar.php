@@ -91,6 +91,8 @@
                     <li><a href="<?= URL ?>/Chofer/index" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/abm/calles" class="nav-link text-white">Calles</a></li>
                     <li><a href="<?= URL ?>/Servicio/index" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/Recorrido/index" class="nav-link text-white">Recorridos</a></li>
+                    <li><a href="<?= URL ?>/Servicio/index" class="nav-link text-white">Puntos de detencion</a></li>
                 </ul>
             </div>
         </li>

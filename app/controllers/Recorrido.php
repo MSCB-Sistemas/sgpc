@@ -4,19 +4,37 @@
  */
 class Recorrido extends Control
 {
-    private RecorridoModel $model;
+    private $model;
+    private $calleRecorridoModel;
 
     public function __construct()
     {
-        $this->model = $this->load_model("RecorridoModel");   
-             
+        $this->model = $this->load_model("RecorridoModel"); 
+        $this->calleRecorridoModel = $this->load_model("CalleRecorridoModel");
     }
 
     // Mostrar todos los recorridos
     public function index()
     {
         $recorridos = $this->model->getAllRecorridos();
-        $this->load_view('recorridos/index', ['recorridos' => $recorridos]);
+        $calleRecorrido = $this->calleRecorridoModel->getAllCallesRecorridos();
+
+        $datos = [
+            'title' => 'Listado de Recorridos',
+            'urlCrear' => URL . '/recorrido/create',
+            'columnas' => ['ID', 'Nombre', 'Calles'],
+            'columnas_claves' => ['id_recorrido', 'nombre', 'calles'],
+            'data' => $recorridos,
+            'acciones' => function($fila) {
+                $id = $fila['id_recorrido'];
+                $url = URL . '/recorrido';
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
+                ';
+            }
+        ];
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar un recorrido específico
