@@ -53,19 +53,20 @@ class PuntosDetencion extends Control
     // Procesar la creación
     public function save()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $nombre = trim($_POST['nombre'] ?? '');
-            $calle = $_POST['calle'] ?? '';
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
+            $calle = $_POST["calle"] ?? '';
+            echo "Nombre: $nombre, Calle: $calle"; // Debugging line
 
             $errores = [];
             if(empty($nombre)) { $errores[] = 'El nombre del punto es obligatorio.'; }
-            if(empty($calles)) { $errores[] = 'Debe seleccionar una calle.'; }
+            if(empty($calle)) { $errores[] = 'Debe seleccionar una calle.'; }
 
             if (!empty($errores)) {
                 $calles = $this->calleModel->getAllCalles();
                 $this->load_view('puntos_detencion/form', [
                     'title' => 'Crear nuevo punto de detención',
-                    'action' => URL . '/puntosDetencion/save',
+                    'action' => URL . '/puntosDetencion/guardar',
                     'values' => $_POST,
                     'errores' => $errores,
                     'calles' => $calles
@@ -75,7 +76,7 @@ class PuntosDetencion extends Control
             }
 
             if ($this->model->insertPuntoDetencion($nombre, $calle)) {
-                header("Location: " . URL . "/puntosDetencion");
+                header("Location: " . URL . "/puntosDetencion/index");
                 exit;
             } else {
                 die("Error al insertar el punto de detención.");
@@ -86,18 +87,22 @@ class PuntosDetencion extends Control
     // Formulario para editar un punto
     public function edit($id)
     {
-        $punto = $this->model->getPuntoDetencion($id);
-        if (!$punto) {
-            $this->load_view('puntos_detencion/index', [
-                'error' => 'Punto de detención no encontrado.',
-                'puntos' => $this->model->getAllPuntosDetencion()
-            ]);
-            return;
+        $punto_detencion = $this->model->getPuntoDetencion($id);
+        $calles = $this->calleModel->getAllCalles();
+
+        if (!$punto_detencion) {
+            die("Punto de detención no encontrado.");
         }
 
-        $calles = $this->load_model('CallesModel')->getAllCalles();
-        $this->load_view('puntos_detencion/edit', [
-            'punto' => $punto,
+        $this->load_view('puntos_detencion/form', [
+            'title' => 'Editar punto de detención',
+            'action' => URL . '/puntosDetencion/update/' . $id,
+            'values' => [
+                'id_punto_detencion' => $punto_detencion['id_punto_detencion'],
+                'nombre' => $punto_detencion['nombre'],
+                'calle' => $punto_detencion['id_calle']
+            ],
+            'errores' => [],
             'calles' => $calles
         ]);
     }
@@ -105,46 +110,51 @@ class PuntosDetencion extends Control
     // Procesar actualización
     public function update($id)
     {
-        $nombre = trim($_POST['nombre'] ?? '');
-        $id_calle = $_POST['id_calle'] ?? '';
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST["nombre"] ?? '');
+            $calle = $_POST["calle"] ?? '';
 
-        if ($nombre === '' || $id_calle === '') {
-            $punto = $this->model->getPuntoDetencion($id);
-            $calles = $this->load_model('CallesModel')->getAllCalles();
+            $errores = [];
+            if (empty($nombre)) { $errores[] = 'El nombre del punto es obligatorio.'; }
+            if (empty($calle)) { $errores[] = 'Debe seleccionar una calle.'; }
 
-            $this->load_view('puntos_detencion/edit', [
-                'error' => 'Todos los campos son obligatorios.',
-                'punto' => $punto,
-                'calles' => $calles
-            ]);
-            return;
+            if (!empty($errores)) {
+                $punto_detencion = [
+                    'id_punto_detencion' => $id,
+                    'nombre' => $nombre,
+                    'calle' => $calle
+                ];
+                $calles = $this->calleModel->getAllCalles();
+                $this->load_view('puntos_detencion/form', [
+                    'title' => 'Editar punto de detención',
+                    'action' => URL . '/puntosDetencion/update/' . $id,
+                    'values' => $punto_detencion,
+                    'errores' => $errores,
+                    'calles' => $calles
+                ]);
+
+                return;
+            }
+
+            if ($this->model->updatePuntoDetencion($id, $nombre, $calle)) {
+                header("Location: " . URL . "/puntosDetencion/index");
+                exit;
+            } else {
+                die("Error al actualizar el punto de detención.");
+            }
         }
-
-        $this->model->updatePuntoDetencion($id, $nombre, $id_calle);
-
-        $this->load_view('puntos_detencion/index', [
-            'message' => 'Punto de detención actualizado correctamente.',
-            'puntos' => $this->model->getAllPuntosDetencion()
-        ]);
     }
 
     // Eliminar un punto
     public function delete($id)
     {
         $eliminado = $this->model->deletePuntoDetencion($id);
-        $puntos = $this->model->getAllPuntosDetencion();
 
         if (!$eliminado) {
-            $this->load_view('puntos_detencion/index', [
-                'error' => 'No se pudo eliminar el punto.',
-                'puntos' => $puntos
-            ]);
-            return;
+            die("No se pudo eliminar el punto de detención.");
         }
 
-        $this->load_view('puntos_detencion/index', [
-            'message' => 'Punto de detención eliminado correctamente.',
-            'puntos' => $puntos
-        ]);
+        header("Location: " . URL . "/puntosDetencion/index");
+        exit;
     }
 }
