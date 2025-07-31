@@ -92,6 +92,7 @@
                     <li><a href="<?= URL ?>/Calle" class="nav-link text-white">Calles</a></li>
                     <li><a href="<?= URL ?>/Hoteles" class="nav-link text-white">Hoteles</a></li>
                     <li><a href="<?= URL ?>/Servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/PuntosDetencion" class="nav-link text-white">PuntosDetencion</a></li>
                 </ul>
             </div>
         </li>
