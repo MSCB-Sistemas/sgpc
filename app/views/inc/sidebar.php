@@ -88,10 +88,10 @@
 
             <div class="collapse ps-3" id="submenuABM">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
-                    <li><a href="<?= URL ?>/calle" class="nav-link text-white">Calles</a></li>
-                    <li><a href="<?= URL ?>/hoteles" class="nav-link text-white">Hoteles</a></li>
-                    <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/Chofer" class="nav-link text-white">Choferes</a></li>
+                    <li><a href="<?= URL ?>/Calle" class="nav-link text-white">Calles</a></li>
+                    <li><a href="<?= URL ?>/Hoteles" class="nav-link text-white">Hoteles</a></li>
+                    <li><a href="<?= URL ?>/Servicio" class="nav-link text-white">Servicios</a></li>
                 </ul>
             </div>
         </li>
