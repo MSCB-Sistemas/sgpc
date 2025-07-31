@@ -77,9 +77,9 @@ class UsuariosModel {
      * @param int $id_tipo_usuario Nuevo tipo de usuario.
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
-    public function updateUsuario($id_usuario, $usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $id_tipo_usuario) : bool {
-        $stmt = $this->db->prepare("UPDATE usuarios SET usuario = :usuario, nombre = :nombre, apellido = :apellido, cargo = :cargo, sector = :sector, contrasenia = :contrasenia, id_tipo_usuario = :id_tipo_usuario WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'contrasenia' => $contrasenia, 'id_tipo_usuario' => $id_tipo_usuario]);
+    public function updateUsuario($id_usuario, $usuario, $nombre, $apellido, $cargo, $sector, $id_tipo_usuario) : bool {
+        $stmt = $this->db->prepare("UPDATE usuarios SET usuario = :usuario, nombre = :nombre, apellido = :apellido, cargo = :cargo, sector = :sector, id_tipo_usuario = :id_tipo_usuario WHERE id_usuario = :id_usuario");
+        $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'id_tipo_usuario' => $id_tipo_usuario]);
         return $stmt->rowCount() > 0;
     }
 
@@ -96,7 +96,7 @@ class UsuariosModel {
      * @return int|string ID del usuario insertado.
      */
     public function insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $id_tipo_usuario) {
-        $stmt = $this->db->prepare("INSERT INTO usuarios (usuario, nombre, apellido, cargo, sector, contrasenia, id_tipo_usuario) VALUES (:usuario, :nombre, :apellido, :cargo, :sector, :contrasenia, :id_tipo_usuario)");
+        $stmt = $this->db->prepare("INSERT INTO usuarios (usuario, nombre, apellido, cargo, sector, id_tipo_usuario) VALUES (:usuario, :nombre, :apellido, :cargo, :sector, :contrasenia, :id_tipo_usuario)");
         $stmt->execute(['usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'contrasenia' => $contrasenia, 'id_tipo_usuario' => $id_tipo_usuario]);
         return $this->db->lastInsertId();
     }
@@ -122,6 +122,19 @@ class UsuariosModel {
     public function activateUsuario($id_usuario) : bool {
         $stmt = $this->db->prepare("UPDATE usuarios SET activo = 1 WHERE id_usuario = :id_usuario");
         $stmt->execute(['id_usuario' => $id_usuario]);
+        return $stmt->rowCount() > 0;
+    }
+    
+    /**
+     * Actualiza la contraseña de un usuario.
+     *
+     * @param  mixed $id_usuario ID del usuario cuya contraseña se actualizará.
+     * @param  mixed $password  Nueva contraseña del usuario.
+     * @return bool True si se actualizó la contraseña, false en caso contrario.
+     */
+    public function updatePassword($id_usuario, $password) : bool {
+        $stmt = $this->db->prepare("UPDATE usuarios SET contrasenia = :contrasenia WHERE id_usuario = :id_usuario");
+        $stmt->execute(['id_usuario' => $id_usuario, 'contrasenia'=> $password]);
         return $stmt->rowCount() > 0;
     }
 } 

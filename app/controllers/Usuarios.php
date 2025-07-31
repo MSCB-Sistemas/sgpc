@@ -30,6 +30,7 @@ class Usuarios extends Control
                 <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                 <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
                 <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
+                <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
             ';
         
         }
@@ -55,11 +56,11 @@ class Usuarios extends Control
                 'apellido' => $usuario['apellido'],
                 'cargo' => $usuario['cargo'],
                 'sector' => $usuario['sector'],
-                'contrasenia' => $usuario['contrasenia'],
                 'id_tipo_usuario' => $usuario['id_tipo_usuario']
             ],
             'errores' => [],
-            'tipos' => $tipos
+            'tipos' => $tipos,
+            'update' => true
         ]);
     }
 
@@ -71,14 +72,12 @@ class Usuarios extends Control
             $apellido = trim($_POST["apellido"] ?? '');
             $cargo = trim($_POST["cargo"] ?? '');
             $sector = trim($_POST["sector"] ?? '');
-            $contrasenia = trim($_POST["password"] ?? '');
             $tipoUsuario = $_POST["tipo_usuario"] ?? '';
 
             $errores = [];
             if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
             if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
-            if (empty($contrasenia)) $errores[] = "El nombre es obligatorio.";
             if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
 
             if (!empty($errores)) {
@@ -89,7 +88,6 @@ class Usuarios extends Control
                     'apellido' => $apellido,
                     'cargo' => $cargo,
                     'sector' => $sector,
-                    'contrasenia'=> $contrasenia,
                     'id_tipo_usuario'=> $tipoUsuario
                 ];
                 $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
@@ -98,13 +96,13 @@ class Usuarios extends Control
                     'action' => URL . '/usuarios/update/' . $id,
                     'values' => $usuario,
                     'errores' => $errores,
-                    'tipos' => $tipos
+                    'tipos' => $tipos,
+                    'update' => true
                 ]);
                 return;
             }
-            $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
 
-            if ($this->model->updateUsuario($id, $usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario)) {
+            if ($this->model->updateUsuario($id, $usuario, $nombre, $apellido, $cargo, $sector, $tipoUsuario)) {
                 header("Location: " . URL . "/usuarios");
                 exit;
             } else {
@@ -121,7 +119,8 @@ class Usuarios extends Control
             'action' => URL . '/usuarios/save',
             'values' => [],
             'errores' => [],
-            'tipos' => $tipos
+            'tipos' => $tipos,
+            'update' => false
         ]);
     }
     
@@ -151,7 +150,8 @@ class Usuarios extends Control
                     'action' => URL . '/usuarios/save',
                     'values' => $_POST,
                     'errores' => $errores,
-                    'tipos' => $tipos
+                    'tipos' => $tipos,
+                    'update' => false
                 ]);
                 return;
             }
@@ -174,6 +174,7 @@ class Usuarios extends Control
             die("No se puedo eliminar al usuario.");
         }
     }
+
     public function activate($id){
         if($this->model->activateUsuario($id)) {
             header(header: "Location: " . URL . "/usuarios");
@@ -182,4 +183,40 @@ class Usuarios extends Control
             die("No se puedo activar al usuario.");
         }
     }
+    
+    public function changePass($id){
+        $this->load_view('usuarios/formPass', [
+            'title' => 'Cambiar clave',
+            'action' => URL . '/usuarios/savePass/' . $id,
+            'errores' => []
+        ]);
+    }
+
+    public function savePass($id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $password = trim($_POST["password"] ?? '');
+
+            $errores = [];
+            if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";
+
+            if (!empty($errores)) {
+                $this->load_view('usuarios/formPass', [
+                    'title' => 'Cambiar clave',
+                    'action' => URL . '/usuarios/savePass/' . $id,
+                    'errores' => $errores,
+                ]);
+                return;
+            }
+
+            $password = password_hash($password, PASSWORD_DEFAULT);
+            if ($this->model->updatePassword($id, $password)) {
+                header("Location: " . URL . "/usuarios");
+                exit;
+            } else {
+                die("Error al cambiar la clave");
+            }
+        }
+    }
+
 }

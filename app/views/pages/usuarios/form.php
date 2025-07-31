@@ -56,12 +56,12 @@
                 </select>
             </div>
         </div>
-
-        <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="password" name="password"
-                   value="<?= htmlspecialchars($datos['values']['contrasenia'] ?? '') ?>" required>
-        </div>
+        <?php if (!$datos['update']): ?>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+        <?php endif; ?>
 
         <button type="submit" class="btn btn-success">Guardar</button>
         <a href="<?= URL ?>/usuarios" class="btn btn-secondary">Cancelar</a>
