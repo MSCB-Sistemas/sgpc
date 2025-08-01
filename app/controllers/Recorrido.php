@@ -4,8 +4,8 @@
  */
 class Recorrido extends Control
 {
-    private $model;
-    private $calleRecorridoModel;
+    private RecorridoModel $model;
+    private CalleRecorridoModel $calleRecorridoModel;
 
     public function __construct()
     {
