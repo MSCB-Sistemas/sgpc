@@ -105,7 +105,13 @@ class CalleRecorridoModel
         $stmt->execute(['id' => $id]);
         return $stmt->rowCount() > 0;
     }
-
+    
+    /**
+     * Obtiene las calles asociadas a un recorrido específico.
+     *
+     * @param  mixed $id_recorrido ID del recorrido.
+     * @return bool|string Lista de nombres de calles asociadas al recorrido, o false si no hay calles. 
+     */
     public function getCallesByRecorrido($id_recorrido): bool|string
     {
         $stmt = $this->db->prepare(
@@ -114,10 +120,6 @@ class CalleRecorridoModel
              WHERE calles_recorridos.id_recorrido = :id_recorrido"
         );
         $stmt->execute(['id_recorrido' => $id_recorrido]);
-        $calles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if ($calles) {
-            return implode(', ', $calles['nombre']);
-        }
-        return false;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
