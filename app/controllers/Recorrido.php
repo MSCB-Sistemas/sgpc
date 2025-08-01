@@ -160,19 +160,10 @@ class Recorrido extends Control
     {
         $eliminado = $this->model->deleteRecorrido($id);
 
-        $recorridos = $this->model->getAllRecorridos();
-
         if (!$eliminado) {
-            $this->load_view('recorridos/index', [
-                'error' => 'No se pudo eliminar el recorrido.',
-                'recorridos' => $recorridos
-            ]);
-            return;
+            die("Error al eliminar el recorrido");
         }
-
-        $this->load_view('recorridos/index', [
-            'message' => 'Recorrido eliminado correctamente.',
-            'recorridos' => $recorridos
-        ]);
+        header("Location : " . URL . "/recorrido/index");
+        exit;
     }
 }
