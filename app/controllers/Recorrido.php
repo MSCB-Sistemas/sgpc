@@ -6,11 +6,13 @@ class Recorrido extends Control
 {
     private RecorridoModel $model;
     private CalleRecorridoModel $calleRecorridoModel;
+    private CalleModel $calleModel;
 
     public function __construct()
     {
         $this->model = $this->load_model("RecorridoModel"); 
         $this->calleRecorridoModel = $this->load_model("CalleRecorridoModel");
+        $this->calleModel = $this->load_model("CalleModel");
     }
 
     // Mostrar todos los recorridos
@@ -45,11 +47,13 @@ class Recorrido extends Control
     // Mostrar formulario de creación
     public function create()
     {
+        $calles = $this->calleModel->getAllCalles();
         $datos = [
             'title' => 'Crear Recorrido',
             'action' => URL . '/recorrido/save',
             'values' => [],
             'errores' => [],
+            'calles' => $calles
         ];
         
         $this->load_view('recorridos/form', $datos);

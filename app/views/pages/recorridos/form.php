@@ -20,7 +20,7 @@
                         <option value="">Seleccione...</option>
                         <?php foreach ($datos['calles'] as $n): ?>
                             <option value="<?= $n['id_calle'] ?>"
-                                <?= ($datos['values']['nombre'] ?? '') == $n['id_calle'] ? 'selected' : '' ?>
+                                <?= ($datos['values']['calle'] ?? '') == $n['id_calle'] ? 'selected' : '' ?>
                                 <?= htmlspecialchars($n['nombre']) ?>>
                             </option>
                         <?php endforeach ?>
