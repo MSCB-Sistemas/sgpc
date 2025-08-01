@@ -163,7 +163,7 @@ class Recorrido extends Control
         if (!$eliminado) {
             die("Error al eliminar el recorrido");
         }
-        header("Location : " . URL . "/recorrido/index");
+        header("Location: " . URL . "/recorrido/index");
         exit;
     }
 }
