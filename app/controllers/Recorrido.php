@@ -63,34 +63,58 @@ class Recorrido extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $id_recorrido = $_POST["id_recorrido"] ?? null;
-            $calle = $_POST["calle"] ?? '';
+            
             $nombre = trim($_POST['nombre']);
+            $calles = $_POST['calles'] ?? [];
 
             $errores = [];
-            if (!empty($calle)) { $errores[] = 'La calle es obligatoria'; }
-            if (!empty($nombre)) { $errores[] = 'El nombre de la ruta es obligatorio'; }
+            if ($nombre === '') {
+                $errores[] = "El nombre es obligatorio.";
+            }
+            if (empty($calles)) {
+                $errores[] = "Debe seleccionar al menos una calle.";
+            }
 
             if (!empty($errores)) {
-                $calles = $this->calleModel->getAllCalles();
-                $this->load_view('recorridos/form', [
-                    'title' => 'Crear Recorrido',
-                    'action'=> URL . 'recorrido/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                    'calles' => $calles
-                ]);
-
+                $datos = [
+                    'title' => 'Nuevo Recorrido',
+                    'action' => URL . '/recorrido/save',
+                    'values' => [
+                        'nombre' => $nombre,
+                        'calles_array' => $this->mapCalles($calles)
+                    ],
+                    'calles' => $this->calleModel->getAllCalles(),
+                    'errores' => $errores
+                ];
+                $this->load_view('recorridos/form', $datos);
                 return;
             }
 
-            if ($this->model->insertRecorrido($nombre) && $this->calleRecorridoModel->insertCalleRecorrido($id_recorrido, $calle)) {
-                header("Location : " . URL . "/recorrido/index");
-                exit;
+            $idRecorrido = $this->model->insertRecorrido($nombre);
+            if ($idRecorrido) {
+                foreach ($calles as $idCalle) {
+                    if(!$this->calleRecorridoModel->insertCalleRecorrido($idRecorrido, $idCalle)){
+                        die("Error al guardar la calle del recorrido");
+                    };
+                }
             } else {
-                die("Error al guardar el recorrido.");
+                die("Error al guardar el recorrido");
+            }
+
+            header('Location: ' . URL . '/recorrido');
+        }
+    }
+    
+    private function mapCalles($ids)
+    {
+        $res = [];
+        foreach ($ids as $id) {
+            $calle = $this->calleModel->getCalle($id);
+            if ($calle) {
+                $res[$id] = $calle['nombre'];
             }
         }
+        return $res;
     }
 
     // Mostrar formulario de edición
