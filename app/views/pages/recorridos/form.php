@@ -67,17 +67,13 @@
 </div>
 
 <script>
-document.getElementById('addCalle').addEventListener('click', function () {
-    const selectCalle = document.getElementById('selectCalle');
-    const addCalleBtn = document.getElementById('addCalle');
-
-    window.agregarCalle = function() {
-        const id = selectCalle.value;
-        const nombre = selectCalle.options[selectCalle.selectedIndex].text;
+    document.getElementById('addCalle').addEventListener('click', function () {
+        const select = document.getElementById('selectCalle');
+        const id = select.value;
+        const nombre = select.options[select.selectedIndex].text;
 
         if (!id) return;
 
-        // evitar duplicados
         if (document.querySelector('#tablaCalles tbody tr[data-id="' + id + '"]')) {
             alert("Esa calle ya fue agregada.");
             return;
@@ -94,26 +90,12 @@ document.getElementById('addCalle').addEventListener('click', function () {
             <input type="hidden" name="calles[]" value="${id}">
         `;
         tbody.appendChild(tr);
-
-        selectCalle.value = '';
-        selectCalle.focus();
-    }
-
-    addCalleBtn.addEventListener('click', agregarCalle);
-
-    selectCalle.addEventListener('keydown', function(e) {
+    });
+    // capturar ENTER en el select
+    document.getElementById('selectCalle').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
-            e.preventDefault();
-            agregarCalle();
+            e.preventDefault(); // evita que el form se envíe
+            document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
         }
     });
-
-    document.getElementById('tablaCalles').addEventListener('click', function (e) {
-        if (e.target.classList.contains('removeCalle')) {
-            e.target.closest('tr').remove();
-        }
-    });
-
-    selectCalle.focus();
-});
 </script>
