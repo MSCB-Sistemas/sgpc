@@ -17,10 +17,12 @@ class Recorrido extends Control
     public function index()
     {
         $recorridos = $this->model->getAllRecorridos();
-        foreach ($recorridos as $recorrido) {
+        foreach ($recorridos as &$recorrido) {
             $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
             $recorrido['calles'] = $calles ? implode(', ', $calles) : 'Sin calles';
         }
+
+        unSet($recorrido);
 
         $datos = [
             'title' => 'Listado de Recorridos',
