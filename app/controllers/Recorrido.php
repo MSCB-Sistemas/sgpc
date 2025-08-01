@@ -45,11 +45,18 @@ class Recorrido extends Control
     // Mostrar formulario de creación
     public function create()
     {
-        $this->load_view('recorridos/create');
+        $datos = [
+            'title' => 'Crear Recorrido',
+            'action' => URL . '/recorrido/save',
+            'values' => [],
+            'errores' => [],
+        ];
+        
+        $this->load_view('recorridos/form', $datos);
     }
 
     // Procesar creación
-    public function store()
+    public function save()
     {
         $nombre = trim($_POST['nombre'] ?? '');
 
