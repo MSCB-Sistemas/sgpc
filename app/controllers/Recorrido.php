@@ -62,21 +62,35 @@ class Recorrido extends Control
     // Procesar creación
     public function save()
     {
-        $nombre = trim($_POST['nombre'] ?? '');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $id_recorrido = $_POST["id_recorrido"] ?? null;
+            $calle = $_POST["calle"] ?? '';
+            $nombre = trim($_POST['nombre']);
 
-        if ($nombre === '') {
-            $this->load_view('recorridos/create', [
-                'error' => 'El nombre es obligatorio.'
-            ]);
-            return;
+            $errores = [];
+            if (!empty($calle)) { $errores[] = 'La calle es obligatoria'; }
+            if (!empty($nombre)) { $errores[] = 'El nombre de la ruta es obligatorio'; }
+
+            if (!empty($errores)) {
+                $calles = $this->calleModel->getAllCalles();
+                $this->load_view('recorridos/form', [
+                    'title' => 'Crear Recorrido',
+                    'action'=> URL . 'recorrido/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'calles' => $calles
+                ]);
+
+                return;
+            }
+
+            if ($this->model->insertRecorrido($nombre) && $this->calleRecorridoModel->insertCalleRecorrido($id_recorrido, $calle)) {
+                header("Location : " . URL . "/recorrido/index");
+                exit;
+            } else {
+                die("Error al guardar el recorrido.");
+            }
         }
-
-        $this->model->insertRecorrido($nombre);
-
-        $this->load_view('recorridos/index', [
-            'message' => 'Recorrido creado exitosamente.',
-            'recorridos' => $this->model->getAllRecorridos()
-        ]);
     }
 
     // Mostrar formulario de edición
