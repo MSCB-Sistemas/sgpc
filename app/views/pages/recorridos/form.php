@@ -68,35 +68,52 @@
 
 <script>
 document.getElementById('addCalle').addEventListener('click', function () {
-    const select = document.getElementById('selectCalle');
-    const id = select.value;
-    const nombre = select.options[select.selectedIndex].text;
+    const selectCalle = document.getElementById('selectCalle');
+    const addCalleBtn = document.getElementById('addCalle');
 
-    if (!id) return;
+    window.agregarCalle = function() {
+        const id = selectCalle.value;
+        const nombre = selectCalle.options[selectCalle.selectedIndex].text;
 
-    // evitar duplicados
-    if (document.querySelector('#tablaCalles tbody tr[data-id="' + id + '"]')) {
-        alert("Esa calle ya fue agregada.");
-        return;
+        if (!id) return;
+
+        // evitar duplicados
+        if (document.querySelector('#tablaCalles tbody tr[data-id="' + id + '"]')) {
+            alert("Esa calle ya fue agregada.");
+            return;
+        }
+
+        const tbody = document.querySelector('#tablaCalles tbody');
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-id', id);
+        tr.innerHTML = `
+            <td>${nombre}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger removeCalle">Eliminar</button>
+            </td>
+            <input type="hidden" name="calles[]" value="${id}">
+        `;
+        tbody.appendChild(tr);
+
+        selectCalle.value = '';
+        selectCalle.focus();
     }
 
-    const tbody = document.querySelector('#tablaCalles tbody');
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-id', id);
-    tr.innerHTML = `
-        <td>${nombre}</td>
-        <td>
-            <button type="button" class="btn btn-sm btn-danger removeCalle">Eliminar</button>
-        </td>
-        <input type="hidden" name="calles[]" value="${id}">
-    `;
-    tbody.appendChild(tr);
-});
+    addCalleBtn.addEventListener('click', agregarCalle);
 
-// eliminar fila
-document.getElementById('tablaCalles').addEventListener('click', function (e) {
-    if (e.target.classList.contains('removeCalle')) {
-        e.target.closest('tr').remove();
-    }
+    selectCalle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            agregarCalle();
+        }
+    });
+
+    document.getElementById('tablaCalles').addEventListener('click', function (e) {
+        if (e.target.classList.contains('removeCalle')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    selectCalle.focus();
 });
 </script>
