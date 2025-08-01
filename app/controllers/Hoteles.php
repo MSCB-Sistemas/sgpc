@@ -33,21 +33,6 @@ class Hoteles extends Control
         $this->load_view('partials/tablaAbm', $datos);
     }
 
-    // Mostrar un hotel específico.
-    public function show($id)
-    {
-        $hotel = $this->model->getHotel($id);
-        if (!$hotel) {
-            $hoteles = $this->model->getAllHoteles();
-            $this->load_view('hoteles/index', [
-                'error' => 'Hotel no encontrado.',
-                'hoteles' => $hoteles
-            ]);
-            return;
-        }
-        $this->load_view('hoteles/show', ['hotel' => $hotel]);
-    }
-
     // Mostrar formulario para crear hotel.
     public function create()
     {
@@ -60,7 +45,7 @@ class Hoteles extends Control
     }
 
     // Procesar creación de hotel.
-    public function store()
+    public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombre = trim($_POST["nombre"] ?? '');
