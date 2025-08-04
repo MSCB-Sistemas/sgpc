@@ -19,7 +19,10 @@ class Auth extends Control
             $usuario = $usuarioModel->getUsuarioByNombreUsuario($user);
 
             if ($usuario && password_verify($password, $usuario['contrasenia'])) {
-                session_start();
+                if (session_status() === PHP_SESSION_NONE) {
+                    
+                    session_start();
+                }
                 $_SESSION['usuario_id'] = $usuario['id_usuario'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
                 $_SESSION['usuario_apellido'] = $usuario['apellido'];
@@ -43,20 +46,29 @@ class Auth extends Control
 
     public function logout()
     {
-        session_start();
-
-        if (!isset($_SESSION['usuario_id']) && isset($_COOKIE['remember_token']) && isset($_COOKIE['user_id'])) {
-            $tokenModel = $this->load_model('RememberTokensModel');
-            $tokenModel->deleteRememberMeToken($_SESSION['usuario_id']);
-            
-            setcookie('remember_token', '', time() - 3600, '/');
-            setcookie('id_usuario', '', time() - 3600, '/');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
 
+        $idUsuario = $_SESSION['usuario_id'] ?? $_COOKIE['id_usuario'] ?? null;
+
+        if ($idUsuario) {
+            $tokenModel = $this->load_model('RememberTokensModel');
+            $tokenModel->deleteRememberMeToken($idUsuario);
+        }
+
+        // Eliminar cookies del navegador
+        setcookie('remember_token', '', time() - 3600, '/');
+        setcookie('id_usuario', '', time() - 3600, '/');
+
+        // Destruir sesión si está activa
+        $_SESSION = [];
         session_destroy();
+
         header("Location: " . URL . "/auth/login");
         exit;
     }
+
 
     private function createRememberMeToken($id_usuario)
     {
@@ -73,25 +85,28 @@ class Auth extends Control
     private function checkRememberMeToken()
     {
         if (basename($_SERVER['PHP_SELF']) === 'login.php') {
-            $hasSession = isset($_SESSION['id_usuario']);
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            $hasSession = isset($_SESSION['usuario_id']);
             $hasTokenCookie = isset($_COOKIE['remember_token']);
             $hasIdUsuarioCookie = isset($_COOKIE['id_usuario']);
 
             if (!$hasSession && $hasTokenCookie && $hasIdUsuarioCookie) {
                 $token = $_COOKIE['remember_token'];
-                $usuario = $_COOKIE['id_usuario'];
+                $usuarioId = $_COOKIE['id_usuario'];
 
                 $tokenModel = $this->load_model('RememberTokensModel');
-                $token = $tokenModel->validateRememberMeToken($usuario, $token);
+                $usuarioData = $tokenModel->validateRememberMeToken($usuarioId, $token);
 
-                if ($usuario) {
-                    session_start();
-                    $_SESSION['usuario_id'] = $usuario['id_usuario'];
-                    $_SESSION['usuario_nombre'] = $usuario['nombre'];
-                    $_SESSION['usuario_apellido'] = $usuario['apellido'];
-                    $_SESSION['usuario_tipo'] = $usuario['id_tipo_usuario'];
+                if ($usuarioData) {
+                    $_SESSION['usuario_id'] = $usuarioData['id_usuario'];
+                    $_SESSION['usuario_nombre'] = $usuarioData['nombre'];
+                    $_SESSION['usuario_apellido'] = $usuarioData['apellido'];
+                    $_SESSION['usuario_tipo'] = $usuarioData['id_tipo_usuario'];
 
-                    $this->createRememberMeToken($usuario);
+                    $this->createRememberMeToken($usuarioData['id_usuario']); // Regenerar token
                     header("Location: " . URL . "/views/inicio");
                     exit;
                 }

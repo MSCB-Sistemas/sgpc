@@ -55,10 +55,22 @@ class RememberTokensModel {
      * @return array|false Arreglo asociativo con el ID del usuario si es válido, false en caso contrario.
      */
     public function validateRememberMeToken($id_usuario, $token) {
-        $stmt = $this->db->prepare("SELECT id_usuario FROM remember_tokens WHERE token = :token AND expiry > NOW()");
-        $stmt->execute(['token' => $token]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare("
+            SELECT u.*
+            FROM remember_tokens rt
+            INNER JOIN usuarios u ON u.id_usuario = rt.id_usuario
+            WHERE rt.id_usuario = :id_usuario
+            AND rt.token = :token
+            AND rt.fecha_expiracion > NOW()
+            LIMIT 1
+        ");    
+        $stmt->execute([
+            'id_usuario' => $id_usuario,
+            'token' => $token
+        ]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve los datos completos del usuario
     }
+
 
     /**
      * Elimina un token de "Recuérdame" para un usuario específico.
