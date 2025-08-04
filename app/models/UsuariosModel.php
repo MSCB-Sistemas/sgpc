@@ -137,5 +137,18 @@ class UsuariosModel {
         $stmt->execute(['id_usuario' => $id_usuario, 'contrasenia'=> $password]);
         return $stmt->rowCount() > 0;
     }
+
+    /**
+     * Obtiene un usuario basado en su id .
+     *
+     * @param int $id $id_usuario ID del usuario.
+     * @return array $stmt un arreglo que va a almacenar los datos de ese usuario.
+     */
+    public function getUsuarioById($id) {
+    $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id_usuario = :id");
+    $stmt->execute(['id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 } 
 ?>
