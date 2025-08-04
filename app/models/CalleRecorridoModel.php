@@ -115,11 +115,24 @@ class CalleRecorridoModel
     public function getCallesByRecorrido($id_recorrido): bool|array
     {
         $stmt = $this->db->prepare(
-            "SELECT calles.nombre FROM calles 
+            "SELECT calles.id_calle, calles.nombre FROM calles 
              JOIN calles_recorridos ON calles.id_calle = calles_recorridos.id_calle 
              WHERE calles_recorridos.id_recorrido = :id_recorrido"
         );
         $stmt->execute(['id_recorrido' => $id_recorrido]);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0) ?: false;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Elimina todas las calles asociadas a un recorrido específico.
+     *
+     * @param  mixed $id ID del recorrido.
+     * @return bool True si se eliminaron las calles, false en caso contrario.
+     */
+    public function deleteByRecorrido($id): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM calles_recorridos WHERE id_recorrido = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() > 0;
     }
 }

@@ -58,9 +58,7 @@ class RecorridoModel
         $stmt = $this->db->prepare("UPDATE recorridos SET nombre = :nombre 
         WHERE id_recorrido = :id_recorrido");
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido' => $id_recorrido,'nombre' => $nombre_recorrido ]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        return $stmt->execute(['id_recorrido' => $id_recorrido,'nombre' => $nombre_recorrido ]);
     }
  
     /**

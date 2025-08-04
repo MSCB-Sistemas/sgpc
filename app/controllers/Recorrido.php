@@ -6,11 +6,13 @@ class Recorrido extends Control
 {
     private RecorridoModel $model;
     private CalleRecorridoModel $calleRecorridoModel;
+    private CalleModel $calleModel;
 
     public function __construct()
     {
         $this->model = $this->load_model("RecorridoModel"); 
         $this->calleRecorridoModel = $this->load_model("CalleRecorridoModel");
+        $this->calleModel = $this->load_model("CalleModel");
     }
 
     // Mostrar todos los recorridos
@@ -19,7 +21,8 @@ class Recorrido extends Control
         $recorridos = $this->model->getAllRecorridos();
         foreach ($recorridos as &$recorrido) {
             $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
-            $recorrido['calles'] = $calles ? implode(', ', $calles) : 'Sin calles';
+            $nombres = $calles ? array_column($calles, 'nombre') : [];
+            $recorrido['calles'] = $nombres ? implode(', ', $nombres) : 'Sin calles';
         }
 
         unSet($recorrido);
@@ -45,11 +48,13 @@ class Recorrido extends Control
     // Mostrar formulario de creación
     public function create()
     {
+        $calles = $this->calleModel->getAllCalles();
         $datos = [
             'title' => 'Crear Recorrido',
             'action' => URL . '/recorrido/save',
             'values' => [],
             'errores' => [],
+            'calles' => $calles
         ];
         
         $this->load_view('recorridos/form', $datos);
@@ -58,79 +63,150 @@ class Recorrido extends Control
     // Procesar creación
     public function save()
     {
-        $nombre = trim($_POST['nombre'] ?? '');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            
+            $nombre = trim($_POST['nombre']);
+            $calles = $_POST['calles'] ?? [];
 
-        if ($nombre === '') {
-            $this->load_view('recorridos/create', [
-                'error' => 'El nombre es obligatorio.'
-            ]);
-            return;
+            $errores = [];
+            if ($nombre === '') {
+                $errores[] = "El nombre es obligatorio.";
+            }
+            if (empty($calles)) {
+                $errores[] = "Debe seleccionar al menos una calle.";
+            }
+
+            if (!empty($errores)) {
+                $datos = [
+                    'title' => 'Nuevo Recorrido',
+                    'action' => URL . '/recorrido/save',
+                    'values' => [
+                        'nombre' => $nombre,
+                        'calles_array' => $this->mapCalles($calles)
+                    ],
+                    'calles' => $this->calleModel->getAllCalles(),
+                    'errores' => $errores
+                ];
+                $this->load_view('recorridos/form', $datos);
+                return;
+            }
+
+            $idRecorrido = $this->model->insertRecorrido($nombre);
+            if ($idRecorrido) {
+                foreach ($calles as $idCalle) {
+                    if(!$this->calleRecorridoModel->insertCalleRecorrido($idRecorrido, $idCalle)){
+                        die("Error al guardar la calle del recorrido");
+                    };
+                }
+            } else {
+                die("Error al guardar el recorrido");
+            }
+
+            header('Location: ' . URL . '/recorrido');
         }
-
-        $this->model->insertRecorrido($nombre);
-
-        $this->load_view('recorridos/index', [
-            'message' => 'Recorrido creado exitosamente.',
-            'recorridos' => $this->model->getAllRecorridos()
-        ]);
     }
-
+    
+    private function mapCalles($ids)
+    {
+        $res = [];
+        foreach ($ids as $id) {
+            $calle = $this->calleModel->getCalle($id);
+            if ($calle) {
+                $res[$id] = $calle['nombre'];
+            }
+        }
+        return $res;
+    }    
+    
     // Mostrar formulario de edición
     public function edit($id)
     {
         $recorrido = $this->model->getRecorrido($id);
-
         if (!$recorrido) {
-            $this->load_view('recorridos/index', [
-                'error' => 'Recorrido no encontrado.',
-                'recorridos' => $this->model->getAllRecorridos()
-            ]);
-            return;
+            die("Recorrido no encontrado");
         }
 
-        $this->load_view('recorridos/edit', ['recorrido' => $recorrido]);
+        $calles = $this->calleModel->getAllCalles();
+        $callesAsociadas = $this->calleRecorridoModel->getCallesByRecorrido($id);
+
+        // mapear calles asociadas a id => nombre (para precargar tabla)
+        $calles_array = [];
+        foreach ($callesAsociadas as $c) {
+            $calles_array[$c['id_calle']] = $c['nombre'];
+        }
+
+        $datos = [
+            'title' => 'Editar Recorrido',
+            'action' => URL . '/recorrido/update/' . $id,
+            'values' => [
+                'nombre' => $recorrido['nombre'],
+                'calles_array' => $calles_array
+            ],
+            'calles' => $calles,
+            'errores' => []
+        ];
+
+        $this->load_view('recorridos/form', $datos);
     }
 
     // Procesar edición
     public function update($id)
     {
-        $nombre = trim($_POST['nombre'] ?? '');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        if ($nombre === '') {
-            $recorrido = $this->model->getRecorrido($id);
-            $this->load_view('recorridos/edit', [
-                'error' => 'El nombre es obligatorio.',
-                'recorrido' => $recorrido
-            ]);
-            return;
+            $nombre = trim($_POST['nombre']);
+            $calles = $_POST['calles'] ?? [];
+
+            $errores = [];
+            if ($nombre === '') {
+                $errores[] = "El nombre es obligatorio.";
+            }
+            if (empty($calles)) {
+                $errores[] = "Debe seleccionar al menos una calle.";
+            }
+
+            if (!empty($errores)) {
+                $datos = [
+                    'title' => 'Editar Recorrido',
+                    'action' => URL . '/recorrido/update/' . $id,
+                    'values' => [
+                        'nombre' => $nombre,
+                        'calles_array' => $this->mapCalles($calles)
+                    ],
+                    'calles' => $this->calleModel->getAllCalles(),
+                    'errores' => $errores
+                ];
+                $this->load_view('recorridos/form', $datos);
+                return;
+            }
+
+            // actualizar nombre
+            if (!$this->model->updateRecorrido($id, $nombre)) {
+                die("Error al actualizar el recorrido");
+            }
+
+            // borrar calles viejas e insertar nuevas
+            $this->calleRecorridoModel->deleteByRecorrido($id);
+            foreach ($calles as $idCalle) {
+                if (!$this->calleRecorridoModel->insertCalleRecorrido($id, $idCalle)) {
+                    die("Error al guardar las calles del recorrido");
+                }
+            }
+
+            header('Location: ' . URL . '/recorrido');
         }
-
-        $this->model->updateRecorrido($id, $nombre);
-
-        $this->load_view('recorridos/index', [
-            'message' => 'Recorrido actualizado correctamente.',
-            'recorridos' => $this->model->getAllRecorridos()
-        ]);
     }
+
 
     // Eliminar un recorrido
     public function delete($id)
     {
         $eliminado = $this->model->deleteRecorrido($id);
 
-        $recorridos = $this->model->getAllRecorridos();
-
         if (!$eliminado) {
-            $this->load_view('recorridos/index', [
-                'error' => 'No se pudo eliminar el recorrido.',
-                'recorridos' => $recorridos
-            ]);
-            return;
+            die("Error al eliminar el recorrido");
         }
-
-        $this->load_view('recorridos/index', [
-            'message' => 'Recorrido eliminado correctamente.',
-            'recorridos' => $recorridos
-        ]);
+        header("Location: " . URL . "/recorrido/index");
+        exit;
     }
 }
