@@ -4,8 +4,8 @@
  */
 class Recorrido extends Control
 {
-    private $model;
-    private $calleRecorridoModel;
+    private RecorridoModel $model;
+    private CalleRecorridoModel $calleRecorridoModel;
 
     public function __construct()
     {
@@ -17,13 +17,18 @@ class Recorrido extends Control
     public function index()
     {
         $recorridos = $this->model->getAllRecorridos();
-        $calleRecorrido = $this->calleRecorridoModel->getAllCallesRecorridos();
+        foreach ($recorridos as &$recorrido) {
+            $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
+            $recorrido['calles'] = $calles ? implode(', ', $calles) : 'Sin calles';
+        }
+
+        unSet($recorrido);
 
         $datos = [
             'title' => 'Listado de Recorridos',
             'urlCrear' => URL . '/recorrido/create',
-            'columnas' => ['ID', 'Nombre'],
-            'columnas_claves' => ['id_recorrido', 'calles', 'nombre'],
+            'columnas' => ['ID', 'Nombre', 'Calles'],
+            'columnas_claves' => ['id_recorrido','nombre','calles'],
             'data' => $recorridos,
             'acciones' => function($fila) {
                 $id = $fila['id_recorrido'];
@@ -37,30 +42,21 @@ class Recorrido extends Control
         $this->load_view('partials/tablaAbm', $datos);
     }
 
-    // Mostrar un recorrido específico
-    public function show($id)
-    {
-        $recorrido = $this->model->getRecorrido($id);
-
-        if (!$recorrido) {
-            $this->load_view('recorridos/index', [
-                'error' => 'Recorrido no encontrado.',
-                'recorridos' => $this->model->getAllRecorridos()
-            ]);
-            return;
-        }
-
-        $this->load_view('recorridos/show', ['recorrido' => $recorrido]);
-    }
-
     // Mostrar formulario de creación
     public function create()
     {
-        $this->load_view('recorridos/create');
+        $datos = [
+            'title' => 'Crear Recorrido',
+            'action' => URL . '/recorrido/save',
+            'values' => [],
+            'errores' => [],
+        ];
+        
+        $this->load_view('recorridos/form', $datos);
     }
 
     // Procesar creación
-    public function store()
+    public function save()
     {
         $nombre = trim($_POST['nombre'] ?? '');
 
