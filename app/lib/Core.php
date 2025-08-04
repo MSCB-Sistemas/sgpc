@@ -41,6 +41,10 @@
 
       // Parámetros si hay
       $this->parameters = $url ? array_values($url) : [];
+      
+      if (session_status() === PHP_SESSION_NONE) {
+          session_start();
+      }
 
       // Llamar al método con parámetros
       call_user_func_array([$this->controller, $this->method], $this->parameters);

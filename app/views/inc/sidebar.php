@@ -31,7 +31,7 @@
             </a>
         </li>
         <li>
-            <a class="nav-link text-white" href="#">
+            <a class="nav-link text-white" href="<?= URL ?>/permiso/nuevo">
                 <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                     <use xlink:href="#table">
                         <symbol id="table" viewBox="0 0 16 16">
@@ -91,13 +91,14 @@
                     <? if ($_SESSION['usuario_tipo'] == '1') : ?>
                         <li><a href="<?= URL ?>/usuarios" class="nav-link text-white">Usuarios</a></li>
                     <? endif; ?>
-                    <li><a href="<?= URL ?>/Chofer" class="nav-link text-white">Choferes</a></li>
-                    <li><a href="<?= URL ?>/Calle" class="nav-link text-white">Calles</a></li>
-                    <li><a href="<?= URL ?>/Hoteles" class="nav-link text-white">Hoteles</a></li>
-                    <li><a href="<?= URL ?>/Servicio" class="nav-link text-white">Servicios</a></li>
-                    <li><a href="<?= URL ?>/Recorrido" class="nav-link text-white">Recorridos</a></li>
-                    <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
+                    <li><a href="<?= URL ?>/calle" class="nav-link text-white">Calles</a></li>
+                    <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/empresa" class="nav-link text-white">Empresas</a></li>
+                    <li><a href="<?= URL ?>/hoteles" class="nav-link text-white">Hoteles</a></li>
+                    <li><a href="<?= URL ?>/permiso" class="nav-link text-white">Permisos</a></li>
+                    <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
+                    <li><a href="<?= URL ?>/recorrido" class="nav-link text-white">Recorridos</a></li>
+                    <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
                 </ul>
             </div>
         </li>

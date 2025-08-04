@@ -11,6 +11,12 @@
           <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre" required>
           <input type="text" class="form-control mb-2" name="apellido" placeholder="Apellido" required>
           <input type="text" class="form-control mb-2" name="dni" placeholder="DNI" required>
+          <select class="form-select mb-2" name="nacionalidad" required>
+            <option value="">Seleccione Nacionalidad</option>
+            <?php foreach ($datos['nacionalidades'] as $n): ?>
+              <option value="<?= $n['id_nacionalidad'] ?>"><?= htmlspecialchars($n['nacionalidad']) ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Guardar</button>

@@ -137,5 +137,13 @@ class UsuariosModel {
         $stmt->execute(['id_usuario' => $id_usuario, 'contrasenia'=> $password]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getUsuarioById($id)
+{
+    // Ejemplo usando PDO
+    $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id_usuario = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 } 
 ?>

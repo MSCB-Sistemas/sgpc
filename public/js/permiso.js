@@ -5,6 +5,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
         e.preventDefault();
 
         const formData = new FormData(form);
+        console.log("URL:", url);
         try {
             const res = await fetch(url, {
                 method: "POST",
@@ -32,12 +33,11 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
         }
     });
 }
-
 // Chofer -> espera JSON: { success: true, id_chofer, nombre, apellido }
-handleModalForm("formNuevoChofer", URL + "/chofer/saveAjax", "chofer", "id_chofer", "nombreCompleto");
+handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "chofer", "id_chofer", "nombreCompleto");
 
 // Servicio -> espera JSON: { success: true, id_servicio, interno, dominio }
-handleModalForm("formNuevoServicio", URL + "/servicio/saveAjax", "servicio", "id_servicio", "internoDominio");
+handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicio", "id_servicio", "internoDominio");
 
 // Recorrido -> espera JSON: { success: true, id_recorrido, nombre }
-handleModalForm("formNuevoRecorrido", URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre");
+handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre");

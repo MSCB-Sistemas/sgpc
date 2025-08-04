@@ -157,17 +157,18 @@ class Chofer extends Control
 
     public function saveAjax()
     {
+        header('Content-Type: application/json');
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombre = trim($_POST['nombre']);
             $apellido = trim($_POST['apellido']);
             $dni = trim($_POST['dni']);
+            $nacionalidad = $_POST['nacionalidad'];
 
-            if ($nombre === '' || $apellido === '' || $dni === '') {
+            if ($nombre === '' || $apellido === '' || $dni === '' || $nacionalidad === '') {
                 echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
                 return;
             }
-
-            $idChofer = $this->modelo->insertChofer($nombre, $apellido, $dni, null); // null nacionalidad si no lo pedís acá
+            $idChofer = $this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad);
             if ($idChofer) {
                 echo json_encode([
                     'success' => true,
