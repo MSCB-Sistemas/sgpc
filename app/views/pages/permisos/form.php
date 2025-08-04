@@ -1,6 +1,24 @@
 <form action="<?= $datos['action'] ?>" method="POST" id="permisoForm">
 
-        <!-- Chofer y Servicio en una sola fila -->
+    <div class="mb-3 row">
+        <div class="col-md-4">
+            <label class="form-label d-block">Tipo de Permiso</label>
+            <div class="btn-group" role="group" aria-label="Tipo de permiso">
+                <input type="radio" class="btn-check" name="tipo_permiso" id="charter" autocomplete="off" value="charter">
+                <label class="btn btn-outline-primary" for="charter">Charter</label>
+
+                <input type="radio" class="btn-check" name="tipo_permiso" id="linea" autocomplete="off" value="linea">
+                <label class="btn btn-outline-primary" for="linea">Línea</label>
+            </div>
+            <div class="btn-group" role="group" aria-label="arribo_salida">
+                <input type="radio" class="btn-check" name="arribo_salida" id="arribo" autocomplete="off" value="arribo">
+                <label class="btn btn-outline-primary" for="arribo">Arribo</label>
+
+                <input type="radio" class="btn-check" name="arribo_salida" id="salida" autocomplete="off" value="salida">
+                <label class="btn btn-outline-primary" for="salida">Salida</label>
+            </div>
+        </div>
+    </div>
     <div class="row mb-3">
         <!-- Chofer -->
         <div class="col-md-6 d-flex align-items-end">
@@ -74,13 +92,6 @@
     <div class="mb-3">
         <label for="observacion" class="form-label">Observación</label>
         <textarea class="form-control" id="observacion" name="observacion" rows="3"><?= htmlspecialchars($datos['values']['observacion'] ?? '') ?></textarea>
-    </div>
-
-    <!-- Switch -->
-    <div class="form-check form-switch mb-3">
-        <input class="form-check-input" type="checkbox" id="es_arribo" name="es_arribo" 
-            <?= !empty($datos['values']['es_arribo']) ? 'checked' : '' ?>>
-        <label class="form-check-label" for="es_arribo">Es Arribo</label>
     </div>
 
     <button type="submit" class="btn btn-success">Guardar</button>
