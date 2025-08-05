@@ -97,6 +97,93 @@ class ReservasPuntosModel {
         $stmt->execute(['id_reserva_punto' => $id_reserva_punto]);
         return $stmt->rowCount() > 0;
     }
+
+    // Obtener cantidad de permisos por tipo (charter, línea, otros)
+    public function getCantidadPorTipo(): array {
+        $stmt = $this->db->prepare("
+            SELECT tipo, COUNT(*) as cantidad 
+            FROM permisos 
+            GROUP BY tipo
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener los puntos de ingreso más utilizados
+    public function getPuntosMasUsados(): array {
+        $stmt = $this->db->prepare("
+            SELECT pd.nombre AS nombre_punto, COUNT(*) AS cantidad
+            FROM reservas_puntos rp
+            JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion
+            GROUP BY pd.nombre
+            ORDER BY cantidad DESC
+            LIMIT 5
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener empresas que más permisos generaron
+    public function getEmpresasMasFrecuentes(): array {
+        $stmt = $this->db->prepare("
+            SELECT e.nombre AS nombre_empresa, COUNT(*) AS cantidad
+            FROM permisos p
+            JOIN servicios s ON p.id_servicio = s.id_servicio
+            JOIN empresas e ON s.id_empresa = e.id_empresa
+            GROUP BY e.nombre
+            ORDER BY cantidad DESC
+            LIMIT 5
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener promedio de ingresos por día
+    public function getPromedioIngresos(): array {
+        $stmt = $this->db->prepare("
+            SELECT ROUND(COUNT(*) / COUNT(DISTINCT DATE(fecha_horario)), 2) as promedio_diario
+            FROM reservas_puntos
+        ");
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+        // 1. Hoteles más utilizados
+    public function getHotelesMasUsados(): array {
+        $stmt = $this->db->prepare("
+            SELECT h.nombre AS nombre_hotel, COUNT(*) AS cantidad
+            FROM reservas_puntos rp
+            JOIN hoteles h ON rp.id_hotel = h.id_hotel
+            WHERE rp.id_hotel IS NOT NULL
+            GROUP BY h.nombre
+            ORDER BY cantidad DESC
+            LIMIT 5
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getReservasDesdeHoy(): array {
+    $stmt = $this->db->prepare("
+        SELECT 
+            pd.nombre AS punto,
+            c.nombre AS calle,
+            rp.fecha_horario
+        FROM reservas_puntos rp
+        JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion
+        JOIN calles c ON pd.id_calle = c.id_calle
+        WHERE rp.fecha_horario >= CURRENT_DATE
+        ORDER BY rp.fecha_horario ASC
+    ");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
+
+
+    
 }
 
 ?>

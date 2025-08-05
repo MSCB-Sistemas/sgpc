@@ -78,7 +78,7 @@ class Control
 
                 $this->createRememberMeToken($usuarioData['id_usuario']); // renovar token
 
-                header("Location: " . URL . "/views/inicio");
+                header("Location: " . URL . "/inicio");
                 exit;
             }
         }

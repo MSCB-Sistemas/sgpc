@@ -35,7 +35,7 @@ class Auth extends Control
                     $this->createRememberMeToken($usuario['id_usuario']); 
                 }
 
-                header("Location: " . URL . "/views/inicio");
+                header("Location: " . URL . "/inicio");
                 exit;
             } else {
                 $datos['error'] = 'Credenciales incorrectas';

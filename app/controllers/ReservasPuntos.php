@@ -156,4 +156,64 @@ class ReservasPuntos extends Control
             'reservas' => $reservas
         ]);
     }
+
+
+    public function getCantidadPorTipo()
+{
+    $stmt = $this->db->query("
+        SELECT tipo_permiso, COUNT(*) as cantidad
+        FROM permisos
+        GROUP BY tipo_permiso
+    ");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+    /**
+     * Obtiene los puntos más usados en las reservas.
+     * @return array
+     */
+    public function getPuntosMasUsados()
+    {
+        $stmt = $this->db->query("
+            SELECT pd.nombre_punto, COUNT(*) as cantidad
+            FROM reservas_puntos rp
+            JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion
+            GROUP BY pd.nombre_punto
+            ORDER BY cantidad DESC
+            LIMIT 5
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtiene las empresas más frecuentes en las reservas.
+     * @return array
+     */
+    public function getEmpresasMasFrecuentes()
+    {
+        $stmt = $this->db->query("
+            SELECT e.nombre_empresa, COUNT(*) as cantidad
+            FROM permisos p
+            JOIN empresas e ON p.id_empresa = e.id_empresa
+            GROUP BY e.nombre_empresa
+            ORDER BY cantidad DESC
+            LIMIT 5
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Obtiene el promedio de ingresos diarios por reservas.
+     * @return array
+     */
+    public function getPromedioIngresos()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                ROUND(COUNT(*) / COUNT(DISTINCT DATE(fecha_horario)), 2) as promedio_diario
+            FROM reservas_puntos
+        ");
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 }

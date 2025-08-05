@@ -138,13 +138,7 @@ class UsuariosModel {
         return $stmt->rowCount() > 0;
     }
 
-    public function getUsuarioById($id)
-{
-    // Ejemplo usando PDO
-    $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id_usuario = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+
 
     /**
      * Obtiene un usuario basado en su id .

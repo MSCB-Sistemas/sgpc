@@ -21,8 +21,8 @@
               session_start();
           }
           if (isset($_SESSION['usuario_id'])) {
-              $this->controller = 'Views';
-              $this->method = 'inicio';
+              $this->controller = 'inicio';
+              $this->method = 'index';
           } else {
               $this->controller = 'Auth';
               $this->method = 'login';
