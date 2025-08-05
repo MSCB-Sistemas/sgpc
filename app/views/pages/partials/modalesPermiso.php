@@ -39,8 +39,26 @@
         <div class="modal-body">
           <input type="text" class="form-control mb-2" name="interno" placeholder="Interno" required>
           <input type="text" class="form-control mb-2" name="dominio" placeholder="Dominio" required>
-          <input type="text" class="form-control mb-2" name="id_empresa" placeholder="ID Empresa" required>
+
+          <div class="row mb-2 align-items-center">
+            <div class="col-10">
+              <select class="form-select" name="empresa" id="selectEmpresa" required>
+                <option value="">Empresa</option>
+                <?php foreach ($datos['empresas'] as $n): ?>
+                  <option value="<?= $n['id_empresa'] ?>"><?= htmlspecialchars($n['nombre']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="col-2">
+              <button type="button" class="btn btn-outline-success w-100" id="btnAgregarEmpresa">+</button>
+            </div>
+          </div>
+
+          <div class="mb-2 d-none" id="campoNuevaEmpresa">
+            <input type="text" class="form-control" name="nueva_empresa" placeholder="Nombre de la nueva empresa">
+          </div>
         </div>
+
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Guardar</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -61,6 +79,35 @@
         </div>
         <div class="modal-body">
           <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre" required>
+          <!-- Selector de calles -->
+          <div class="mb-3 d-flex gap-2 align-items-end">
+              <div class="flex-grow-1">
+                  <label for="selectCalle" class="form-label">Agregar calle</label>
+                  <select id="selectCalle" class="form-select">
+                      <option value="">Seleccionar calle</option>
+                      <?php foreach ($datos['calles'] as $c): ?>
+                          <option value="<?= $c['id_calle'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                      <?php endforeach; ?>
+                  </select>
+              </div>
+              <div>
+                  <button type="button" id="addCalle" class="btn btn-primary">+</button>
+              </div>
+          </div>
+
+          <!-- Tabla de calles seleccionadas -->
+          <div class="table-responsive shadow rounded mb-3" style="overflow: hidden;">
+              <table class="table table-hover align-middle mb-0" id="tablaCalles">
+                  <thead class="table-light">
+                      <tr>
+                          <th>Calle</th>
+                          <th>Acción</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+              </table>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">Guardar</button>
@@ -70,3 +117,49 @@
     </div>
   </div>
 </div>
+
+<script>
+  const campoNuevaEmpresa = document.getElementById('campoNuevaEmpresa');
+  const selectEmpresa = document.getElementById('selectEmpresa');
+  const inputNuevaEmpresa = campoNuevaEmpresa.querySelector('input');
+
+  document.getElementById('btnAgregarEmpresa').addEventListener('click', function() {
+    campoNuevaEmpresa.classList.toggle('d-none');
+    selectEmpresa.disabled = !selectEmpresa.disabled;
+    inputNuevaEmpresa.required = !inputNuevaEmpresa.required;
+    inputNuevaEmpresa.value = '';
+  });
+
+  
+  document.getElementById('addCalle').addEventListener('click', function () {
+      const select = document.getElementById('selectCalle');
+      const id = select.value;
+      const nombre = select.options[select.selectedIndex].text;
+
+      if (!id) return;
+
+      if (document.querySelector('#tablaCalles tbody tr[data-id="' + id + '"]')) {
+          alert("Esa calle ya fue agregada.");
+          return;
+      }
+
+      const tbody = document.querySelector('#tablaCalles tbody');
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-id', id);
+      tr.innerHTML = `
+          <td>${nombre}</td>
+          <td>
+              <button type="button" class="btn btn-sm btn-danger removeCalle">Eliminar</button>
+          </td>
+          <input type="hidden" name="calles[]" value="${id}">
+      `;
+      tbody.appendChild(tr);
+  });
+  // capturar ENTER en el select
+  document.getElementById('selectCalle').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+          e.preventDefault(); // evita que el form se envíe
+          document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
+      }
+  });
+</script>

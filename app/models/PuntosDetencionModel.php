@@ -90,6 +90,13 @@ class PuntosDetencionModel {
         $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getPuntosByCalle($id_calle): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM puntos_detencion WHERE id_calle = :id_calle");
+        $stmt->execute(['id_calle' => $id_calle]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>

@@ -232,4 +232,18 @@ class Recorrido extends Control
             }
         }
     }
+
+    public function calles($id_recorrido)
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER["REQUEST_METHOD"] == "GET") {
+            $calles = $this->calleRecorridoModel->getCallesByRecorrido($id_recorrido);
+            if ($calles !== false) {
+                echo json_encode($calles);
+            } else {
+                echo json_encode([]);
+            }
+        } else {
+        }
+    }
 }

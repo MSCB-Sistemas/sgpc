@@ -1,7 +1,7 @@
 <form action="<?= $datos['action'] ?>" method="POST" id="permisoForm">
 
     <div class="mb-3 row">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <label class="form-label d-block">Tipo de Permiso</label>
             <div class="btn-group" role="group" aria-label="Tipo de permiso">
                 <input type="radio" class="btn-check" name="tipo_permiso" id="charter" autocomplete="off" value="charter">
@@ -9,6 +9,9 @@
 
                 <input type="radio" class="btn-check" name="tipo_permiso" id="linea" autocomplete="off" value="linea">
                 <label class="btn btn-outline-primary" for="linea">Línea</label>
+
+                <input type="radio" class="btn-check" name="tipo_permiso" id="otros" autocomplete="off" value="otros">
+                <label class="btn btn-outline-primary" for="otros">Otros</label>
             </div>
             <div class="btn-group" role="group" aria-label="arribo_salida">
                 <input type="radio" class="btn-check" name="arribo_salida" id="arribo" autocomplete="off" value="arribo">
@@ -68,9 +71,49 @@
                     </option>
                 <?php endforeach; ?>
             </select>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-            <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
+            </div>
+            <!-- TODO: Accordion de Recorrido -->
+            <!-- OJO ACA!! Accordion de Recorrido -->
+            <div class="accordion mb-3 d-none" id="accordionRecorrido">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingRecorrido">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecorrido" aria-expanded="true" aria-controls="collapseRecorrido">
+                    Detalles del Recorrido
+                </button>
+                </h2>
+                <div id="collapseRecorrido" class="accordion-collapse collapse show" aria-labelledby="headingRecorrido">
+                <div class="accordion-body">
+                    <div class="row">
+                    <div class="col-md-6">
+                        <h6>Calles del Recorrido</h6>
+                        <table class="table table-bordered table-sm" id="tablaCalles">
+                        <thead>
+                            <tr><th>Nombre</th></tr>
+                        </thead>
+                        <tbody>
+                            <!-- Se cargan dinámicamente -->
+                        </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Puntos de Detención</h6>
+                        <table class="table table-bordered table-sm" id="tablaPuntos">
+                        <thead>
+                            <tr><th>Dirección</th></tr>
+                        </thead>
+                        <tbody>
+                            <!-- Se cargan dinámicamente -->
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
         </div>
     </div>
 
