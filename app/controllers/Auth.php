@@ -1,6 +1,9 @@
 <?php
 class Auth extends Control
 {
+    /**
+     * Controlador para manejar la autenticación de usuarios.
+     */
     public function login()
     {
         $datos = ["title" => "Login"];

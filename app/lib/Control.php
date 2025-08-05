@@ -52,9 +52,7 @@ class Control
     }
 
     /**
-     * 
-     * Requiere autenticación en controladores específicos.
-     * Si el usuario no está autenticado, redirige al login.
+     * Comprobar si el usuario está autenticado.
      */
     protected function checkRememberMeToken()
     {
