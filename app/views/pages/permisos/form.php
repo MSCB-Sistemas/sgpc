@@ -24,12 +24,12 @@
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
                 <label for="chofer" class="form-label">Chofer</label>
-                <select class="form-select" id="chofer" name="id_chofer" required>
+                <select class="form-select" data-live-search="true" id="chofer" name="id_chofer" required>
                     <option value="">Seleccione...</option>
                     <?php foreach ($datos['choferes'] as $c): ?>
                         <option value="<?= $c['id_chofer'] ?>"
                             <?= ($datos['values']['id_chofer'] ?? '') == $c['id_chofer'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($c['nombre'] . ' ' . $c['apellido']) ?>
+                            <?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

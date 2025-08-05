@@ -1,14 +1,14 @@
 <?php
   define('APP', dirname(dirname(__FILE__)));
-  define('URL', 'http://localhost/sgpc');
-  // Configuración de la base de datos
+
+  $host = $_SERVER['HTTP_HOST']; // puede ser IP, localhost o dominio
+  $projectFolder = 'sgpc';
+  $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+
+  define('URL', $protocol . '://' . $host . '/' . $projectFolder);
+
   define('DB_HOST', 'localhost');     
   define('DB_NAME', 'sgpc');
   define('DB_USER', 'root');
-  define('DB_PASS', '');  
-
-  // Otras configuraciones globales si necesitás
-  // define('APP_ENV', 'development');
-  // define('BASE_URL', 'http://localhost/mi-proyecto/');
-
+  define('DB_PASS', '');
 ?>

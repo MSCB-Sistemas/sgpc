@@ -173,7 +173,7 @@ class Chofer extends Control
                 echo json_encode([
                     'success' => true,
                     'id_chofer' => $idChofer,
-                    'nombreCompleto' => $nombre . ' ' . $apellido
+                    'nombreCompleto' => $dni . ' - ' . $nombre . ' ' . $apellido
                 ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Error al guardar chofer']);
