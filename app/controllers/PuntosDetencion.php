@@ -9,6 +9,7 @@ class PuntosDetencion extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->model = $this->load_model('PuntosDetencionModel');
         $this->calleModel = $this->load_model('CalleModel');
     }

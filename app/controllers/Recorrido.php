@@ -10,6 +10,7 @@ class Recorrido extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->model = $this->load_model("RecorridoModel"); 
         $this->calleRecorridoModel = $this->load_model("CalleRecorridoModel");
         $this->calleModel = $this->load_model("CalleModel");

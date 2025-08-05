@@ -11,7 +11,6 @@
       session_set_cookie_params([
             'lifetime' => 0,       // Expira al cerrar el navegador
             'path' => '/',
-            'domain' => '',        // Opcional: dominio (ej. '.tudominio.com')
             'secure' => true,      // Solo HTTPS (false en desarrollo local)
             'httponly' => true,   // Protección contra JS malicioso
             'samesite' => 'Lax'   // Seguridad CSRF

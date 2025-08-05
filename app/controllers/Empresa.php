@@ -8,6 +8,7 @@ class Empresa extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->model = $this->load_model('EmpresaModel');
     }
 

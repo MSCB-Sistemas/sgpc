@@ -8,6 +8,7 @@ class TiposUsuarios extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         // Cargar el modelo desde la clase base Control
         $this->model = $this->load_model('TiposUsuariosModel');
     }

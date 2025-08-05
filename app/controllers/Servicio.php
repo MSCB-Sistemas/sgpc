@@ -9,6 +9,7 @@ class Servicio extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->model = $this->load_model('ServicioModel');
         $this->empresaModel = $this->load_model('EmpresaModel');
     }
