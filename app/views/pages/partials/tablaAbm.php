@@ -1,7 +1,9 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><?= $datos['title'] ?></h2>
-        <a href="<?= $datos['urlCrear'] ?>" class="btn btn-success">+ Nuevo</a>
+        <?php if (!empty($datos['urlCrear'])): ?>
+            <a href="<?= $datos['urlCrear'] ?>" class="btn btn-success">+ Nuevo</a>
+        <?php endif; ?>
     </div>
 
     <div class="mb-3">
@@ -15,7 +17,9 @@
                     <?php foreach ($datos['columnas'] as $col): ?>
                         <th><?= $col ?></th>
                     <?php endforeach ?>
-                    <th>Acciones</th>
+                    <?php if (!empty($datos['acciones'])): ?>
+                        <th>Acciones</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -24,7 +28,9 @@
                         <?php foreach ($datos['columnas_claves'] as $key): ?>
                             <td><?= ucfirst(htmlspecialchars($fila[$key])) ?></td>
                         <?php endforeach ?>
-                        <td><?= $datos['acciones']($fila) ?></td>
+                        <?php if (!empty($datos['acciones'])): ?>
+                            <td><?= $datos['acciones']($fila) ?></td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach ?>
             </tbody>

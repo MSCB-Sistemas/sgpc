@@ -18,15 +18,13 @@ class Permiso extends Control
         $permisos = $this->model->getAllPermisos();
         $datos = [
         'title' => 'Listado de Permisos',
-        'urlCrear' => URL . '/permisos/create',
+        'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
         'columnas' => [
             'Tipo',
             'Fecha Reserva',
             'Fecha Emisión',
             'Chofer',
-            'Nacionalidad',
             'Usuario',
-            'Cargo',
             'Servicio',
             'Dominio',
             'Empresa',
@@ -38,23 +36,21 @@ class Permiso extends Control
             'fecha_reserva',
             'fecha_emision',
             'chofer',
-            'chofer_nacionalidad',
             'usuario',
-            'usuario_cargo',
             'servicio_interno',
             'servicio_dominio',
             'empresa_nombre',
             'observacion',
             'arribo'
         ],
-        'data' => $permisos,
-        'acciones' => function($fila) {
+        'data' => $permisos, 
+        'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
             $id = $fila['id_permiso'];
             $url = URL . '/permisos';
             return '
-                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este permiso?\');">Eliminar</a>
+                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
             ';
-        }
+        } : null
     ];
 
 $this->load_view('partials/tablaAbm', $datos);
@@ -75,9 +71,22 @@ $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar formulario para crear permiso
-    public function create()
+    public function nuevo()
     {
-        $this->load_view('permisos/create');
+        $servicios = $this->load_model('ServicioModel')->getAllServicios();
+        $recorridos = $this->load_model('RecorridoModel')->getAllRecorridos();
+        $choferes = $this->load_model('ChoferesModel')->getAllChoferes();
+        $nacionalidades = $this->load_model('NacionalidadModel')->getAllNacionalidades();
+        $this->load_view('permisos/form', [
+            'title' => 'Nuevo Permiso',
+            'action' => URL . '/permiso/store',
+            'values' => [],
+            'choferes' => $choferes,
+            'servicios' => $servicios,
+            'recorridos' => $recorridos,
+            'nacionalidades' => $nacionalidades,
+            'errores' => []
+        ]);
     }
 
     // Procesar creación

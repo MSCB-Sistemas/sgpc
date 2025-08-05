@@ -31,13 +31,10 @@
             </a>
         </li>
         <li>
-            <a class="nav-link text-white" href="#">
-                <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
-                    <use xlink:href="#table">
-                        <symbol id="table" viewBox="0 0 16 16">
-                            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"></path>
-                        </symbol>
-                    </use>
+            <a class="nav-link text-white" href="<?= URL ?>/permiso/nuevo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bus-front me-2" viewBox="0 0 16 16">
+                    <path d="M5 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0m8 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-6-1a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2zm1-6c-1.876 0-3.426.109-4.552.226A.5.5 0 0 0 3 4.723v3.554a.5.5 0 0 0 .448.497C4.574 8.891 6.124 9 8 9s3.426-.109 4.552-.226A.5.5 0 0 0 13 8.277V4.723a.5.5 0 0 0-.448-.497A44 44 0 0 0 8 4m0-1c-1.837 0-3.353.107-4.448.22a.5.5 0 1 1-.104-.994A44 44 0 0 1 8 2c1.876 0 3.426.109 4.552.226a.5.5 0 1 1-.104.994A43 43 0 0 0 8 3"/>
+                    <path d="M15 8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1V2.64c0-1.188-.845-2.232-2.064-2.372A44 44 0 0 0 8 0C5.9 0 4.208.136 3.064.268 1.845.408 1 1.452 1 2.64V4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v3.5c0 .818.393 1.544 1 2v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5V14h6v1.5a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2c.607-.456 1-1.182 1-2zM8 1c2.056 0 3.71.134 4.822.261.676.078 1.178.66 1.178 1.379v8.86a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5V2.64c0-.72.502-1.301 1.178-1.379A43 43 0 0 1 8 1"/>
                 </svg>
                 Registrar permiso
             </a>
@@ -91,13 +88,14 @@
                     <? if ($_SESSION['usuario_tipo'] == '1') : ?>
                         <li><a href="<?= URL ?>/usuarios" class="nav-link text-white">Usuarios</a></li>
                     <? endif; ?>
-                    <li><a href="<?= URL ?>/Chofer" class="nav-link text-white">Choferes</a></li>
-                    <li><a href="<?= URL ?>/Calle" class="nav-link text-white">Calles</a></li>
-                    <li><a href="<?= URL ?>/Hoteles" class="nav-link text-white">Hoteles</a></li>
-                    <li><a href="<?= URL ?>/Servicio" class="nav-link text-white">Servicios</a></li>
-                    <li><a href="<?= URL ?>/Recorrido" class="nav-link text-white">Recorridos</a></li>
-                    <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
+                    <li><a href="<?= URL ?>/calle" class="nav-link text-white">Calles</a></li>
+                    <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/empresa" class="nav-link text-white">Empresas</a></li>
+                    <li><a href="<?= URL ?>/hoteles" class="nav-link text-white">Hoteles</a></li>
+                    <li><a href="<?= URL ?>/permiso" class="nav-link text-white">Permisos</a></li>
+                    <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
+                    <li><a href="<?= URL ?>/recorrido" class="nav-link text-white">Recorridos</a></li>
+                    <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
                 </ul>
             </div>
         </li>

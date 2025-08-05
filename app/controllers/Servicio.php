@@ -174,4 +174,31 @@ class Servicio extends Control
         header("Location: " . URL . "/servicio/index");
         exit;
     }
+    
+    public function saveAjax()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $interno = trim($_POST['interno']);
+            $dominio = trim($_POST['dominio']);
+            $id_empresa = intval($_POST['id_empresa']);
+
+            if ($interno === '' || $dominio === '' || !$id_empresa) {
+                echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+                return;
+            }
+
+            $idServicio = $this->model->insertServicio($id_empresa, $interno, $dominio);
+            if ($idServicio) {
+                echo json_encode([
+                    'success' => true,
+                    'id_servicio' => $idServicio,
+                    'internoDominio' => $interno . ' - ' . $dominio
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al guardar servicio']);
+            }
+        }
+    }
+
 }
+
