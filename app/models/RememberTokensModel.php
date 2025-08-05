@@ -77,9 +77,9 @@ class RememberTokensModel {
      * @param int $id_usuario ID del usuario al que pertenece el token.
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
-    public function deleteRememberMeToken($id_usuario) {
-        $stmt = $this->db->prepare("DELETE FROM remember_tokens WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $id_usuario]);
+    public function deleteRememberMeToken($id_usuario, $token) {
+        $stmt = $this->db->prepare("DELETE FROM remember_tokens WHERE id_usuario = :id_usuario AND token = :token");
+        $stmt->execute(['id_usuario' => $id_usuario, 'token' => $token]);
         return $stmt->rowCount() > 0;
     }
 }

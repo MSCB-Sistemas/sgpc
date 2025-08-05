@@ -120,8 +120,4 @@ class Control
     }
 }
 
-
-    
-
-
 ?>

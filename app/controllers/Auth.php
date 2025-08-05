@@ -54,11 +54,12 @@ class Auth extends Control
         }
 
         $idUsuario = $_SESSION['usuario_id'] ?? $_COOKIE['id_usuario'] ?? null;
+        $token = $_COOKIE['remember_token'] ?? null;
 
-        if ($idUsuario) {
-            $tokenModel = $this->load_model('RememberTokensModel');
-            $tokenModel->deleteRememberMeToken($idUsuario);
-        }
+        if ($idUsuario && $token) {
+        $tokenModel = $this->load_model('RememberTokensModel');
+        $tokenModel->deleteRememberMeToken($idUsuario, $token); 
+    }
 
         // Eliminar cookies del navegador
         setcookie('remember_token', '', time() - 3600, '/');
