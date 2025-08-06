@@ -1,90 +1,109 @@
 <div class="container mt-4">
-    <h1 class="mb-4">Panel de Inicio</h1>
+    <h1 class="mb-4 text-center">📊 Panel de Inicio Mejorado</h1>
 
-    <!-- Promedio diario -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">📈 Promedio Diario de Ingresos</div>
-        <div class="card-body">
-            <h3><?= $datos['promedio_ingresos']['promedio_diario'] ?? '0' ?> ingresos/día</h3>
+    <form method="GET" class="row g-3 mb-4 justify-content-center">
+        <div class="col-auto">
+            <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+            <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?= $_GET['fecha_inicio'] ?? '' ?>">
         </div>
-    </div>
-   
-
-    <!-- Promedio mensual -->
-    <!-- Permisos por tipo -->
-    <div class="card mb-4">
-        <div class="card-header bg-secondary text-white">🚍 Permisos por Tipo</div>
-        <div class="card-body">
-            <?php if (!empty($datos['por_tipo'])): ?>
-                <ul class="list-group">
-                    <?php foreach ($datos['por_tipo'] as $item): ?>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <?= ucfirst($item['tipo']) ?>
-                            <span class="badge bg-info"><?= $item['cantidad'] ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p class="text-muted">Sin datos disponibles.</p>
-            <?php endif; ?>
+        <div class="col-auto">
+            <label for="fecha_fin" class="form-label">Fecha Fin</label>
+            <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?= $_GET['fecha_fin'] ?? '' ?>">
         </div>
+        <div class="col-auto align-self-end">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+        
     </div>
 
-    <!-- Hoteles más usados -->
-    <div class="card mb-4">
-        <div class="card-header bg-success text-white">🏨 Hoteles Más Utilizados</div>
-        <div class="card-body">
-            <?php if (!empty($datos['hoteles_usados'])): ?>
-                <ul class="list-group">
-                    <?php foreach ($datos['hoteles_usados'] as $h): ?>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <?= $h['nombre_hotel'] ?>
-                            <span class="badge bg-success"><?= $h['cantidad'] ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p class="text-muted">Sin datos disponibles.</p>
-            <?php endif; ?>
-        </div>
-    </div>
+    <!-- Fila de métricas principales -->
+    <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-white" style="background: linear-gradient(135deg,#6a11cb,#2575fc);">
+                    <div class="card-body text-center">
+                        <h3>📅</h3>
+                        <h5>Reservas Actuales</h5>
+                        <h2><?= count($datos['reservas_desde_hoy'] ?? []) ?></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white" style="background: linear-gradient(135deg,#43e97b,#38f9d7);">
+                    <div class="card-body text-center">
+                        <h3>📈</h3>
+                        <h5>Promedio Diario</h5>
+                        <h2><?= $datos['promedio_ingresos']['promedio_diario'] ?? '0' ?></h2>
+                        <small>ingresos/día</small>
+                    </div>
+                </div>
+            </div>
+     
 
-    <!-- Empresas más frecuentes -->
-    <div class="card mb-4">
-        <div class="card-header bg-warning text-dark">🏢 Empresas Más Frecuentes</div>
-        <div class="card-body">
-            <?php if (!empty($datos['empresas_frecuentes'])): ?>
-                <ul class="list-group">
-                    <?php foreach ($datos['empresas_frecuentes'] as $e): ?>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <?= $e['nombre_empresa'] ?>
-                            <span class="badge bg-warning text-dark"><?= $e['cantidad'] ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p class="text-muted">Sin datos disponibles.</p>
-            <?php endif; ?>
+        <div class="col-md-3 mb-3">
+        <div class="card text-white" style="background: linear-gradient(135deg,#f7971e,#ffd200);">
+            <div class="card-body text-center">
+                <h3>🚍</h3>
+                <h4>Servicio más usado</h4>
+                <h5><?= ucfirst($datos['por_tipo']['tipo'] ?? 'N/A') ?></h5>
+            </div>
         </div>
     </div>
 
-    <!-- Reservas desde hoy -->
-    <div class="card mb-4">
-        <div class="card-header bg-info text-white">📅 Puntos Reservados desde Hoy</div>
-        <div class="card-body">
-            <?php if (!empty($datos['reservas_desde_hoy'])): ?>
-                <ul class="list-group">
-                    <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
-                        <li class="list-group-item">
-                            <strong><?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong><br>
-                            <span class="text-muted">📍 Punto: </span><?= $r['punto'] ?><br>
-                            <span class="text-muted">🛣️ Calle: </span><?= $r['calle'] ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p class="text-muted">No hay reservas futuras.</p>
-            <?php endif; ?>
+
+        <!-- Total de hoteles (en vez de lista completa si es redundante) -->
+        <div class="col-md-3 mb-3">
+            <div class="card text-white" style="background: linear-gradient(#e66465, #9198e5);">
+                <div class="card-body text-center">
+                    <h3>🏨</h3>
+                    <h4>Hotel con mas Reservas</h4>
+                    <h5><?= $datos['hoteles_usados'][0]['nombre_hotel'] ?? 'N/A' ?></h5>
+
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Reservas desde hoy detalladas -->
+    <div class="row mb-4">
+        <div class="col-md-12 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-info text-white">📅 Reservas Programadas</div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    <?php if (!empty($datos['reservas_desde_hoy'])): ?>
+                        <ul class="list-group list-group-flush">
+                            <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong><?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong><br>
+                                        <small class="text-muted">📍 <?= $r['punto'] ?> | 🛣️ <?= $r['calle'] ?></small>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p class="text-muted">No hay reservas futuras.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Opcional: empresas más frecuentes si tiene sentido -->
+    <?php if (!empty($datos['empresas_frecuentes']) && count($datos['empresas_frecuentes'])>0): ?>
+        <div class="row mt-3">
+            <div class="col-md-12 mb-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark">🏢 Empresa con más reservas</div>
+                    <div class="card-body">
+                        <strong><?= $datos['empresas_frecuentes'][0]['nombre_empresa'] ?? 'N/A' ?></strong>
+                        <span class="badge bg-warning text-dark"><?= $datos['empresas_frecuentes'][0]['cantidad'] ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    
 </div>
