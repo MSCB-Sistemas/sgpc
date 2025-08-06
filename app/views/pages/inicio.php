@@ -8,7 +8,9 @@
             <h3><?= $datos['promedio_ingresos']['promedio_diario'] ?? '0' ?> ingresos/día</h3>
         </div>
     </div>
+   
 
+    <!-- Promedio mensual -->
     <!-- Permisos por tipo -->
     <div class="card mb-4">
         <div class="card-header bg-secondary text-white">🚍 Permisos por Tipo</div>
