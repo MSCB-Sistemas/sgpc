@@ -97,7 +97,7 @@
 
           <!-- Tabla de calles seleccionadas -->
           <div class="table-responsive shadow rounded mb-3" style="overflow: hidden;">
-              <table class="table table-hover align-middle mb-0" id="tablaCalles">
+              <table class="table table-hover align-middle mb-0" id="tablaCallesModal">
                   <thead class="table-light">
                       <tr>
                           <th>Calle</th>
@@ -138,12 +138,12 @@
 
       if (!id) return;
 
-      if (document.querySelector('#tablaCalles tbody tr[data-id="' + id + '"]')) {
+      if (document.querySelector('#tablaCallesModal tbody tr[data-id="' + id + '"]')) {
           alert("Esa calle ya fue agregada.");
           return;
       }
 
-      const tbody = document.querySelector('#tablaCalles tbody');
+      const tbody = document.querySelector('#tablaCallesModal tbody');
       const tr = document.createElement('tr');
       tr.setAttribute('data-id', id);
       tr.innerHTML = `
