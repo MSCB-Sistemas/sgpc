@@ -72,9 +72,6 @@ class Recorrido extends Control
             if ($nombre === '') {
                 $errores[] = "El nombre es obligatorio.";
             }
-            if (empty($calles)) {
-                $errores[] = "Debe seleccionar al menos una calle.";
-            }
 
             if (!empty($errores)) {
                 $datos = [
@@ -214,6 +211,7 @@ class Recorrido extends Control
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombre = trim($_POST['nombre']);
+            $calles = $_POST['calles'] ?? [];
 
             if ($nombre === '') {
                 echo json_encode(['success' => false, 'message' => 'El nombre es obligatorio']);
@@ -221,7 +219,13 @@ class Recorrido extends Control
             }
 
             $idRecorrido = $this->model->insertRecorrido($nombre);
+
             if ($idRecorrido) {
+                foreach ($calles as $idCalle) {
+                    if(!$this->calleRecorridoModel->insertCalleRecorrido($idRecorrido, id_calle: $idCalle)){
+                        echo json_encode(['success' => false, 'message' => 'Error al guardar las calles del recorrido']);
+                    };
+                }
                 echo json_encode([
                     'success' => true,
                     'id_recorrido' => $idRecorrido,

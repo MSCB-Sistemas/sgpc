@@ -60,7 +60,7 @@
 
     <!-- Recorrido -->
     <div class="mb-3 row">
-        <div class="col-md-10">
+        <div class="col-md-10 mb-2">
             <label for="recorrido" class="form-label">Recorrido</label>
             <select class="form-select" id="recorrido" name="id_recorrido" required>
                 <option value="">Seleccione...</option>
@@ -71,11 +71,12 @@
                     </option>
                 <?php endforeach; ?>
             </select>
-            <div class="col-md-2 d-flex align-items-end">
+
+        </div>
+            <div class="col-sm-2 d-flex align-items-end mb-2">
                 <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
             </div>
-            <!-- TODO: Accordion de Recorrido -->
-            <!-- OJO ACA!! Accordion de Recorrido -->
+            <!-- Accordion de Recorrido -->
             <div class="accordion mb-3 d-none" id="accordionRecorrido">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingRecorrido">
@@ -88,7 +89,7 @@
                     <div class="row">
                     <div class="col-md-6">
                         <h6>Calles del Recorrido</h6>
-                        <table class="table table-bordered table-sm" id="tablaCalles">
+                        <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
                             <tr><th>Nombre</th></tr>
                         </thead>
@@ -99,9 +100,13 @@
                     </div>
                     <div class="col-md-6">
                         <h6>Puntos de Detención</h6>
-                        <table class="table table-bordered table-sm" id="tablaPuntos">
+                        <table class="table table-hover align-middle mb-0" id="tablaPuntos">
                         <thead>
-                            <tr><th>Dirección</th></tr>
+                            <tr>
+                                <th>Dirección</th>
+                                <th>Hotel</th>
+                                <th>Horario</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <!-- Se cargan dinámicamente -->
@@ -113,8 +118,6 @@
                 </div>
             </div>
             </div>
-
-        </div>
     </div>
 
     <!-- Fechas -->
@@ -140,8 +143,10 @@
     <button type="submit" class="btn btn-success">Guardar</button>
     <a href="<?= URL ?>/permiso" class="btn btn-secondary">Cancelar</a>
 </form>
+
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>
 <script>
     _URL = '<?= URL ?>';
+    window._HOTELES = <?= json_encode($datos['hoteles']) ?>;
 </script>
 <script src="<?= URL ?>/public/js/permiso.js"></script>

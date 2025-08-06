@@ -78,6 +78,8 @@ class Permiso extends Control
         $nacionalidades = $this->load_model('NacionalidadModel')->getAllNacionalidades();
         $empresas = $this->load_model('EmpresaModel')->getAllEmpresas();
         $calles = $this->load_model('CalleModel')->getAllCalles();
+        $hoteles = $this->load_model('HotelesModel')->getAllHoteles();
+
         $this->load_view('permisos/form', [
             'title' => 'Nuevo Permiso',
             'action' => URL . '/permiso/store',
@@ -88,6 +90,7 @@ class Permiso extends Control
             'nacionalidades' => $nacionalidades,
             'empresas' => $empresas,
             'calles' => $calles,
+            'hoteles'=> $hoteles,
             'errores' => []
         ]);
     }

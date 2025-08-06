@@ -21,6 +21,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
                 option.textContent = data[textField];
                 option.selected = true;
                 select.appendChild(option);
+                select.dispatchEvent(new Event('change'));
 
                 // cerrar modal
                 bootstrap.Modal.getInstance(form.closest(".modal")).hide();
@@ -42,12 +43,16 @@ handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicio", "i
 // Recorrido -> espera JSON: { success: true, id_recorrido, nombre }
 handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre");
 
-
+// Cargar cales y puntos de detención al seleccionar un recorrido
 document.addEventListener("DOMContentLoaded", function() {
   const selectRecorrido = document.getElementById("recorrido");
   const accordionRecorrido = document.getElementById("accordionRecorrido");
   const tablaCalles = document.querySelector("#tablaCalles tbody");
   const tablaPuntos = document.querySelector("#tablaPuntos tbody");
+   // clave = id_punto, valor = { hotel: X, horario: Y }
+  let puntosData = {};
+
+  const hoteles = window._HOTELES || [];
 
   selectRecorrido.addEventListener("change", async function() {
     const idRecorrido = this.value;
@@ -59,10 +64,8 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
 
-    // Mostrar accordion
     accordionRecorrido.classList.remove("d-none");
 
-    // Cargar calles
     try {
       const res = await fetch(`${_URL}/recorrido/calles/${idRecorrido}`);
       const calles = await res.json();
@@ -75,18 +78,18 @@ document.addEventListener("DOMContentLoaded", function() {
         tablaCalles.appendChild(tr);
       });
 
-      // Reset puntos
-      tablaPuntos.innerHTML = "";
-
+      tablaPuntos.innerHTML = ""; // reset puntos al cambiar recorrido
     } catch (err) {
       console.error("Error cargando calles:", err);
     }
   });
 
-  // Evento delegado para hacer clic en una calle
+  // Evento delegado al hacer click en una calle
   document.querySelector("#tablaCalles").addEventListener("click", async function(e) {
     const td = e.target.closest("td.calle-item");
     if (!td) return;
+    document.querySelector("#tablaCalles").querySelectorAll("td").forEach(el => el.classList.remove("table-active"));
+    td.classList.toggle("table-active");
 
     const idCalle = td.dataset.id;
 
@@ -95,13 +98,65 @@ document.addEventListener("DOMContentLoaded", function() {
       const puntos = await res.json();
 
       tablaPuntos.innerHTML = "";
+
       puntos.forEach(p => {
+        // recuperar datos previos si existen
+        console.log("Punto:", p);
+        const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "" };
+
+        // armar select hoteles
+        let hotelSelect = `<select class="form-select form-select-sm punto-hotel" data-id="${p.id_punto_detencion}">
+          <option value="">(ninguno)</option>`;
+        hoteles.forEach(h => {
+          const selected = (prev.hotel && prev.hotel == h.id_hotel) ? "selected" : "";
+          hotelSelect += `<option value="${h.id_hotel}" ${selected}>${h.nombre}</option>`;
+        });
+        hotelSelect += `</select>`;
+
+        // armar input horario (solo agregamos value si existe)
+        const horarioValue = prev.horario ? `value="${prev.horario}"` : "";
+        const horarioInput = `<input type="time" class="form-control form-control-sm punto-horario" 
+                              data-id="${p.id_punto_detencion}" ${horarioValue}>`;
+
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${p.nombre}</td>`;
+        tr.innerHTML = `
+          <td>${p.nombre}</td>
+          <td>${hotelSelect}</td>
+          <td>${horarioInput}</td>
+        `;
         tablaPuntos.appendChild(tr);
       });
+
     } catch (err) {
       console.error("Error cargando puntos de detención:", err);
     }
+  });
+
+  // Delegamos cambios en hotel/horario para actualizar puntosData
+  tablaPuntos.addEventListener("change", function(e) {
+    const select = e.target.closest(".punto-hotel");
+    const input = e.target.closest(".punto-horario");
+
+    if (select) {
+      const id = select.getAttribute("data-id");
+      puntosData[id] = puntosData[id] || {};
+      puntosData[id].hotel = select.value;
+    }
+
+    if (input) {
+      const id = input.getAttribute("data-id");
+      puntosData[id] = puntosData[id] || {};
+      puntosData[id].horario = input.value;
+    }
+  });
+
+  // Al enviar formulario, serializamos puntosData en un input oculto
+  const form = document.getElementById("permisoForm");
+  form.addEventListener("submit", function() {
+    const hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = "puntos_detencion";
+    hidden.value = JSON.stringify(puntosData);
+    form.appendChild(hidden);
   });
 });
