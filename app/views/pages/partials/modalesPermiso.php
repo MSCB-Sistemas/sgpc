@@ -155,6 +155,7 @@
       `;
       tbody.appendChild(tr);
   });
+  
   // capturar ENTER en el select
   document.getElementById('selectCalle').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
