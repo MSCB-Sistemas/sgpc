@@ -61,7 +61,7 @@ class Recorrido extends Control
         $this->load_view('recorridos/form', $datos);
     }
 
-    // Procesar creación
+    // Procesar creación a
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
