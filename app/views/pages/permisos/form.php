@@ -21,6 +21,7 @@
                 <label class="btn btn-outline-primary" for="salida">Salida</label>
             </div>
         </div>
+        
     </div>
     <div class="row mb-3">
         <!-- Chofer -->
