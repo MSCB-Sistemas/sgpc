@@ -211,7 +211,7 @@ class PermisoModel
      *
      * @return array Arreglo asociativo con la cantidad de permisos por tipo.
      */
-    public function getCantidadPorTipo($fecha_inicio = null, $fecha_fin = null): array {
+    public function getCantidadPorTipo($fecha_inicio = null, $fecha_fin = null): array|bool {
     // Si no se pasa fecha, por defecto el último mes
         if (!$fecha_inicio || !$fecha_fin) {
             $fecha_fin = date('Y-m-d');
