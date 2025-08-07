@@ -164,5 +164,12 @@ class Calle extends Control
         header('Content-Type: application/json');
         echo json_encode($puntos);
     }
+
+    public function calles()
+    {
+        $calles = $this->model->getAllCalles();
+        header('Content-Type: application/json');
+        echo json_encode($calles);
+    }
 }
 

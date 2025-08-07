@@ -109,13 +109,13 @@ document.addEventListener("DOMContentLoaded", function() {
           <option value="">(ninguno)</option>`;
         hoteles.forEach(h => {
           const selected = (prev.hotel && prev.hotel == h.id_hotel) ? "selected" : "";
-          hotelSelect += `<option value="${h.id_hotel}" ${selected}>${h.nombre}</option>`;
+          hotelSelect += `<option value="${h.id_hotel}" ${selected}>${h.nombre} - ${h.direccion}</option>`;
         });
         hotelSelect += `</select>`;
 
         // armar input horario (solo agregamos value si existe)
         const horarioValue = prev.horario ? `value="${prev.horario}"` : "";
-        const horarioInput = `<input type="time" class="form-control form-control-sm punto-horario" 
+        const horarioInput = `<input type="time" step="900" class="form-control form-control-sm punto-horario" 
                               data-id="${p.id_punto_detencion}" ${horarioValue}>`;
 
         const tr = document.createElement("tr");
