@@ -156,4 +156,6 @@ class ReservasPuntos extends Control
             'reservas' => $reservas
         ]);
     }
+
+
 }

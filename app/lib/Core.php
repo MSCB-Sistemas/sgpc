@@ -21,8 +21,8 @@
               session_start();
           }
           if (isset($_SESSION['usuario_id'])) {
-              $this->controller = 'Views';
-              $this->method = 'inicio';
+              $this->controller = 'inicio';
+              $this->method = 'index';
           } else {
               $this->controller = 'Auth';
               $this->method = 'login';
@@ -49,6 +49,10 @@
 
       // Parámetros si hay
       $this->parameters = $url ? array_values($url) : [];
+      
+      if (session_status() === PHP_SESSION_NONE) {
+          session_start();
+      }
 
       // Llamar al método con parámetros
       call_user_func_array([$this->controller, $this->method], $this->parameters);

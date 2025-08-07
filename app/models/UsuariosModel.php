@@ -138,6 +138,8 @@ class UsuariosModel {
         return $stmt->rowCount() > 0;
     }
 
+
+
     /**
      * Obtiene un usuario basado en su id .
      *

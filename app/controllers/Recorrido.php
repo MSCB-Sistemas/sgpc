@@ -61,7 +61,7 @@ class Recorrido extends Control
         $this->load_view('recorridos/form', $datos);
     }
 
-    // Procesar creación
+    // Procesar creación a
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -209,5 +209,28 @@ class Recorrido extends Control
         }
         header("Location: " . URL . "/recorrido/index");
         exit;
+    }
+
+    public function saveAjax()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST['nombre']);
+
+            if ($nombre === '') {
+                echo json_encode(['success' => false, 'message' => 'El nombre es obligatorio']);
+                return;
+            }
+
+            $idRecorrido = $this->model->insertRecorrido($nombre);
+            if ($idRecorrido) {
+                echo json_encode([
+                    'success' => true,
+                    'id_recorrido' => $idRecorrido,
+                    'nombre' => $nombre
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al guardar recorrido']);
+            }
+        }
     }
 }

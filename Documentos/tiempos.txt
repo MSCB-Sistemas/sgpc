@@ -1,3 +1,7 @@
 abm recorridos
-   complejidad: media
-   tiempo: 2h 40min
+    complejidad: media
+    tiempo: 2h 40min
+
+form principal permisos
+    complejidad: alta
+    tiempo: 1h +

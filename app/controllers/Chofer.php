@@ -156,4 +156,31 @@ class Chofer extends Control
         }
             die("No se puede eliminar la chofer, tiene permisos asignados.");
     }
+
+    public function saveAjax()
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST['nombre']);
+            $apellido = trim($_POST['apellido']);
+            $dni = trim($_POST['dni']);
+            $nacionalidad = $_POST['nacionalidad'];
+
+            if ($nombre === '' || $apellido === '' || $dni === '' || $nacionalidad === '') {
+                echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+                return;
+            }
+            $idChofer = $this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad);
+            if ($idChofer) {
+                echo json_encode([
+                    'success' => true,
+                    'id_chofer' => $idChofer,
+                    'nombreCompleto' => $dni . ' - ' . $nombre . ' ' . $apellido
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al guardar chofer']);
+            }
+        }
+    }
+
 }

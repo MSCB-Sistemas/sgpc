@@ -131,21 +131,32 @@ CREATE TABLE `permisos` (
   `id_chofer` int NOT NULL,
   `id_usuario` int NOT NULL,
   `id_servicio` int NOT NULL,
-  `tipo` enum('charter','linea','otros') COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `tipo` enum('charter','linea','otros') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `fecha_reserva` timestamp NOT NULL,
   `fecha_emision` timestamp NOT NULL,
   `es_arribo` tinyint(1) NOT NULL,
-  `observacion` varchar(100) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  `observacion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
   `activo` tinyint(1) DEFAULT '1',
+  `pasajeros` int NOT NULL,
+  `id_lugar` int NOT NULL,
   PRIMARY KEY (`id_permiso`),
   KEY `permisos_FK` (`id_chofer`),
   KEY `permisos_FK_1` (`id_usuario`),
   KEY `permisos_FK_2` (`id_servicio`),
+  KEY `permisos_lugares_FK` (`id_lugar`),
   CONSTRAINT `permisos_FK` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`),
   CONSTRAINT `permisos_FK_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
-  CONSTRAINT `permisos_FK_2` FOREIGN KEY (`id_servicio`) REFERENCES `servicios` (`id_servicio`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+  CONSTRAINT `permisos_FK_2` FOREIGN KEY (`id_servicio`) REFERENCES `servicios` (`id_servicio`),
+  CONSTRAINT `permisos_lugares_FK` FOREIGN KEY (`id_lugar`) REFERENCES `lugares` (`id_lugar`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
+-- sgpc.lugares definition
+
+CREATE TABLE `lugares` (
+  `id_lugar` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_lugar`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- sgpc.recorridos_permisos definition
 
