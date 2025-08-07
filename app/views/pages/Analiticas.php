@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h1 class="mb-4 text-center">👋 Bienvenido al Sistema SGPC</h1>
+    <h1 class="mb-4 text-center">📊 Municipalidad de San Carlos de Bariloche</h1>
     <form method="GET" class="row g-3 mb-4 justify-content-center">
         <div class="col-auto">
             <label for="fecha_inicio" class="form-label">Fecha Inicio</label>

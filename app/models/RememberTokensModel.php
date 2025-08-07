@@ -55,10 +55,21 @@ class RememberTokensModel {
      * @return array|false Arreglo asociativo con el ID del usuario si es válido, false en caso contrario.
      */
     public function validateRememberMeToken($id_usuario, $token) {
-        $stmt = $this->db->prepare("SELECT id_usuario FROM remember_tokens WHERE token = :token AND expiry > NOW()");
-        $stmt->execute(['token' => $token]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare("SELECT u.*
+            FROM remember_tokens rt
+            INNER JOIN usuarios u ON u.id_usuario = rt.id_usuario
+            WHERE rt.id_usuario = :id_usuario
+            AND rt.token = :token
+            AND rt.fecha_expiracion > NOW()
+            LIMIT 1
+        ");    
+        $stmt->execute([
+            'id_usuario' => $id_usuario,
+            'token' => $token
+        ]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve los datos completos del usuario
     }
+
 
     /**
      * Elimina un token de "Recuérdame" para un usuario específico.
@@ -66,9 +77,9 @@ class RememberTokensModel {
      * @param int $id_usuario ID del usuario al que pertenece el token.
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
-    public function deleteRememberMeToken($id_usuario) {
-        $stmt = $this->db->prepare("DELETE FROM remember_tokens WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $id_usuario]);
+    public function deleteRememberMeToken($id_usuario, $token) {
+        $stmt = $this->db->prepare("DELETE FROM remember_tokens WHERE id_usuario = :id_usuario AND token = :token");
+        $stmt->execute(['id_usuario' => $id_usuario, 'token' => $token]);
         return $stmt->rowCount() > 0;
     }
 }

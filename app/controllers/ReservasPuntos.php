@@ -8,6 +8,7 @@ class ReservasPuntos extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->model = $this->load_model('ReservasPuntosModel');
     }
 
@@ -155,4 +156,6 @@ class ReservasPuntos extends Control
             'reservas' => $reservas
         ]);
     }
+
+
 }

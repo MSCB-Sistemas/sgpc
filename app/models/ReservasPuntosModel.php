@@ -97,6 +97,8 @@ class ReservasPuntosModel {
         $stmt->execute(['id_reserva_punto' => $id_reserva_punto]);
         return $stmt->rowCount() > 0;
     }
+
+    
 }
 
 ?>

@@ -9,6 +9,7 @@ class Usuarios extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->modelTipoUsuario = $this->load_model('TiposUsuariosModel');
         $this->model = $this->load_model('UsuariosModel');
     }

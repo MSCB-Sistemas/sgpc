@@ -1,4 +1,5 @@
 <?php
+
 class Chofer extends Control
 {
     private $modelo;
@@ -6,6 +7,7 @@ class Chofer extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->modelo = $this->load_model('ChoferesModel');
         $this->modeloNacionalidades = $this->load_model('NacionalidadModel');
     }

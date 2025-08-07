@@ -10,6 +10,7 @@ class Recorrido extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->model = $this->load_model("RecorridoModel"); 
         $this->calleRecorridoModel = $this->load_model("CalleRecorridoModel");
         $this->calleModel = $this->load_model("CalleModel");
@@ -60,7 +61,7 @@ class Recorrido extends Control
         $this->load_view('recorridos/form', $datos);
     }
 
-    // Procesar creación
+    // Procesar creación a
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
