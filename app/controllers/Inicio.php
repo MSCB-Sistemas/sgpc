@@ -5,6 +5,7 @@ class Inicio extends Control
 
     public function __construct()
     {
+        $this->requireLogin();
         $this->modelo = $this->load_model('PermisoModel');
     }
 
@@ -19,6 +20,8 @@ class Inicio extends Control
             $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
         }
         
+        // Obtener datos del modelo de permiso que contiene las query para calcular las métricas
+        // y estadísticas de la página de inicio
         $datos = [
 
 
