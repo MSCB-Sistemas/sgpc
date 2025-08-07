@@ -6,11 +6,13 @@
 class Calle extends Control
 {
     private CalleModel $model;
+    private PuntosDetencionModel $pDModel;
 
     public function __construct()
     {
         $this->requireLogin();
         $this->model = $this->load_model('CalleModel');
+        $this->pDModel = $this->load_model('PuntosDetencionModel');
     }
 
     // Mostrar todas las calles en una vista.
@@ -155,6 +157,20 @@ class Calle extends Control
             exit;
         
         
+    }
+
+    public function puntos($id)
+    {
+        $puntos = $this->pDModel->getPuntosByCalle($id);
+        header('Content-Type: application/json');
+        echo json_encode($puntos);
+    }
+
+    public function calles()
+    {
+        $calles = $this->model->getAllCalles();
+        header('Content-Type: application/json');
+        echo json_encode($calles);
     }
 }
 

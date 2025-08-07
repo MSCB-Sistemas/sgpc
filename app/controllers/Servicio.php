@@ -180,7 +180,12 @@ class Servicio extends Control
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $interno = trim($_POST['interno']);
             $dominio = trim($_POST['dominio']);
-            $id_empresa = intval($_POST['id_empresa']);
+            if (!empty($_POST['nueva_empresa'])) {
+                $id_empresa = $this->empresaModel->insertEmpresa(trim($_POST['nueva_empresa']));
+            } else {
+                $id_empresa = intval($_POST['empresa']);
+            }
+            
 
             if ($interno === '' || $dominio === '' || !$id_empresa) {
                 echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);

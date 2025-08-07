@@ -17,43 +17,43 @@ class Permiso extends Control
     {
         $permisos = $this->model->getAllPermisos();
         $datos = [
-        'title' => 'Listado de Permisos',
-        'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
-        'columnas' => [
-            'Tipo',
-            'Fecha Reserva',
-            'Fecha Emisión',
-            'Chofer',
-            'Usuario',
-            'Servicio',
-            'Dominio',
-            'Empresa',
-            'Observación',
-            'Arribo'
-        ],
-        'columnas_claves' => [
-            'tipo',
-            'fecha_reserva',
-            'fecha_emision',
-            'chofer',
-            'usuario',
-            'servicio_interno',
-            'servicio_dominio',
-            'empresa_nombre',
-            'observacion',
-            'arribo'
-        ],
-        'data' => $permisos, 
-        'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
-            $id = $fila['id_permiso'];
-            $url = URL . '/permisos';
-            return '
-                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
-            ';
-        } : null
-    ];
+            'title' => 'Listado de Permisos',
+            'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
+            'columnas' => [
+                'Tipo',
+                'Fecha Reserva',
+                'Fecha Emisión',
+                'Chofer',
+                'Usuario',
+                'Servicio',
+                'Dominio',
+                'Empresa',
+                'Observación',
+                'Arribo'
+            ],
+            'columnas_claves' => [
+                'tipo',
+                'fecha_reserva',
+                'fecha_emision',
+                'chofer',
+                'usuario',
+                'servicio_interno',
+                'servicio_dominio',
+                'empresa_nombre',
+                'observacion',
+                'arribo'
+            ],
+            'data' => $permisos, 
+            'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
+                $id = $fila['id_permiso'];
+                $url = URL . '/permisos';
+                return '
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
+                ';
+            } : null,
+        ];
 
-$this->load_view('partials/tablaAbm', $datos);
+        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar detalles de un permiso específico
@@ -77,6 +77,10 @@ $this->load_view('partials/tablaAbm', $datos);
         $recorridos = $this->load_model('RecorridoModel')->getAllRecorridos();
         $choferes = $this->load_model('ChoferesModel')->getAllChoferes();
         $nacionalidades = $this->load_model('NacionalidadModel')->getAllNacionalidades();
+        $empresas = $this->load_model('EmpresaModel')->getAllEmpresas();
+        $calles = $this->load_model('CalleModel')->getAllCalles();
+        $hoteles = $this->load_model('HotelesModel')->getAllHoteles();
+
         $this->load_view('permisos/form', [
             'title' => 'Nuevo Permiso',
             'action' => URL . '/permiso/store',
@@ -85,6 +89,9 @@ $this->load_view('partials/tablaAbm', $datos);
             'servicios' => $servicios,
             'recorridos' => $recorridos,
             'nacionalidades' => $nacionalidades,
+            'empresas' => $empresas,
+            'calles' => $calles,
+            'hoteles'=> $hoteles,
             'errores' => []
         ]);
     }

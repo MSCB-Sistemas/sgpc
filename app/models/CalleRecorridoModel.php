@@ -110,7 +110,7 @@ class CalleRecorridoModel
      * Obtiene las calles asociadas a un recorrido específico.
      *
      * @param  mixed $id_recorrido ID del recorrido.
-     * @return bool|string Lista de nombres de calles asociadas al recorrido, o false si no hay calles. 
+     * @return bool|array Lista de nombres de calles asociadas al recorrido, o false si no hay calles. 
      */
     public function getCallesByRecorrido($id_recorrido): bool|array
     {
