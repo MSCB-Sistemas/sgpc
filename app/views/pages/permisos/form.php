@@ -15,13 +15,13 @@
             </div>
             <div class="btn-group" role="group" aria-label="arribo_salida">
                 <input type="radio" class="btn-check" name="arribo_salida" id="arribo" autocomplete="off" value="arribo">
-                <label class="btn btn-outline-primary" for="arribo">Arribo</label>
+                <label class="btn btn-outline-info" for="arribo">Arribo</label>
 
                 <input type="radio" class="btn-check" name="arribo_salida" id="salida" autocomplete="off" value="salida">
-                <label class="btn btn-outline-primary" for="salida">Salida</label>
+                <label class="btn btn-outline-info" for="salida">Salida</label>
             </div>
         </div>
-        
+
     </div>
     <div class="row mb-3">
         <!-- Chofer -->
@@ -59,6 +59,19 @@
         </div>
     </div>
 
+    <!-- Fecha -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label for="fecha_reserva" class="form-label">Fecha Reserva</label>
+            <input type="date" class="form-control" id="fecha_reserva" name="fecha_reserva" 
+                   value="<?php echo date('Y-m-d'); ?>">
+        </div>
+        <div class="col-md-2">
+            <label for="pasajeros" class="form-label">Pasajeros</label>
+            <input type="number" class="form-control" id="pasajeros" name="pasajeros"></input>
+        </div>
+    </div>
+    
     <!-- Recorrido -->
     <div class="mb-3 row">
         <div class="col-md-10 mb-2">
@@ -121,19 +134,6 @@
             </div>
     </div>
 
-    <!-- Fechas -->
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="fecha_reserva" class="form-label">Fecha Reserva</label>
-            <input type="date" class="form-control" id="fecha_reserva" name="fecha_reserva" 
-                   value="<?= htmlspecialchars($datos['values']['fecha_reserva'] ?? '') ?>">
-        </div>
-        <div class="col-md-6">
-            <label for="fecha_emision" class="form-label">Fecha Emisión</label>
-            <input type="date" class="form-control" id="fecha_emision" name="fecha_emision" 
-                   value="<?= htmlspecialchars($datos['values']['fecha_emision'] ?? '') ?>">
-        </div>
-    </div>
 
     <!-- Observación -->
     <div class="mb-3">
