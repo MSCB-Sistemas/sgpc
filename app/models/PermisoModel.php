@@ -39,19 +39,16 @@ class PermisoModel
             p.tipo,
             p.fecha_reserva,
             p.fecha_emision,
-            p.es_arribo,
+            p.arribo_salida,
             p.observacion,
+            p.pasajeros,
+            l.nombre as lugar,
 
             -- Datos del chofer
-            c.dni AS chofer_dni,
-            c.nombre AS chofer_nombre,
-            c.apellido AS chofer_apellido,
-            n.nacionalidad AS chofer_nacionalidad,
+            CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS chofer,
 
             -- Datos del usuario
-            u.nombre AS usuario_nombre,
-            u.apellido AS usuario_apellido,
-            u.cargo AS usuario_cargo,
+            CONCAT(u.nombre,' ',u.apellido) AS usuario,
 
             -- Datos del servicio
             s.interno AS servicio_interno,
@@ -63,7 +60,8 @@ class PermisoModel
         JOIN nacionalidades n ON c.id_nacionalidad = n.id_nacionalidad
         JOIN usuarios u ON p.id_usuario = u.id_usuario
         JOIN servicios s ON p.id_servicio = s.id_servicio
-        JOIN empresas e ON s.id_empresa = e.id_empresa;
+        JOIN empresas e ON s.id_empresa = e.id_empresa
+        JOIN lugares l ON p.id_lugar = l.id_lugar;
         ");
         return $stmt->fetchAll();
     }
@@ -97,15 +95,15 @@ class PermisoModel
      * @param string $tipo Tipo de permiso ("salida" o "arribo").
      * @param string $fecha_reserva Fecha de reserva del permiso (formato 'YYYY-MM-DD HH:MM:SS').
      * @param string $fecha_emision Fecha de emisión del permiso (formato 'YYYY-MM-DD HH:MM:SS').
-     * @param bool|int $es_arribo Indicador si es un permiso de arribo (1 o 0).
+     * @param bool|int $arribo_salida Indicador si es un permiso de arribo (1 o 0).
      * @param string|null $observacion Observaciones adicionales (puede ser null).
      * @return bool|string ID del nuevo registro insertado o false en caso de error.
      */
-    public function insertPermiso($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $es_arribo, $observacion): bool|string
+    public function insertPermiso($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion,$pasajeros,$id_lugar): bool|string
     {
         $stmt = $this->db->prepare("INSERT INTO sgpc.permisos
-            (id_chofer, id_usuario, id_servicio, tipo, fecha_reserva, fecha_emision, es_arribo, observacion)
-            VALUES (:id_chofer, :id_usuario, :id_servicio, :tipo, :fecha_reserva, :fecha_emision, :es_arribo, :observacion)");
+            (id_chofer, id_usuario, id_servicio, tipo, fecha_reserva, fecha_emision, arribo_salida, observacion, pasajeros, id_lugar)
+            VALUES (:id_chofer, :id_usuario, :id_servicio, :tipo, :fecha_reserva, :fecha_emision, :arribo_salida, :observacion, :pasajeros, :id_lugar)");
         $stmt->execute([
             'id_chofer' => $id_chofer,
             'id_usuario' => $id_usuario,
@@ -113,8 +111,10 @@ class PermisoModel
             'tipo' => $tipo,
             'fecha_reserva' => $fecha_reserva,
             'fecha_emision' => $fecha_emision,
-            'es_arribo' => $es_arribo,
-            'observacion' => $observacion
+            'arribo_salida' => $arribo_salida,
+            'observacion' => $observacion,
+            'pasajeros'=> $pasajeros,
+            'id_lugar'=> $id_lugar
         ]);
         return $this->db->lastInsertId();
     }
@@ -129,16 +129,16 @@ class PermisoModel
      * @param string $tipo Tipo de permiso ("salida" o "arribo").
      * @param string $fecha_reserva Fecha de reserva (formato 'YYYY-MM-DD HH:MM:SS').
      * @param string $fecha_emision Fecha de emisión (formato 'YYYY-MM-DD HH:MM:SS').
-     * @param bool|int $es_arribo Indicador si es un permiso de arribo (1 o 0).
+     * @param bool|int $arribo_salida Indicador si es un permiso de arribo (1 o 0).
      * @param string|null $observacion Observaciones adicionales.
      * @param bool|int $activo Estado del permiso (1 para activo, 0 para inactivo).
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
-    public function updatePermiso($id, $id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $es_arribo, $observacion, $activo): bool|string
+    public function updatePermiso($id, $id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion, $activo): bool|string
     {
         $stmt = $this->db->prepare("UPDATE sgpc.permisos
             SET id_chofer = :id_chofer, id_usuario = :id_usuario, id_servicio = :id_servicio, tipo = :tipo,
-                fecha_reserva = :fecha_reserva, fecha_emision = :fecha_emision, es_arribo = :es_arribo,
+                fecha_reserva = :fecha_reserva, fecha_emision = :fecha_emision, arribo_salida = :arribo_salida,
                 observacion = :observacion, activo = :activo
             WHERE id_permiso = :id");
         $stmt->execute([
@@ -149,7 +149,7 @@ class PermisoModel
             'tipo' => $tipo,
             'fecha_reserva' => $fecha_reserva,
             'fecha_emision' => $fecha_emision,
-            'es_arribo' => $es_arribo,
+            'arribo_salida' => $arribo_salida,
             'observacion' => $observacion,
             'activo' => $activo
         ]);
@@ -183,12 +183,12 @@ class PermisoModel
 
         $sql = "
             SELECT 
-                COUNT(CASE WHEN tipo='linea' AND es_arribo=1 THEN 1 END) AS cantidad_linea_arribos,
-                COUNT(CASE WHEN tipo='linea' AND es_arribo=0 THEN 1 END) AS cantidad_linea_salidas,
-                COUNT(CASE WHEN tipo='charter' AND es_arribo=1 THEN 1 END) AS cantidad_charter_arribos,
-                COUNT(CASE WHEN tipo='charter' AND es_arribo=0 THEN 1 END) AS cantidad_charter_salidas,
-                COUNT(CASE WHEN tipo='otros' AND es_arribo=1 THEN 1 END) AS cantidad_otros_arribos,
-                COUNT(CASE WHEN tipo='otros' AND es_arribo=0 THEN 1 END) AS cantidad_otros_salidas,
+                COUNT(CASE WHEN tipo='linea' AND arribo_salida='arribo' THEN 1 END) AS cantidad_linea_arribos,
+                COUNT(CASE WHEN tipo='linea' AND arribo_salida='salida' THEN 1 END) AS cantidad_linea_salidas,
+                COUNT(CASE WHEN tipo='charter' AND arribo_salida='arribo' THEN 1 END) AS cantidad_charter_arribos,
+                COUNT(CASE WHEN tipo='charter' AND arribo_salida='salida' THEN 1 END) AS cantidad_charter_salidas,
+                COUNT(CASE WHEN tipo='otros' AND arribo_salida='arribo' THEN 1 END) AS cantidad_otros_arribos,
+                COUNT(CASE WHEN tipo='otros' AND arribo_salida='salida' THEN 1 END) AS cantidad_otros_salidas,
                 COUNT(*) AS cantidad_total
             FROM permisos
             WHERE activo = 1

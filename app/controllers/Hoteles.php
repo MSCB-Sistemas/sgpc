@@ -137,10 +137,9 @@ class Hoteles extends Control
     {
         $eliminado = $this->model->deleteHotel($id);
         if (!$eliminado) {
-            die("No se puede eliminar la calle.");
+            die("No se puede eliminar el hotel.");
         }
-        $this->model->deleteHotel($id);
-            header("Location: " . URL . "/hoteles");
-            exit;
+        header("Location: " . URL . "/hoteles");
+        exit;
     }
 }

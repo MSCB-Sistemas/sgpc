@@ -134,7 +134,7 @@ CREATE TABLE `permisos` (
   `tipo` enum('charter','linea','otros') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `fecha_reserva` timestamp NOT NULL,
   `fecha_emision` timestamp NOT NULL,
-  `es_arribo` tinyint(1) NOT NULL,
+  `arribo_salida` enum('arribo','salida') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `observacion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
   `activo` tinyint(1) DEFAULT '1',
   `pasajeros` int NOT NULL,

@@ -138,7 +138,7 @@ class PuntosDetencion extends Control
             }
 
             if ($this->model->updatePuntoDetencion($id, $nombre, $calle)) {
-                header("Location: " . URL . "/puntosDetencion/index");
+                header("Location: " . URL . "/puntosDetencion");
                 exit;
             } else {
                 die("Error al actualizar el punto de detención.");
@@ -155,7 +155,7 @@ class PuntosDetencion extends Control
             die("No se pudo eliminar el punto de detención.");
         }
 
-        header("Location: " . URL . "/puntosDetencion/index");
+        header("Location: " . URL . "/puntosDetencion");
         exit;
     }
 }

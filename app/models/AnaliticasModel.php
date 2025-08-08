@@ -150,10 +150,7 @@ class AnaliticasModel
                 e.nombre AS empresa,
                 DATE(p.fecha_reserva) AS fecha,
                 pd.nombre AS lugar,
-                CASE 
-                    WHEN p.es_arribo = 1 THEN 'Arribo'
-                    ELSE 'Salida'
-                END AS tipo_movimiento,
+                p.arribo_salida,
                 SUM(p.pasajeros) AS cantidad
             FROM permisos p
             JOIN servicios s ON s.id_servicio = p.id_servicio
@@ -166,7 +163,7 @@ class AnaliticasModel
                 e.id_empresa, 
                 DATE(p.fecha_reserva), 
                 pd.id_punto_detencion, 
-                p.es_arribo
+                p.arribo_salida
             ORDER BY fecha DESC;
 
         ");

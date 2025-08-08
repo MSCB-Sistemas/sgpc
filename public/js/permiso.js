@@ -34,6 +34,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
         }
     });
 }
+
 // Chofer -> espera JSON: { success: true, id_chofer, nombre, apellido }
 handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "chofer", "id_chofer", "nombreCompleto");
 
@@ -42,6 +43,9 @@ handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicio", "i
 
 // Recorrido -> espera JSON: { success: true, id_recorrido, nombre }
 handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre");
+
+// Lugar -> espera JSON: { success: true, id_recorrido, nombre }
+handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugar", "id_lugar", "nombre");
 
 // Cargar cales y puntos de detención al seleccionar un recorrido
 document.addEventListener("DOMContentLoaded", function() {
