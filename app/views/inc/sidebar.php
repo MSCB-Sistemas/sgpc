@@ -18,7 +18,7 @@
             </a>
         </li>
         <li>
-            <a class="nav-link text-white" href="<?= URL ?>/analiticas">
+            <a class="nav-link text-white" href="<?= URL ?>/estadisticas">
                 <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                     <use xlink:href="#speedometer2">
                         <symbol id="speedometer2" viewBox="0 0 16 16">
@@ -27,7 +27,7 @@
                         </symbol>
                     </use>
                 </svg>
-                Analiticas
+                Estadisticas
             </a>
         </li>
         <li>

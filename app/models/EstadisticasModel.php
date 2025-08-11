@@ -1,0 +1,287 @@
+<?php
+require_once __DIR__ . '/../config/config.php';
+require_once 'Database.php';
+
+/**
+ * Modelo para obtener analíticas y métricas del sistema.
+ * Contiene métodos para calcular promedios, totales y estadísticas de permisos.
+ */
+class EstadisticasModel 
+{
+    private $db;
+
+    public function __construct()
+    {
+        $this->db = Database::connect();
+    }
+
+    /**
+     * Genera fechas por defecto (últimos 30 días) si no se proporcionan
+     */
+    private function establecerFechasPorDefecto(&$fecha_inicio, &$fecha_fin)
+    {
+        if (!$fecha_fin) {
+            $fecha_fin = date('Y-m-d');
+        }
+
+        if (!$fecha_inicio) {
+            $fecha_inicio = date('Y-m-d', strtotime('-30 days', strtotime($fecha_fin)));
+        }
+    }
+
+    /**
+     * Promedio de permisos emitidos por día
+     */
+    public function getPromedioPermisosPorDia($fecha_inicio = null, $fecha_fin = null): float
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT AVG(cantidad) AS promedio_diario
+            FROM (
+                SELECT DATE(fecha_emision) AS dia, COUNT(*) AS cantidad
+                FROM permisos
+                WHERE activo = 1 AND DATE(fecha_emision) BETWEEN :inicio AND :fin
+                GROUP BY DATE(fecha_emision)
+            ) AS sub
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (float)($resultado['promedio_diario'] ?? 0);
+    }
+
+    /**
+     * Empresa con más permisos diarios en promedio
+     */
+    public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): ?array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT e.nombre, COUNT(p.id_permiso) / COUNT(DISTINCT DATE(p.fecha_reserva)) AS promedio_diario
+            FROM permisos p
+            JOIN servicios s ON p.id_servicio = s.id_servicio
+            JOIN empresas e ON s.id_empresa = e.id_empresa
+            WHERE p.activo = 1 AND DATE(p.fecha_reserva) BETWEEN :inicio AND :fin
+            GROUP BY e.id_empresa
+            ORDER BY promedio_diario DESC
+            LIMIT 1
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Promedio de permisos por tipo
+     */
+    public function getPromedioPermisosPorTipo($fecha_inicio = null, $fecha_fin = null): array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT tipo, COUNT(*) / COUNT(DISTINCT DATE(fecha_reserva)) AS promedio_diario
+            FROM permisos
+            WHERE activo = 1 AND DATE(fecha_reserva) BETWEEN :inicio AND :fin
+            GROUP BY tipo
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Recorrido más utilizado
+     */
+    public function getRecorridoMasUtilizado($fecha_inicio = null, $fecha_fin = null): ?array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT r.nombre, COUNT(*) AS cantidad
+            FROM recorridos_permisos rp
+            JOIN recorridos r ON r.id_recorrido = rp.id_recorrido
+            JOIN permisos p ON p.id_permiso = rp.id_permiso
+            WHERE p.activo = 1 AND DATE(p.fecha_reserva) BETWEEN :inicio AND :fin
+            GROUP BY r.id_recorrido
+            ORDER BY cantidad DESC
+            LIMIT 1
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Punto de detención más utilizado
+     */
+    public function getPuntoMasUtilizado($fecha_inicio = null, $fecha_fin = null): ?array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT pd.nombre, COUNT(*) AS cantidad
+            FROM reservas_puntos rp
+            JOIN puntos_detencion pd ON pd.id_punto_detencion = rp.id_punto_detencion
+            JOIN permisos p ON p.id_permiso = rp.id_permiso
+            WHERE p.activo = 1 AND DATE(p.fecha_reserva) BETWEEN :inicio AND :fin
+            GROUP BY pd.id_punto_detencion
+            ORDER BY cantidad DESC
+            LIMIT 1
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+
+    /**
+     * Obtiene un listado de permisos filtrados por fecha, DNI, tipo, orden y paginación.
+     *
+     * @param string|null $fecha_inicio Fecha inicial para filtrar los permisos.
+     * @param string|null $fecha_fin Fecha final para filtrar los permisos.
+     * @param string|null $dni DNI del chofer (si se busca por chofer).
+     * @param string|null $tipo Tipo de servicio (línea, charter, etc.).
+     * @param string $sort_col Columna por la que se ordenan los resultados.
+     * @param string $sort_dir Dirección de ordenamiento (ASC o DESC).
+     * @param int|null $limit Límite de resultados por página (para paginación).
+     * @param int|null $offset Desplazamiento de la paginación.
+     * @return array Arreglo asociativo con los permisos encontrados.
+     */
+    public function getPermisosFiltrados(
+        $fecha_inicio = null,
+        $fecha_fin = null,
+        $dni = null,
+        $tipo = null,
+        $sort_col = 'fecha',
+        $sort_dir = 'ASC',
+        $limit = null,
+        $offset = null
+    ): array {
+        // Columnas válidas para ordenar
+        $columnasValidas = ['empresa', 'fecha', 'lugar', 'tipo_movimiento', 'cantidad'];
+        $sort_col = in_array($sort_col, $columnasValidas) ? $sort_col : 'fecha';
+        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
+
+        // Consulta base con joins necesarios
+        $sql = "
+            SELECT
+                e.nombre AS empresa,
+                p.fecha_emision AS fecha,
+                l.nombre AS lugar,
+                CASE WHEN p.es_arribo = 1 THEN 'Arribo' ELSE 'Salida' END AS tipo_movimiento,
+                p.pasajeros AS cantidad
+            FROM permisos p
+            INNER JOIN servicios s ON p.id_servicio = s.id_servicio
+            INNER JOIN empresas e ON s.id_empresa = e.id_empresa
+            INNER JOIN lugares l ON p.id_lugar = l.id_lugar
+            LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
+            WHERE p.activo = 1
+        ";
+
+        // Parametros de filtrado
+        $params = [];
+
+        if (!empty($fecha_inicio)) {
+            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
+            $params[':fecha_inicio'] = $fecha_inicio;
+        }
+
+        if (!empty($fecha_fin)) {
+            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
+            $params[':fecha_fin'] = $fecha_fin;
+        }
+
+        if (!empty($dni)) {
+            $sql .= " AND c.dni = :dni";
+            $params[':dni'] = $dni;
+        }
+
+        if (!empty($tipo)) {
+            $sql .= " AND p.tipo = :tipo";
+            $params[':tipo'] = $tipo;
+        }
+
+        // Ordenamiento
+        $sql .= " ORDER BY $sort_col $sort_dir";
+
+        // Paginación (si se usa)
+        if ($limit !== null && $offset !== null) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
+
+        // Preparar consulta
+        $stmt = $this->db->prepare($sql);
+
+        // Asignar parámetros dinámicamente
+        foreach ($params as $key => &$value) {
+            $stmt->bindParam($key, $value);
+        }
+
+        // Asignar paginación si aplica
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
+
+        // Ejecutar y devolver resultados
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Retorna la cantidad total de permisos que coinciden con los filtros aplicados.
+     * Esta función se utiliza para calcular la cantidad de páginas en la paginación.
+     *
+     * @param string|null $fecha_inicio Fecha inicial de filtrado.
+     * @param string|null $fecha_fin Fecha final de filtrado.
+     * @param string|null $dni DNI del chofer si se filtra por chofer.
+     * @param string|null $tipo Tipo de permiso (línea, charter, etc.).
+     * @return int Número total de resultados que coinciden con los filtros.
+     */
+    public function getCantidadPermisosFiltrados($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null): int
+    {
+        // Consulta base con JOIN a choferes
+        $sql = "
+            SELECT COUNT(*)
+            FROM permisos p
+            LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
+            WHERE p.activo = 1
+        ";
+
+        $params = [];
+
+        if (!empty($fecha_inicio)) {
+            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
+            $params[':fecha_inicio'] = $fecha_inicio;
+        }
+
+        if (!empty($fecha_fin)) {
+            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
+            $params[':fecha_fin'] = $fecha_fin;
+        }
+
+        if (!empty($dni)) {
+            $sql .= " AND c.dni = :dni";
+            $params[':dni'] = $dni;
+        }
+
+        if (!empty($tipo)) {
+            $sql .= " AND p.tipo = :tipo";
+            $params[':tipo'] = $tipo;
+        }
+
+        // Ejecutar consulta y retornar el número
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+}
