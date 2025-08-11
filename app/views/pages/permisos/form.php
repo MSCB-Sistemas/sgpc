@@ -1,3 +1,22 @@
+
+<?php if (!empty($datos['errores'])): ?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach ($datos['errores'] as $e): ?>
+                <li><?= htmlspecialchars($e) ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>
+<?php if (!empty($datos['mensajes'])): ?>
+    <div class="alert alert-success">
+        <ul>
+            <?php foreach ($datos['mensajes'] as $e): ?>
+                <li><?= htmlspecialchars($e) ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>
 <form action="<?= $datos['action'] ?>" method="POST" id="permisoForm">
 
     <div class="mb-3 row">
