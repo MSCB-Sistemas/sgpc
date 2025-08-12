@@ -53,9 +53,10 @@ class Permiso extends Control
             'data' => $permisos, 
             'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
                 $id = $fila['id_permiso'];
-                $url = URL . '/permisos';
+                $url = URL . '/permiso';
                 return '
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
+                    <a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a>
                 ';
             } : null,
         ];
@@ -176,24 +177,57 @@ class Permiso extends Control
             $mensajes[] = "Permiso {$idPermiso} creado correctamente.";
             if (!empty($_POST['imprimir'])) {
                 // Generar el PDF
-                $this->generarPDFyMostrar($idPermiso); // función que devuelve la ruta del PDF
+                $this->imprimir($idPermiso); // función que devuelve la ruta del PDF
             }
         }
 
         $this->nuevo($errores, $mensajes);
     }
 
-    public function generarPDFyMostrar($idPermiso) {
-        $datos = $this->model->getPermiso($idPermiso);
+    public function imprimir($idPermiso) {
+        $permiso = $this->model->getPermisoPdf($idPermiso);
+        $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
+        $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
+        $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($idPermiso);
+        $datos = [
+            'id_permiso' => $idPermiso,
+            'tipo' => $permiso['tipo'],
+            'arribo_salida' => $permiso['arribo_salida'],
+            'fecha_reserva' => $permiso['fecha_reserva'],
+            'empresa' => $permiso['empresa'],
+            'dominio' => $permiso['dominio'],
+            'interno' => $permiso['interno'],
+            'pasajeros' => $permiso['pasajeros'],
+            'observacion' => $permiso['observacion'],
+            'calles_recorrido' => $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles',
+            'paradas' => $paradas,
+            'nombre_chofer' => $permiso['nombre_chofer'],
+            'apellido_chofer' => $permiso['apellido_chofer'],
+            'dni_chofer' => $permiso['dni_chofer'],
+            'usuario_nombre' => $permiso['usuario_nombre'],
+            'usuario_apellido' => $permiso['usuario_apellido'],
+            'usuario_cargo' => $permiso['usuario_cargo'],
+            'usuario_sector' => $permiso['usuario_sector']
+        ];
 
-        // Cargar plantilla en variable
+        // Cargar plantilla
         ob_start();
         include APP . '/views/pages/partials/permisoPdf.php';
         $html = ob_get_clean();
 
+        // Cargar css
+        $cssPath = APP . '/../public/css/permisoPdf.css';
+        $css = file_get_contents($cssPath);
+
         // Generar PDF
-        $mpdf = new Mpdf();
-        $mpdf->WriteHTML($html);
+        $mpdf = new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+        ]);
+
+        $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+
         $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
     }
 

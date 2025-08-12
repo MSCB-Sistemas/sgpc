@@ -79,6 +79,37 @@ class PermisoModel
         return $stmt->fetch();
     }
 
+    public function getPermisoPdf($id): array
+    {
+        $stmt = $this->db->prepare("SELECT 
+            p.tipo ,
+            p.arribo_salida ,
+            DATE(p.fecha_reserva) as fecha_reserva ,
+            e.nombre as empresa ,
+            s.dominio ,
+            s.interno ,
+            p.pasajeros ,
+            p.observacion ,
+            rp.id_recorrido ,
+            c.nombre as nombre_chofer,
+            c.apellido as apellido_chofer,
+            c.dni as dni_chofer,
+            u.nombre as usuario_nombre,
+            u.apellido as usuario_apellido,
+            u.cargo as usuario_cargo,
+            u.sector as usuario_sector
+            from permisos p
+            inner join choferes c on p.id_chofer = c.id_chofer
+            inner join usuarios u on p.id_usuario = u.id_usuario
+            inner join servicios s on p.id_servicio = s.id_servicio 
+            inner join empresas e on s.id_empresa = e.id_empresa 
+            inner join recorridos_permisos rp on p.id_permiso = rp.id_permiso
+            where p.id_permiso = :id;
+            ");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch();
+    }
+
     public function getPermisosByChofer($id_chofer): array
     {
         $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_chofer = :id");

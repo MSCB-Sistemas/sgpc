@@ -16,6 +16,13 @@
       $this->load_view('inicio', $datos);
     }
 
+    public function pdf()
+    {
+
+      $this->load_view('partials/permisoPdf');
+
+    }
+
     /**public function login()
     {
       $datos = [
