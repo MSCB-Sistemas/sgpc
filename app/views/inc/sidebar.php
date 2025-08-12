@@ -96,6 +96,7 @@
                     <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
                     <li><a href="<?= URL ?>/recorrido" class="nav-link text-white">Recorridos</a></li>
                     <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="<?= URL ?>/lugar" class="nav-link text-white">Lugares</a></li>
                 </ul>
             </div>
         </li>

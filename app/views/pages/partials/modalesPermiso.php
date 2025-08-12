@@ -27,6 +27,27 @@
   </div>
 </div>
 
+<!-- Modal Chofer -->
+<div class="modal fade" id="modalLugar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formNuevoLugar">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo Lugar</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre" required>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Servicio -->
 <div class="modal fade" id="modalServicio" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">

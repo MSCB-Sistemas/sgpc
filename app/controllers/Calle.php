@@ -77,8 +77,8 @@ class Calle extends Control
 
             if (!empty($errores)) {
                 $this->load_view('calle/form', [
-                    'title' => 'Crear nuevo calle',
-                    'action' => URL . '/calle/guardar',
+                    'title' => 'Crear nueva calle',
+                    'action' => URL . '/calle/save',
                     'values' => $_POST,
                     'errores' => $errores,
                 ]);
@@ -136,8 +136,8 @@ class Calle extends Control
                 return;
             }
 
-            if ($this->model->updateCalle($id,  $nombre)) {
-                header("Location: " . URL . "/calle/index");
+            if ($this->model->updateCalle($id,  nombre_calle: $nombre)) {
+                header("Location: " . URL . "/calle");
                 exit;
             } else {
                 die("Error al actualizar calle");
@@ -152,9 +152,8 @@ class Calle extends Control
         if (!$eliminado) {
             die("No se puede eliminar la calle.");
         }
-        $this->model->deleteCalle($id);
-            header("Location: " . URL . "/calle");
-            exit;
+        header("Location: " . URL . "/calle");
+        exit;
         
         
     }

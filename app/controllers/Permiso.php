@@ -2,6 +2,9 @@
 /**
  * Controlador para gestionar operaciones relacionadas con los permisos.
  */
+require_once __DIR__ . '/../../vendor/autoload.php';
+use Mpdf\Mpdf;
+
 class Permiso extends Control
 {
     private PermisoModel $model;
@@ -28,8 +31,10 @@ class Permiso extends Control
                 'Servicio',
                 'Dominio',
                 'Empresa',
+                'Pasajeros',
+                'Origen/Destino',
                 'Observación',
-                'Arribo'
+                'Arribo/Salida'
             ],
             'columnas_claves' => [
                 'tipo',
@@ -40,8 +45,10 @@ class Permiso extends Control
                 'servicio_interno',
                 'servicio_dominio',
                 'empresa_nombre',
+                'pasajeros',
+                'lugar',
                 'observacion',
-                'arribo'
+                'arribo_salida'
             ],
             'data' => $permisos, 
             'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
@@ -71,7 +78,7 @@ class Permiso extends Control
     }
 
     // Mostrar formulario para crear permiso
-    public function nuevo()
+    public function nuevo($errores = [], $mensajes = [])
     {
         $servicios = $this->load_model('ServicioModel')->getAllServicios();
         $recorridos = $this->load_model('RecorridoModel')->getAllRecorridos();
@@ -80,6 +87,7 @@ class Permiso extends Control
         $empresas = $this->load_model('EmpresaModel')->getAllEmpresas();
         $calles = $this->load_model('CalleModel')->getAllCalles();
         $hoteles = $this->load_model('HotelesModel')->getAllHoteles();
+        $lugares = $this->load_model('LugarModel')->getAllLugares();
 
         $this->load_view('permisos/form', [
             'title' => 'Nuevo Permiso',
@@ -92,45 +100,101 @@ class Permiso extends Control
             'empresas' => $empresas,
             'calles' => $calles,
             'hoteles'=> $hoteles,
-            'errores' => []
+            'lugares' => $lugares,
+            'errores' => $errores,
+            'mensajes' => $mensajes
         ]);
     }
+    
 
     // Procesar creación
     public function store()
     {
         $id_chofer = $_POST['id_chofer'] ?? null;
-        $id_usuario = $_POST['id_usuario'] ?? null;
+        $id_usuario = $_SESSION['usuario_id']  ?? null;
         $id_servicio = $_POST['id_servicio'] ?? null;
-        $tipo = $_POST['tipo'] ?? '';
+        $id_lugar = $_POST['id_lugar'] ?? null;
+        $tipo = $_POST['tipo_permiso'] ?? '';
         $fecha_reserva = $_POST['fecha_reserva'] ?? '';
-        $fecha_emision = $_POST['fecha_emision'] ?? '';
-        $es_arribo = isset($_POST['es_arribo']) ? 1 : 0;
+        $fecha_emision = date('Y-m-d H:i:s');
+        $arribo_salida = $_POST['arribo_salida'] ?? '';
+        $id_recorrido = $_POST['id_recorrido'] ?? null;
         $observacion = $_POST['observacion'] ?? null;
+        $puntos_detencion = $_POST['puntos_detencion'] ?? '';
+        $puntos_detencion = json_decode($puntos_detencion, true);
+        $pasajeros = $_POST['pasajeros'] ?? 0;
+        $errores = [];
+        $mensajes = [];
 
-        if (!$id_chofer || !$id_usuario || !$id_servicio || $tipo === '' || $fecha_reserva === '' || $fecha_emision === '') {
-            $this->load_view('permisos/create', [
-                'error' => 'Todos los campos obligatorios deben estar completos.',
-                'data' => $_POST
-            ]);
+        $modelRecorridosPermisos = $this->load_model('RecorridosPermisosModel');
+        $modelReservasPuntos = $this->load_model('ReservasPuntosModel');
+
+        if (!$id_chofer || !$id_usuario || !$id_servicio || $tipo === '' || $fecha_reserva === '' || $arribo_salida === '' || !$id_lugar) {
+            
+            var_dump($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion, $pasajeros, $id_lugar,$puntos_detencion,$id_recorrido);
+            
             return;
         }
 
-        $this->model->insertPermiso(
+       $idPermiso = $this->model->insertPermiso(
             $id_chofer,
             $id_usuario,
             $id_servicio,
             $tipo,
             $fecha_reserva,
             $fecha_emision,
-            $es_arribo,
-            $observacion
+            $arribo_salida,
+            $observacion,
+            $pasajeros,
+            $id_lugar
         );
 
-        $this->load_view('permisos/index', [
-            'message' => 'Permiso creado correctamente.',
-            'permisos' => $this->model->getAllPermisos()
-        ]);
+        if (!$idPermiso) {
+            $errores[] = 'Error al crear el permiso.';
+        }
+
+        $idPermisoRecorrido = $modelRecorridosPermisos->insertRecorrido($idPermiso, $id_recorrido);
+        if (!$idPermisoRecorrido) {
+            $errores[] = 'Error al asociar el recorrido al permiso.';
+        }
+
+        foreach ($puntos_detencion as $id_punto_detencion => $punto) {
+            if (!empty($punto['horario'])) {
+                $fecha_horario = $fecha_reserva . ' ' . $punto['horario'] . ':00';
+                $id_reserva = $modelReservasPuntos->insertReservaPunto(
+                   $fecha_horario,
+                   isset($punto['hotel']) ? $punto['hotel'] : null,
+                   $idPermiso,
+                   $id_punto_detencion
+                );
+                if(!$id_reserva) {
+                    $errores[] = "Error al crear la reserva para el punto de detención {$id_punto_detencion} en el horario {$punto['horario']}.";
+                }
+            }
+        }
+        if (empty($errores)) {
+            $mensajes[] = "Permiso {$idPermiso} creado correctamente.";
+            if (!empty($_POST['imprimir'])) {
+                // Generar el PDF
+                $this->generarPDFyMostrar($idPermiso); // función que devuelve la ruta del PDF
+            }
+        }
+
+        $this->nuevo($errores, $mensajes);
+    }
+
+    public function generarPDFyMostrar($idPermiso) {
+        $datos = $this->model->getPermiso($idPermiso);
+
+        // Cargar plantilla en variable
+        ob_start();
+        include APP . '/views/pages/partials/permisoPdf.php';
+        $html = ob_get_clean();
+
+        // Generar PDF
+        $mpdf = new Mpdf();
+        $mpdf->WriteHTML($html);
+        $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
     }
 
     // Mostrar formulario para editar permiso
@@ -192,19 +256,11 @@ class Permiso extends Control
     public function delete($id)
     {
         $eliminado = $this->model->deletePermiso($id);
-        $permisos = $this->model->getAllPermisos();
 
         if (!$eliminado) {
-            $this->load_view('permisos/index', [
-                'error' => 'No se pudo desactivar el permiso.',
-                'permisos' => $permisos
-            ]);
-            return;
+            die ('No se pudo desactivar el permiso.');
         }
-
-        $this->load_view('permisos/index', [
-            'message' => 'Permiso desactivado correctamente.',
-            'permisos' => $permisos
-        ]);
+        header("Location: " . URL . "/permiso");
+        exit;
     }
 }

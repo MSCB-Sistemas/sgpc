@@ -34,6 +34,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
         }
     });
 }
+
 // Chofer -> espera JSON: { success: true, id_chofer, nombre, apellido }
 handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "chofer", "id_chofer", "nombreCompleto");
 
@@ -43,12 +44,38 @@ handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicio", "i
 // Recorrido -> espera JSON: { success: true, id_recorrido, nombre }
 handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre");
 
+// Lugar -> espera JSON: { success: true, id_recorrido, nombre }
+handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugar", "id_lugar", "nombre");
+
 // Cargar cales y puntos de detención al seleccionar un recorrido
 document.addEventListener("DOMContentLoaded", function() {
   const selectRecorrido = document.getElementById("recorrido");
   const accordionRecorrido = document.getElementById("accordionRecorrido");
   const tablaCalles = document.querySelector("#tablaCalles tbody");
   const tablaPuntos = document.querySelector("#tablaPuntos tbody");
+  const formPermiso = document.getElementById("permisoForm");
+  
+  formPermiso.addEventListener("submit", function(event) {
+        event.preventDefault(); // Evita el envío inmediato
+
+        if (confirm("¿Desea imprimir el permiso después de guardarlo?")) {
+            // Si el usuario quiere imprimir, agregamos un input oculto
+            let input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "imprimir";
+            input.value = "1";
+            formPermiso.appendChild(input);
+        }
+        
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "puntos_detencion";
+        hidden.value = JSON.stringify(puntosData);
+        formPermiso.appendChild(hidden);
+
+        formPermiso.submit(); // Ahora sí enviamos el formulario
+    });
+
    // clave = id_punto, valor = { hotel: X, horario: Y }
   let puntosData = {};
 
@@ -148,15 +175,5 @@ document.addEventListener("DOMContentLoaded", function() {
       puntosData[id] = puntosData[id] || {};
       puntosData[id].horario = input.value;
     }
-  });
-
-  // Al enviar formulario, serializamos puntosData en un input oculto
-  const form = document.getElementById("permisoForm");
-  form.addEventListener("submit", function() {
-    const hidden = document.createElement("input");
-    hidden.type = "hidden";
-    hidden.name = "puntos_detencion";
-    hidden.value = JSON.stringify(puntosData);
-    form.appendChild(hidden);
   });
 });
