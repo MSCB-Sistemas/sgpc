@@ -1,4 +1,7 @@
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">📊 Panel de Estadisticas</h1>
 <?php
+
 // Variables para filtrar y error
 $buscar_por = $_GET['buscar_por'] ?? '';
 $dni = trim($_GET['dni'] ?? '');
@@ -66,9 +69,18 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
 
 </style>
 
-<div class="container mt-4">
-    <h1 class="mb-4 text-center">📈 Panel de Estadisticas</h1>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="tablas-tab" data-bs-toggle="tab" data-bs-target="#tablas" type="button" role="tab">Datos</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button" role="tab">Resumen</button>
+        </li>
+    </ul>
 
+    <div class="tab-content mt-4">
+        <div class="tab-pane fade show active" id="tablas" role="tabpanel">
+            <!-- Formulario de filtros -->
     <form method="GET" class="row g-3 mb-4 justify-content-center">
         <div class="col-auto">
             <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
@@ -151,9 +163,9 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
             <?php for ($i = 1; $i <= $datos['total_paginas']; $i++): ?>
                 <li>
                     <a href="?<?= http_build_query(array_merge($_GET, ['pagina' => $i])) ?>"
-   class="pagina-link <?= ($i == ($datos['pagina_actual'] ?? 1)) ? 'pagina-activa' : '' ?>">
-    <?= $i ?>
-</a>
+                        class="pagina-link <?= ($i == ($datos['pagina_actual'] ?? 1)) ? 'pagina-activa' : '' ?>">
+                            <?= $i ?>
+                    </a>
 
                 </li>
             <?php endfor; ?>
@@ -181,3 +193,111 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
     return "<a href=\"$link\">$etiqueta</a>";
 }
 ?>
+
+        </div>
+        <div class="tab-pane fade" id="resumen" role="tabpanel">
+            <!-- Fila de métricas principales -->
+             <div class="dropdown mb-4">
+                <label for="buscar_por" class="form-label">Filtrar por </label>
+                <button class="btn btn-secondary dropdown-toggle" style="background-color:#FFFFFF; color:black;"  type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dia
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="#">Dia</a></li>
+                    <li><a class="dropdown-item" href="#">Mes</a></li>
+                    <li><a class="dropdown-item" href="#">Año</a></li>
+                </ul>
+            </div>
+
+     <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <div class="card text-white" style="background: linear-gradient(135deg,#94BBE9,#EEAECA); height:185px;">
+                    <div class="card-body text-center">
+                        <h3>📅</h3>
+                        <h5>Promedio Diario de Permisos</h5>
+                        <h2><?= number_format($datos['promedio_diario'] ?? 0, 2) ?></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card text-white" style="background: linear-gradient(135deg,#43e97b,#38f9d7); height:185px;">
+                    <div class="card-body text-center">
+                        <h3>🏢</h3>
+                        <h5>Empresa más activa</h5>
+                        <h6><?= $datos['empresa_mas_usada']['nombre'] ?? 'N/A' ?></h6>
+                        <small><?= number_format($datos['empresa_mas_usada']['promedio_diario'] ?? 0, 2) ?> permisos/día</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white" style="background: linear-gradient(135deg,#6a11cb,#2575fc); height:185px;">
+                    <div class="card-body text-center">
+                        <h3>📅</h3>
+                        <h5>Reservas Actuales</h5>
+                        <h2><?= count($datos['reservas_desde_hoy'] ?? []) ?></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white" style="background: linear-gradient(#e66465, #9198e5); height:185px;">
+                    <div class="card-body text-center">
+                        <h3>🏨</h3>
+                        <h4>Hotel con mas Reservas</h4>
+                        <h5><?= $datos['hoteles_usados'][0]['nombre_hotel'] ?? 'N/A' ?></h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white" style="background: linear-gradient(#FF5E00,#B81D89,#47C447); height:185px;">
+                    <div class="card-body text-center">
+                        <h3>🚍</h3>
+                        <h4>Servicio más usado</h4>
+                        <h5><?= ucfirst($datos['por_tipo']['tipo'] ?? 'N/A') ?></h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card text-white" style="background: linear-gradient(#57C785, #8ED938); height:185px;">
+                    <div class="card-body text-center">
+                        <h3>🗺️</h3>
+                        <h5>Recorrido más usado</h5>
+                        <h6><?= $datos['recorrido_mas_usado']['nombre'] ?? 'N/A' ?></h6>
+                        <small><?= $datos['recorrido_mas_usado']['cantidad'] ?? 0 ?> veces</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Segunda fila de métricas -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card text-white" style="background: linear-gradient(to right,#8360c3,#2ebf91); height:185px;">
+                <div class="card-body text-center">
+                    <h3>📍</h3>
+                    <h5>Parada más usada</h5>
+                    <h6><?= $datos['punto_mas_usado']['nombre'] ?? 'N/A' ?></h6>
+                    <small><?= $datos['punto_mas_usado']['cantidad'] ?? 0 ?> veces</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card text-white" style="background: linear-gradient(to right,#ff758c,#D143D1); height:185px;">
+                <div class="card-body text-center">
+                    <h3>📊</h3>
+                    <h5>Tipos de Permisos</h5>
+                    <?php if (!empty($datos['promedio_por_tipo'])): ?>
+                        <ul class="list-unstyled mb-0">
+                            <?php foreach ($datos['promedio_por_tipo'] as $tipo): ?>
+                                <li><?= ucfirst($tipo['tipo']) ?>: <?= number_format($tipo['promedio_diario'], 2) ?> / día</li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>No hay datos.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    

@@ -46,7 +46,7 @@ class Estadisticas extends Control
 
             // Paginación
             $pagina_actual     = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
-            $limite_por_pagina = 20;
+            $limite_por_pagina = 10;
             $offset            = ($pagina_actual - 1) * $limite_por_pagina;
 
             // Total de resultados y total de páginas para la paginación

@@ -6,7 +6,7 @@ class Inicio extends Control
     public function __construct()
     {
         $this->requireLogin();
-        $this->modelo = $this->load_model('PermisoModel');
+        $this->modelo = $this->load_model('EstadisticasModel');
     }
 
     public function index()
