@@ -20,6 +20,15 @@ class Estadisticas extends Control
         $buscar_por   = $_GET['buscar_por'] ?? null;
         $dni          = $_GET['dni'] ?? null;
         $tipo         = $_GET['tipo'] ?? null;
+        $fecha_inicio_resumen = $_GET['fecha_inicio_resumen'] ?? null;
+        $fecha_fin_resumen    = $_GET['fecha_fin_resumen'] ?? null;
+
+        if (!$fecha_inicio_resumen) {
+        $fecha_inicio_resumen = '2000-01-01';
+        }
+        if (!$fecha_fin_resumen) {
+            $fecha_fin_resumen = date('Y-m-d');
+        }
 
         // Validar si se busca por chofer pero no se completó DNI
         if ($buscar_por === 'chofer' && empty($dni)) {
@@ -70,6 +79,7 @@ class Estadisticas extends Control
 
         // Preparar datos para la vista
         $datos = [
+            'title' => 'Estadísticas',
             'movimientos'   => $movimientos,
             'fecha_inicio'  => $fecha_inicio,
             'fecha_fin'     => $fecha_fin,
@@ -81,7 +91,10 @@ class Estadisticas extends Control
             'pagina_actual' => $pagina_actual ?? 1,
             'total_paginas' => $total_paginas ?? 1,
             'error'         => $error,
-        ];
+            'total_resultados' => $total_resultados ?? 0,
+            'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
+            'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+        ];  
 
         $this->load_view('estadisticas', $datos);
     }

@@ -54,18 +54,18 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
     border: 1px solid #ccc;
     border-radius: 4px;
     transition: background 0.3s ease;
-}
+    }
 
-.pagination a.pagina-link:hover {
-    background: #e9ecef;
-}
+    .pagination a.pagina-link:hover {
+        background: #e9ecef;
+    }
 
-.pagination a.pagina-activa {
-    background-color: #030c14ff;
-    color: white;
-    border-color: #061422ff;
-    font-weight: bold;
-}
+    .pagination a.pagina-activa {
+        background-color: #030c14ff;
+        color: white;
+        border-color: #061422ff;
+        font-weight: bold;
+    }
 
 </style>
 
@@ -81,48 +81,48 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
     <div class="tab-content mt-4">
         <div class="tab-pane fade show active" id="tablas" role="tabpanel">
             <!-- Formulario de filtros -->
-    <form method="GET" class="row g-3 mb-4 justify-content-center">
-        <div class="col-auto">
-            <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
-            <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?= htmlspecialchars($datos['fecha_inicio'] ?? '') ?>">
-        </div>
+        <form method="GET" class="row g-3 mb-4 justify-content-center">
+            <div class="col-auto">
+                <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?= htmlspecialchars($datos['fecha_inicio'] ?? '') ?>">
+            </div>
 
-        <div class="col-auto">
-            <label for="fecha_fin" class="form-label">Fecha Fin</label>
-            <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?= htmlspecialchars($datos['fecha_fin'] ?? '') ?>">
-        </div>
+            <div class="col-auto">
+                <label for="fecha_fin" class="form-label">Fecha Fin</label>
+                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?= htmlspecialchars($datos['fecha_fin'] ?? '') ?>">
+            </div>
 
-        <div class="col-auto">
-            <label for="buscar_por" class="form-label">Buscar por</label>
-            <select name="buscar_por" id="buscar_por" class="form-select" onchange="this.form.submit()">
-                <option value="">-- Seleccionar --</option>
-                <option value="chofer" <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'selected' : '' ?>>Chofer</option>
-                <option value="tipo" <?= ($datos['buscar_por'] ?? '') === 'tipo' ? 'selected' : '' ?>>Tipo</option>
-            </select>
-        </div>
+            <div class="col-auto">
+                <label for="buscar_por" class="form-label">Buscar por</label>
+                <select name="buscar_por" id="buscar_por" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="chofer" <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'selected' : '' ?>>Chofer</option>
+                    <option value="tipo" <?= ($datos['buscar_por'] ?? '') === 'tipo' ? 'selected' : '' ?>>Tipo</option>
+                </select>
+            </div>
 
-        <!-- Campo DNI solo visible si buscar_por es chofer -->
-        <div class="col-auto" id="campo_dni" style="display: <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'block' : 'none' ?>;">
-            <label for="dni" class="form-label">DNI del Chofer</label>
-            <input type="text" class="form-control" name="dni" id="dni" value="<?= htmlspecialchars($datos['dni'] ?? '') ?>">
-        </div>
+            <!-- Campo DNI solo visible si buscar_por es chofer -->
+            <div class="col-auto" id="campo_dni" style="display: <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'block' : 'none' ?>;">
+                <label for="dni" class="form-label">DNI del Chofer</label>
+                <input type="text" class="form-control" name="dni" id="dni" value="<?= htmlspecialchars($datos['dni'] ?? '') ?>">
+            </div>
 
-        <!-- Campo Tipo visible si buscar_por es chofer o tipo -->
-        <div class="col-auto" id="campo_tipo" style="display: <?= in_array($datos['buscar_por'] ?? '', ['chofer','tipo']) ? 'block' : 'none' ?>;">
-            <label for="tipo" class="form-label">Tipo de Servicio</label>
-            <select name="tipo" id="tipo" class="form-select">
-                <option value="">-- Todos --</option>
-                <option value="linea" <?= ($datos['tipo'] ?? '') === 'linea' ? 'selected' : '' ?>>Línea</option>
-                <option value="charter" <?= ($datos['tipo'] ?? '') === 'charter' ? 'selected' : '' ?>>Charter</option>
-                <option value="otros" <?= ($datos['tipo'] ?? '') === 'otros' ? 'selected' : '' ?>>Otros</option>
-            </select>
-        </div>
+            <!-- Campo Tipo visible si buscar_por es chofer o tipo -->
+            <div class="col-auto" id="campo_tipo" style="display: <?= in_array($datos['buscar_por'] ?? '', ['chofer','tipo']) ? 'block' : 'none' ?>;">
+                <label for="tipo" class="form-label">Tipo de Servicio</label>
+                <select name="tipo" id="tipo" class="form-select">
+                    <option value="">-- Todos --</option>
+                    <option value="linea" <?= ($datos['tipo'] ?? '') === 'linea' ? 'selected' : '' ?>>Línea</option>
+                    <option value="charter" <?= ($datos['tipo'] ?? '') === 'charter' ? 'selected' : '' ?>>Charter</option>
+                    <option value="otros" <?= ($datos['tipo'] ?? '') === 'otros' ? 'selected' : '' ?>>Otros</option>
+                </select>
+            </div>
 
-        <div class="col-auto align-self-end">
-            <!-- Boton con name="filtrar" para detectar submit intencional -->
-            <button type="submit" name="filtrar" class="btn btn-primary">Filtrar</button>
-        </div>
-    </form>
+            <div class="col-auto align-self-end">
+                <!-- Boton con name="filtrar" para detectar submit intencional -->
+                <button type="submit" name="filtrar" class="btn btn-primary">Filtrar</button>
+            </div>
+        </form>
 
     <!-- Mostrar error solo si hay -->
     <?php if ($error): ?>
@@ -194,27 +194,87 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
 }
 ?>
 
-        </div>
-        <div class="tab-pane fade" id="resumen" role="tabpanel">
-            <!-- Fila de métricas principales -->
-             <div class="dropdown mb-4">
-                <label for="buscar_por" class="form-label">Filtrar por </label>
-                <button class="btn btn-secondary dropdown-toggle" style="background-color:#FFFFFF; color:black;"  type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dia
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">Dia</a></li>
-                    <li><a class="dropdown-item" href="#">Mes</a></li>
-                    <li><a class="dropdown-item" href="#">Año</a></li>
-                </ul>
-            </div>
+    <div class="tab-pane fade" id="resumen" role="tabpanel">
+        <!-- Fila de métricas principales -->
+        <div>
+            <form id="form-filtro-resumen" class="row g-2 mb-3 justify-content-left">
+                <div class="col-auto">
+                    <label for="fecha_inicio_resumen" class="form-label">Fecha Inicio</label>
+                    <input type="date"
+                        class="form-control"
+                        name="fecha_inicio_resumen"
+                        id="fecha_inicio_resumen"
+                        value="<?= htmlspecialchars($_GET['fecha_inicio_resumen'] ?? '') ?>">
+                </div>
 
-     <div class="row mb-4">
+                <div class="col-auto">
+                    <label for="fecha_fin_resumen" class="form-label">Fecha Fin</label>
+                    <input type="date"
+                        class="form-control"
+                        name="fecha_fin_resumen"
+                        id="fecha_fin_resumen"
+                        value="<?= htmlspecialchars($_GET['fecha_fin_resumen'] ?? '') ?>">
+                </div>
+
+                <div class="col-auto align-self-end">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+            </form>
+        </div>
+        <body> <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('form-filtro-resumen');
+    const contenedor = document.getElementById('contenedor-resumen');
+
+    // Restaurar el tab activo guardado
+    const lastTab = localStorage.getItem('activeTab');
+    if (lastTab) {
+        const tabElement = document.querySelector(`[data-bs-target="${lastTab}"]`);
+        if (tabElement) {
+            new bootstrap.Tab(tabElement).show();
+        }
+    }
+
+    // Escuchar cambio de pestaña y guardarlo
+    const tabLinks = document.querySelectorAll('[data-bs-toggle="tab"]');
+    tabLinks.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            const activeTab = e.target.getAttribute('data-bs-target');
+            localStorage.setItem('activeTab', activeTab);
+        });
+    });
+
+    // AJAX filtrado
+    if (form && contenedor) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch('resumen_datos.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text())
+            .then(html => {
+                contenedor.innerHTML = html;
+            })
+            .catch(err => {
+                contenedor.innerHTML = "<p class='text-danger'>Error al cargar datos</p>";
+                console.error(err);
+            });
+        });
+    }
+});
+</script>
+</body>
+
+    <div class="row mb-4">
             <div class="col-md-6 mb-3">
                 <div class="card text-white" style="background: linear-gradient(135deg,#94BBE9,#EEAECA); height:185px;">
                     <div class="card-body text-center">
                         <h3>📅</h3>
-                        <h5>Promedio Diario de Permisos</h5>
+                        <h5>Promedio de Permisos entre fechas</h5>
                         <h2><?= number_format($datos['promedio_diario'] ?? 0, 2) ?></h2>
                     </div>
                 </div>
@@ -223,8 +283,9 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
                 <div class="card text-white" style="background: linear-gradient(135deg,#43e97b,#38f9d7); height:185px;">
                     <div class="card-body text-center">
                         <h3>🏢</h3>
-                        <h5>Empresa más activa</h5>
-                        <h6><?= $datos['empresa_mas_usada']['nombre'] ?? 'N/A' ?></h6>
+                        <h4>Empresa más activa</h4>
+                        <h5><?= $datos['empresa_mas_usada']['nombre'] ?? 'N/A' ?></h5>
+                        <h6>Total de Permisos:  <?= $datos['empresa_mas_usada']['total'] ?? 0 ?></h6>
                         <small><?= number_format($datos['empresa_mas_usada']['promedio_diario'] ?? 0, 2) ?> permisos/día</small>
                     </div>
                 </div>
@@ -233,8 +294,8 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
                 <div class="card text-white" style="background: linear-gradient(135deg,#6a11cb,#2575fc); height:185px;">
                     <div class="card-body text-center">
                         <h3>📅</h3>
-                        <h5>Reservas Actuales</h5>
-                        <h2><?= count($datos['reservas_desde_hoy'] ?? []) ?></h2>
+                        <h5>Promedio de reservas</h5>
+                        <h2><?= count($datos['promedio_reservas'] ?? []) ?></h2>
                     </div>
                 </div>
             </div>
@@ -244,6 +305,8 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
                         <h3>🏨</h3>
                         <h4>Hotel con mas Reservas</h4>
                         <h5><?= $datos['hoteles_usados'][0]['nombre_hotel'] ?? 'N/A' ?></h5>
+                        <h5><h5><?= $datos['hoteles_usados'][0]['total'] ?? 'N/A' ?></h5></h5>
+                        <h5><h5><?= $datos['hoteles_usados'][0]['promedio'] ?? 'N/A' ?></h5></h5>
                     </div>
                 </div>
             </div>
@@ -298,6 +361,9 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
                 </div>
             </div>
         </div>
+        
     </div>
+    </div>
+</div>
+</div>
 
-    

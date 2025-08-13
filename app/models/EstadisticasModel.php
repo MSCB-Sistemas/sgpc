@@ -57,14 +57,16 @@ class EstadisticasModel
      */
     public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): ?array
     {
-        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
-
         $stmt = $this->db->prepare("
-            SELECT e.nombre, COUNT(p.id_permiso) / COUNT(DISTINCT DATE(p.fecha_reserva)) AS promedio_diario
+            SELECT 
+                e.nombre, 
+                COUNT(p.id_permiso) AS total,
+                COUNT(p.id_permiso) / COUNT(DISTINCT DATE(p.fecha_reserva)) AS promedio_diario
             FROM permisos p
             JOIN servicios s ON p.id_servicio = s.id_servicio
             JOIN empresas e ON s.id_empresa = e.id_empresa
-            WHERE p.activo = 1 AND DATE(p.fecha_reserva) BETWEEN :inicio AND :fin
+            WHERE p.activo = 1 
+            AND DATE(p.fecha_reserva) BETWEEN :inicio AND :fin
             GROUP BY e.id_empresa
             ORDER BY promedio_diario DESC
             LIMIT 1
@@ -74,6 +76,7 @@ class EstadisticasModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
+
 
     /**
      * Promedio de permisos por tipo
@@ -348,40 +351,6 @@ class EstadisticasModel
 
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC); // solo un registro
-    }
-
-
-
-
-    /**
-     * Obtiene la empresa más frecuente en los permisos.
-     * @return array
-     */
-    public function getEmpresasMasFrecuentes($fecha_inicio = null, $fecha_fin = null, $limit = 5): array {
-        // Si no se pasa fecha, por defecto el último mes
-        if (!$fecha_inicio || !$fecha_fin) {
-            $fecha_fin = date('Y-m-d');
-            $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
-        }
-
-        $stmt = $this->db->prepare("
-            SELECT e.nombre AS nombre_empresa, COUNT(*) AS cantidad
-            FROM permisos p
-            JOIN servicios s ON p.id_servicio = s.id_servicio
-            JOIN empresas e ON s.id_empresa = e.id_empresa
-            WHERE p.activo = 1
-            AND DATE(p.fecha_reserva) BETWEEN :fecha_inicio AND :fecha_fin
-            GROUP BY e.nombre
-            ORDER BY cantidad DESC
-            LIMIT :limit
-        ");
-
-        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
-        $stmt->bindValue(':fecha_fin', $fecha_fin);
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 

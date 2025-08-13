@@ -9,15 +9,17 @@
                 <div class="card-header bg-info text-white">📅 Reservas Programadas</div>
                 <div class="card-body" style="max-height: 300px; overflow-y: auto;">
                     <?php if (!empty($datos['reservas_desde_hoy'])): ?>
-                        <ul class="list-group list-group-flush">
-                            <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
+                        <ul id="listaReservas" class="list-group list-group-flush">
+                            <?php if (!empty($datos['reservas_desde_hoy'])): ?>
+                                <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
+                                    <li class="list-group-item">
                                         <strong><?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong><br>
-                                        <small class="text-muted">📍 <?= $r['punto'] ?> | 🛣️ <?= $r['calle'] ?></small>
-                                    </div>
-                                </li>
-                            <?php endforeach; ?>
+                                        <strong >📍 <?= $r['punto'] ?> | 🛣️ <?= $r['calle'] ?></strong>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li class="list-group-item text-muted">No hay reservas futuras.</li>
+                            <?php endif; ?>
                         </ul>
                     <?php else: ?>
                         <p class="text-muted">No hay reservas futuras.</p>
@@ -26,6 +28,40 @@
             </div>
         </div>
     </div>
+    <body>  
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const buscador = document.getElementById('buscarReservas');
+                const items = document.querySelectorAll('#listaReservas li');
+
+                buscador.addEventListener('keyup', function () {
+                    const filtro = this.value.toLowerCase();
+                    let visibles = 0;
+
+                    items.forEach(function (item) {
+                        const texto = item.innerText.toLowerCase();
+                        const coincide = texto.includes(filtro);
+                        item.style.display = coincide ? '' : 'none';
+                        if (coincide) visibles++;
+                    });
+
+                    // Si no hay coincidencias, mostramos un mensaje
+                    if (visibles === 0) {
+                        if (!document.getElementById('sinResultados')) {
+                            const li = document.createElement('li');
+                            li.id = 'sinResultados';
+                            li.className = 'list-group-item text-muted';
+                            li.textContent = 'No se encontraron resultados.';
+                            document.getElementById('listaReservas').appendChild(li);
+                        }
+                    } else {
+                        const sinResultados = document.getElementById('sinResultados');
+                        if (sinResultados) sinResultados.remove();
+                    }
+                });
+            });
+        </script>
+    </body>
 </div>
 
 
