@@ -157,5 +157,27 @@ class ReservasPuntos extends Control
         ]);
     }
 
+    public function horariosDisponibles($id_punto, $fecha)
+    {
+        // Generar todos los horarios fijos (06:00 a 23:30)
+        $horarios = [];
+        $horaInicio = strtotime('06:00');
+        $horaFin = strtotime('23:30');
+
+        for ($t = $horaInicio; $t <= $horaFin; $t += 1800) { // 1800 seg = 30 min
+            $horarios[] = date('H:i', $t);
+        }
+
+        // Consultar horarios ocupados
+        $ocupados = $this->model->getHorariosPunto($id_punto, $fecha);
+
+        // Filtrar horarios libres
+        $libres = array_values(array_diff($horarios, $ocupados));
+
+        header('Content-Type: application/json');
+        echo json_encode($libres);
+        exit;
+    }
+
 
 }

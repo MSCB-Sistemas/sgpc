@@ -113,6 +113,20 @@ class ReservasPuntosModel {
         $stmt->execute(['id_permiso' => $id_permiso]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getHorariosPunto($id_punto, $fecha): array {
+        $stmt = $this->db->prepare("
+            SELECT TIME(fecha_horario) as hora
+            FROM reservas_puntos
+            WHERE id_punto_detencion = :id_punto
+            AND DATE(fecha_horario) = :fecha;"
+        );
+        $stmt->execute([
+            ':id_punto' => $id_punto,
+            ':fecha' => $fecha
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>
