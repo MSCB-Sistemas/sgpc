@@ -7,78 +7,87 @@
 
     <div class="permiso-header">
         <span class="permiso-titulo">PERMISO DE CIRCULACIÓN POR LA CIUDAD DE SAN CARLOS DE BARILOCHE</span>
-        <span><?= $datos['id_permiso'] ?></span>
     </div>
-
-    <p>
-        <span class="bold"><?= $datos['tipo'] ?> / <?= $datos['arribo_salida'] ?></span>
-        &nbsp;- Fecha validez: <span class="bold"><?= $datos['fecha_reserva'] ?></span><br>
-        Servicio: <span class="bold"><?= $datos['empresa'] ?></span>
-        &nbsp;- Dominio: <span class="bold"><?= $datos['dominio'] ?></span>
-        &nbsp;- Interno: <span class="bold"><?= $datos['interno'] ?></span>
-        &nbsp;- Pasajeros: <span class="bold"><?= $datos['pasajeros'] ?></span>
-    </p>
-
-    <?php if ($datos['tipo'] === 'charter'): ?>
-        <p class="small bold">
-            Deberá presentarse en el baño químico sin pasajeros de 08:00 a 22:00 hs
+<table class="noborder tabla-detalles" cellspacing="0" cellpadding="0">
+        <tr class="noborder">
+            <td class="noborder">
+                <p class="small">
+                    <span class="bold"><?= strtoupper($datos['tipo']) ?>  <?= strtoupper($datos['arribo_salida']) ?></span>
+                    &nbsp;- Fecha validez: <span class="bold"><?= $datos['fecha_reserva'] ?></span><br>
+                    Servicio: <span class="bold"><?= $datos['empresa'] ?></span>
+                    &nbsp;- Dominio: <span class="bold"><?= $datos['dominio'] ?></span>
+                    &nbsp;- Interno: <span class="bold"><?= $datos['interno'] ?></span>
+                    &nbsp;- Pasajeros: <span class="bold"><?= $datos['pasajeros'] ?></span>
+                    <?php if ($datos['tipo'] === 'charter'): ?>
+                        <br><span class="small bold">
+                            Deberá presentarse en el baño químico sin pasajeros de 08:00 a 22:00 hs
+                    </span>
+                    <?php endif; ?>
+                </p>
+            </td>
+            <td class="noborder permiso-observacion-box">
+                <span class="large">Permiso N°: </span><span class="bold medium"><?= $datos['id_permiso'] ?></span>
+            </td>
+        </tr>
+    </table>
+    <?php if (!empty($datos['observacion'])): ?>
+        <p class="small">
+            Observaciones: <span class="small bold"><?= htmlspecialchars($datos['observacion']) ?></span>
         </p>
     <?php endif; ?>
 
-    <p>
-        Observaciones: <span class="bold"><?= htmlspecialchars($datos['observacion']) ?></span>
-    </p>
-    <p>
+    <p class="medium" style="margin-bottom: 0pt;">
         Recorrido: <?= htmlspecialchars($datos['calles_recorrido']) ?>
         <?php if ($datos['tipo'] === 'linea'): ?>
             - horario derecho de dársena: {hora_ocupa_darsena}
         <?php endif; ?>
     </p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>CALLE</th>
-                <th>PARADA</th>
-                <th>HORA</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($datos['paradas'] as $fila): ?>
+    <?php if (!empty($datos['paradas'])): ?>
+        <table style="margin-top: 0pt;">
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($fila['calle']) ?></td>
-                    <td>
-                        <?= htmlspecialchars($fila['parada']) ?>
-                        <?php if (!empty($fila['hotel'])): ?>
-                            - <?= htmlspecialchars($fila['hotel']) ?>
-                        <?php endif; ?>
-                    </td>
-                    <td><?= htmlspecialchars($fila['horario']) ?></td>
+                    <th>CALLE</th>
+                    <th>PARADA</th>
+                    <th>HORA</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                <?php foreach ($datos['paradas'] as $fila): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($fila['calle']) ?></td>
+                        <td>
+                            <?= htmlspecialchars($fila['parada']) ?>
+                            <?php if (!empty($fila['hotel'])): ?>
+                                - <?= htmlspecialchars($fila['hotel']) ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= htmlspecialchars($fila['horario']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
     <table>
         <tr>
-            <td class="text-center small bold">ABONO DERECHO DE DÁRSENA PARA <?= $datos['tipo'] === 'charter' ? 'EL INGRESO' : 'EL DESCENSO DE PAX' ?></td>
-            <td class="text-center small bold">ABONO DERECHO DE DESCARGA DE BAÑO QUÍMICO</td>
-            <td class="text-center small bold">ABONO DERECHO DE DÁRSENA PARA <?= $datos['tipo'] === 'charter' ? 'LA SALIDA' : 'EL ASCENSO DE PAX' ?></td>
+            <td class="text-center small bold">ABONO DERECHO DE DÁRSENA PARA <?= $datos['tipo'] === 'charter' ? 'EL INGRESO' : 'EL DESCENSO DE PAX' ?><br><br><br><br><br></td>
+            <td class="text-center small bold">ABONO DERECHO DE DESCARGA DE BAÑO QUÍMICO<br><br><br></td>
+            <td class="text-center small bold">ABONO DERECHO DE DÁRSENA PARA <?= $datos['tipo'] === 'charter' ? 'LA SALIDA' : 'EL ASCENSO DE PAX' ?><br><br><br><br><br></td>
         </tr>
     </table>
 
-    <table>
-        <tr>
-            <td class="signature-box">
-                ......................<br>
+    <table class="noborder" cellspacing="0" cellpadding="0">
+        <tr class="noborder">
+            <td class="noborder signature-box">
+                <br>......................<br>
                 FIRMA DEL CONDUCTOR<br>
                 <?= htmlspecialchars($datos['nombre_chofer']) ?> <?= htmlspecialchars($datos['apellido_chofer']) ?><br>
                 DNI: <?= htmlspecialchars($datos['dni_chofer']) ?>
             </td>
-            <td></td>
-            <td class="signature-box">
-                <?= htmlspecialchars($datos['usuario_nombre']) ?> <?= htmlspecialchars($datos['usuario_apellido']) ?><br>
-                <?= htmlspecialchars($datos['usuario_cargo']) ?>, <?= htmlspecialchars($datos['usuario_sector']) ?><br>
+            <td class="noborder"></td>
+            <td class="noborder signature-box">
+                <br><br>
+                <?= strtoupper(htmlspecialchars($datos['usuario_nombre'])) ?> <?= strtoupper(htmlspecialchars($datos['usuario_apellido'])) ?><br>
+                <?= strtoupper(htmlspecialchars($datos['usuario_cargo'])) ?>, <?= strtoupper(htmlspecialchars($datos['usuario_sector'])) ?><br>
                 SAN CARLOS DE BARILOCHE
             </td>
         </tr>

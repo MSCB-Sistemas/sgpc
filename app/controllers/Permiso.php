@@ -177,7 +177,9 @@ class Permiso extends Control
             $mensajes[] = "Permiso {$idPermiso} creado correctamente.";
             if (!empty($_POST['imprimir'])) {
                 // Generar el PDF
-                $this->imprimir($idPermiso); // función que devuelve la ruta del PDF
+                 echo "<script>
+                        window.open('/sgpc/permiso/imprimir/{$idPermiso}', '_blank');
+                    </script>";
             }
         }
 
@@ -213,6 +215,7 @@ class Permiso extends Control
         // Cargar plantilla
         ob_start();
         include APP . '/views/pages/partials/permisoPdf.php';
+        include APP . '/views/pages/partials/permisoPdf.php';
         $html = ob_get_clean();
 
         // Cargar css
@@ -229,61 +232,6 @@ class Permiso extends Control
         $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
 
         $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
-    }
-
-    // Mostrar formulario para editar permiso
-    public function edit($id)
-    {
-        $permiso = $this->model->getPermiso($id);
-        if (!$permiso) {
-            $this->load_view('permisos/index', [
-                'error' => 'Permiso no encontrado.',
-                'permisos' => $this->model->getAllPermisos()
-            ]);
-            return;
-        }
-        $this->load_view('permisos/edit', ['permiso' => $permiso]);
-    }
-
-    // Procesar actualización
-    public function update($id)
-    {
-        $id_chofer = $_POST['id_chofer'] ?? null;
-        $id_usuario = $_POST['id_usuario'] ?? null;
-        $id_servicio = $_POST['id_servicio'] ?? null;
-        $tipo = $_POST['tipo'] ?? '';
-        $fecha_reserva = $_POST['fecha_reserva'] ?? '';
-        $fecha_emision = $_POST['fecha_emision'] ?? '';
-        $es_arribo = isset($_POST['es_arribo']) ? 1 : 0;
-        $observacion = $_POST['observacion'] ?? null;
-        $activo = isset($_POST['activo']) ? 1 : 0;
-
-        if (!$id_chofer || !$id_usuario || !$id_servicio || $tipo === '' || $fecha_reserva === '' || $fecha_emision === '') {
-            $permiso = $this->model->getPermiso($id);
-            $this->load_view('permisos/edit', [
-                'error' => 'Todos los campos obligatorios deben estar completos.',
-                'permiso' => $permiso
-            ]);
-            return;
-        }
-
-        $this->model->updatePermiso(
-            $id,
-            $id_chofer,
-            $id_usuario,
-            $id_servicio,
-            $tipo,
-            $fecha_reserva,
-            $fecha_emision,
-            $es_arribo,
-            $observacion,
-            $activo
-        );
-
-        $this->load_view('permisos/index', [
-            'message' => 'Permiso actualizado correctamente.',
-            'permisos' => $this->model->getAllPermisos()
-        ]);
     }
 
     // Desactivar permiso (activo = 0)
