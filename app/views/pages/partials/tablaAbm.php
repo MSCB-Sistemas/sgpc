@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container-fluid mt-5 px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><?= $datos['title'] ?></h2>
         <?php if (!empty($datos['urlCrear'])): ?>
@@ -10,8 +10,8 @@
         <input type="text" id="busqueda" class="form-control" placeholder="Buscar...">
     </div>
 
-    <div class="table-responsive shadow rounded" style="overflow: hidden;">
-        <table class="table table-hover align-middle mb-0" id="tablaABM">
+    <div class="table-responsive-lg shadow rounded" style="overflow: hidden;">
+        <table class="table table-hover align-middle mb-0" id="tablaABM" style="min-width: 800px;">
             <thead class="table-light">
                 <tr>
                     <?php foreach ($datos['columnas'] as $col): ?>
@@ -26,7 +26,7 @@
                 <?php foreach ($datos['data'] as $fila): ?>
                     <tr>
                         <?php foreach ($datos['columnas_claves'] as $key): ?>
-                            <td><?= ucfirst(htmlspecialchars($fila[$key])) ?></td>
+                            <td class="text-truncate" style="max-width: 200px;"><?= ucfirst(htmlspecialchars($fila[$key])) ?></td>
                         <?php endforeach ?>
                         <?php if (!empty($datos['acciones'])): ?>
                             <td><?= $datos['acciones']($fila) ?></td>
