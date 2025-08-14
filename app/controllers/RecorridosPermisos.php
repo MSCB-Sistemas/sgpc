@@ -60,8 +60,16 @@ class RecorridosPermisos extends Control
     // Procesar creación
     public function store()
     {
-        $id_permiso = $_POST['id_permiso'] ?? null;
-        $id_recorrido = $_POST['id_recorrido'] ?? null;
+        if(isset($_POST['id_permiso'])) {
+            $id_permiso = $_POST['id_permiso'];
+        } else {
+            $id_permiso = null;
+        }
+        if(isset($_POST['id_recorrido'])) {
+            $id_recorrido = $_POST['id_recorrido'];
+        } else {
+            $id_recorrido = null;
+        }
 
         if (!$id_permiso || !$id_recorrido) {
             $this->load_view('recorridos_permisos/create', [
@@ -100,10 +108,19 @@ class RecorridosPermisos extends Control
     // Procesar actualización
     public function update($id)
     {
-        $id_permiso = $_POST['id_permiso'] ?? null;
-        $id_recorrido = $_POST['id_recorrido'] ?? null;
+        if(isset($_POST['id_permiso'])) {
+            $id_permiso = $_POST['id_permiso'];
+        } else {
+            $id_permiso = null;
+        }
 
-        if (!$id_permiso || !$id_recorrido) {
+        if(isset($_POST['id_recorrido'])) {
+            $id_recorrido = $_POST['id_recorrido'];
+        } else {
+            $id_recorrido = null;
+        }   
+
+        if ($id_permiso === null || $id_recorrido === null || $id_permiso === '' || $id_recorrido === '') {
             $recorridoPermiso = $this->model->getRecorridoPermiso($id);
             $this->load_view('recorridos_permisos/edit', [
                 'error' => 'Todos los campos son obligatorios.',

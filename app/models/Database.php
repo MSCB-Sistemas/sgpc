@@ -1,10 +1,10 @@
 <?php
 //Conexion de base de datos
 class Database   {
-    private static ?PDO $connection = null;
+    private static PDO $connection;
 
     public static function connect(): PDO {
-        if (self::$connection === null) {
+        if (!isset(self::$connection)) {
             try {
                 $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
                 self::$connection = new PDO($dsn, DB_USER, DB_PASS, [

@@ -3,7 +3,11 @@
 
   $host = $_SERVER['HTTP_HOST']; // puede ser IP, localhost o dominio
   $projectFolder = 'sgpc';
-  $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    $protocol = 'https';
+  } else {
+    $protocol = 'http';
+  }
 
   define('URL', $protocol . '://' . $host . '/' . $projectFolder);
 
