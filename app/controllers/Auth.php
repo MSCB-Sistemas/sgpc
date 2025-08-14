@@ -8,9 +8,9 @@ class Auth extends Control
     {
         $datos = ["title" => "Login"];
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = $_POST['user'] ?? '';
-            $password = trim($_POST['password'] ?? '');
-            $remember = isset($_POST['remember']) ? true : false;
+            $user = $_POST['user'];
+            $password = trim($_POST['password']);
+            $remember = isset($_POST['remember']);
 
             if (empty($user) || empty($password)) {
                 $datos['error'] = 'Debe ingresar usuario y contraseña';
@@ -53,8 +53,18 @@ class Auth extends Control
             session_start();
         }
 
-        $idUsuario = $_SESSION['usuario_id'] ?? $_COOKIE['id_usuario'] ?? null;
-        $token = $_COOKIE['remember_token'] ?? null;
+        $idUsuario = null;
+        $token = null;
+
+        if(!empty($_SESSION['usuario_id'])) {
+            $idUsuario = $_SESSION['usuario_id'];
+        } elseif (!empty($_COOKIE['id_usuario'])) {
+            $idUsuario = $_COOKIE['id_usuario'];
+        }
+
+        if (!empty($_COOKIE['remember_token'])) {
+            $token = $_COOKIE['remember_token'];
+        }
 
         if ($idUsuario && $token) {
         $tokenModel = $this->load_model('RememberTokensModel');
