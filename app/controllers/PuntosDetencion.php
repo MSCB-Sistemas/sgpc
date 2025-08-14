@@ -55,8 +55,8 @@ class PuntosDetencion extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
-            $calle = $_POST["calle"] ?? '';
+            $nombre = trim($_POST["nombre"]);
+            $calle = $_POST["calle"];
             echo "Nombre: $nombre, Calle: $calle"; // Debugging line
 
             $errores = [];
@@ -112,8 +112,8 @@ class PuntosDetencion extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
-            $calle = $_POST["calle"] ?? '';
+            $nombre = trim($_POST["nombre"]);
+            $calle = $_POST["calle"];
 
             $errores = [];
             if (empty($nombre)) { $errores[] = 'El nombre del punto es obligatorio.'; }

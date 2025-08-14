@@ -14,16 +14,22 @@
     <form action="<?= $datos['action'] ?>" method="POST">
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre</label>
+            <?php
+                if (isset($datos['values']['nombre'])) {
+                    $valuesNombre = htmlspecialchars($datos['values']['nombre']);
+                } else {
+                    $valuesNombre = '';
+                }
+            ?>
             <input type="text" class="form-control" id="nombre" name="nombre" 
-                   value="<?= htmlspecialchars($datos['values']['nombre'] ?? '') ?>" required>
+                   value="<?= $valuesNombre ?>" required>
         </div>
         <div class="mb-3">
             <label for="calle" class="form-label">Calle</label>
             <select class="form-select" id="calle" name="calle" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($datos['calles'] as $n): ?>
-                    <option value="<?= $n['id_calle'] ?>"
-                        <?= ($datos['values']['nombre'] ?? '') == $n['id_calle'] ? 'selected' : '' ?>>
+                    <option value="<?= $n['id_calle'] ?>">
                         <?= htmlspecialchars($n['nombre']) ?>
                     </option>
                 <?php endforeach ?>
