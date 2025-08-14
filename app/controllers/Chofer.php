@@ -59,10 +59,10 @@ class Chofer extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
-            $apellido = trim($_POST["apellido"] ?? '');
-            $dni = trim($_POST["dni"] ?? '');
-            $nacionalidad = $_POST["nacionalidad"] ?? '';
+            $nombre = trim($_POST["nombre"]);
+            $apellido = trim($_POST["apellido"]);
+            $dni = trim($_POST["dni"]);
+            $nacionalidad = $_POST["nacionalidad"];
 
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
@@ -113,10 +113,10 @@ class Chofer extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
-            $apellido = trim($_POST["apellido"] ?? '');
-            $dni = trim($_POST["dni"] ?? '');
-            $nacionalidad = $_POST["nacionalidad"] ?? '';
+            $nombre = trim($_POST["nombre"]);
+            $apellido = trim($_POST["apellido"]);
+            $dni = trim($_POST["dni"]);
+            $nacionalidad = $_POST["nacionalidad"];
 
             // Validaciones simples
             $errores = [];

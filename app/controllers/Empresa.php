@@ -54,7 +54,7 @@ class Empresa extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
+            $nombre = trim($_POST["nombre"]);
 
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
@@ -95,7 +95,7 @@ class Empresa extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
+            $nombre = trim($_POST["nombre"]);
 
             // Validaciones simples
             $errores = [];

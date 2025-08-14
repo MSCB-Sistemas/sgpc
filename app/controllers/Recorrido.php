@@ -67,7 +67,7 @@ class Recorrido extends Control
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             $nombre = trim($_POST['nombre']);
-            $calles = $_POST['calles'] ?? [];
+            $calles = $_POST['calles'];
 
             $errores = [];
             if ($nombre === '') {
@@ -153,7 +153,7 @@ class Recorrido extends Control
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $nombre = trim($_POST['nombre']);
-            $calles = $_POST['calles'] ?? [];
+            $calles = $_POST['calles'];
 
             $errores = [];
             if ($nombre === '') {
@@ -212,7 +212,7 @@ class Recorrido extends Control
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombre = trim($_POST['nombre']);
-            $calles = $_POST['calles'] ?? [];
+            $calles = $_POST['calles'];
 
             if ($nombre === '') {
                 echo json_encode(['success' => false, 'message' => 'El nombre es obligatorio']);

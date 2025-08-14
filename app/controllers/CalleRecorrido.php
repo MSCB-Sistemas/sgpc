@@ -91,8 +91,8 @@ class CalleRecorrido extends Control
      */
     public function update($id)
     {
-        $id_recorrido = $_POST['id_recorrido'] ?? null;
-        $id_calle = $_POST['id_calle'] ?? null;
+        $id_recorrido = $_POST['id_recorrido'];
+        $id_calle = $_POST['id_calle'];
 
         if (empty($id_recorrido) || empty($id_calle)) {
             $calleRecorrido = $this->model->getCalleRecorrido($id);
