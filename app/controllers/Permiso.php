@@ -111,19 +111,19 @@ class Permiso extends Control
     // Procesar creación
     public function store()
     {
-        $id_chofer = $_POST['id_chofer'] ?? null;
-        $id_usuario = $_SESSION['usuario_id']  ?? null;
-        $id_servicio = $_POST['id_servicio'] ?? null;
-        $id_lugar = $_POST['id_lugar'] ?? null;
-        $tipo = $_POST['tipo_permiso'] ?? '';
-        $fecha_reserva = $_POST['fecha_reserva'] ?? '';
+        $id_chofer = $_POST['id_chofer'];
+        $id_usuario = $_SESSION['usuario_id'];
+        $id_servicio = $_POST['id_servicio'];
+        $id_lugar = $_POST['id_lugar'];
+        $tipo = $_POST['tipo_permiso'];
+        $fecha_reserva = $_POST['fecha_reserva'];
         $fecha_emision = date('Y-m-d H:i:s');
-        $arribo_salida = $_POST['arribo_salida'] ?? '';
-        $id_recorrido = $_POST['id_recorrido'] ?? null;
-        $observacion = $_POST['observacion'] ?? null;
-        $puntos_detencion = $_POST['puntos_detencion'] ?? '';
+        $arribo_salida = $_POST['arribo_salida'];
+        $id_recorrido = $_POST['id_recorrido'];
+        $observacion = $_POST['observacion'];
+        $puntos_detencion = $_POST['puntos_detencion'];
         $puntos_detencion = json_decode($puntos_detencion, true);
-        $pasajeros = $_POST['pasajeros'] ?? 0;
+        $pasajeros = $_POST['pasajeros'];
         $errores = [];
         $mensajes = [];
 
@@ -162,9 +162,16 @@ class Permiso extends Control
         foreach ($puntos_detencion as $id_punto_detencion => $punto) {
             if (!empty($punto['horario'])) {
                 $fecha_horario = $fecha_reserva . ' ' . $punto['horario'] . ':00';
+
+                if (isset($punto['hotel'])) {
+                    $hotel = $punto['hotel'];
+                } else {
+                    $hotel = null;
+                }
+
                 $id_reserva = $modelReservasPuntos->insertReservaPunto(
                    $fecha_horario,
-                   isset($punto['hotel']) ? $punto['hotel'] : null,
+                   $hotel,
                    $idPermiso,
                    $id_punto_detencion
                 );

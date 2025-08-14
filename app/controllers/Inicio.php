@@ -11,16 +11,9 @@ class Inicio extends Control
 
     public function index()
     {
-   
-        
-        // Obtener datos de las reservas desde hoy
-        $fecha_inicio = $_GET['fecha_inicio'] ?? null;
         $datos = [
-
-
             'title' => 'Inicio',
             'reservas_desde_hoy' => $this->modelo->getReservasDesdeHoy(),
-            
         ];
 
         $this->load_view('Inicio', $datos);

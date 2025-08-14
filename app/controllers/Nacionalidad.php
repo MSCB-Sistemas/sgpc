@@ -41,9 +41,9 @@ class Nacionalidad extends Control
     // Procesar creación de nacionalidad.
     public function store()
     {
-        $nacionalidad = trim($_POST['nacionalidad'] ?? '');
+        $nacionalidad = trim($_POST['nacionalidad']);
 
-        if ($nacionalidad === '') {
+        if (empty($nacionalidad)) {
             $this->load_view('nacionalidades/create', [
                 'error' => 'El nombre de la nacionalidad no puede estar vacío.'
             ]);
@@ -77,9 +77,9 @@ class Nacionalidad extends Control
     // Procesar actualización de nacionalidad.
     public function update($id)
     {
-        $nuevaNacionalidad = trim($_POST['nacionalidad'] ?? '');
+        $nuevaNacionalidad = trim($_POST['nacionalidad']);
 
-        if ($nuevaNacionalidad === '') {
+        if (empty($nuevaNacionalidad)) {
             $nacionalidad = $this->model->getNacionalidad($id);
             $this->load_view('nacionalidades/edit', [
                 'error' => 'El nombre de la nacionalidad no puede estar vacío.',
