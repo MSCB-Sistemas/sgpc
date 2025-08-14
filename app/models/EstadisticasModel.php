@@ -58,7 +58,7 @@ class EstadisticasModel
     /**
      * Empresa con más permisos diarios en promedio
      */
-    public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): ?array
+    public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): array
     {
         $stmt = $this->db->prepare("
             SELECT 
@@ -77,7 +77,13 @@ class EstadisticasModel
         $stmt->bindValue(':inicio', $fecha_inicio);
         $stmt->bindValue(':fin', $fecha_fin);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($resultado) {
+            return $resultado;
+        } 
+        return [];
+
     }
 
 
@@ -97,13 +103,18 @@ class EstadisticasModel
         $stmt->bindValue(':inicio', $fecha_inicio);
         $stmt->bindValue(':fin', $fecha_fin);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($resultado) {
+            return $resultado;
+        }
+        return [];
+        
     }
 
     /**
      * Recorrido más utilizado
      */
-    public function getRecorridoMasUtilizado($fecha_inicio = null, $fecha_fin = null): ?array
+    public function getRecorridoMasUtilizado($fecha_inicio = null, $fecha_fin = null): array
     {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
 
@@ -120,13 +131,17 @@ class EstadisticasModel
         $stmt->bindValue(':inicio', $fecha_inicio);
         $stmt->bindValue(':fin', $fecha_fin);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($resultado) {
+            return $resultado;
+        } 
+        return [];
     }
 
     /**
      * Punto de detención más utilizado
      */
-    public function getPuntoMasUtilizado($fecha_inicio = null, $fecha_fin = null): ?array
+    public function getPuntoMasUtilizado($fecha_inicio = null, $fecha_fin = null): array
     {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
 
@@ -143,7 +158,13 @@ class EstadisticasModel
         $stmt->bindValue(':inicio', $fecha_inicio);
         $stmt->bindValue(':fin', $fecha_fin);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($resultado) {
+            return $resultado;
+        }
+
+        return [];
     }
 
 
@@ -172,8 +193,15 @@ class EstadisticasModel
     ): array {
         // Columnas válidas para ordenar
         $columnasValidas = ['empresa', 'fecha', 'lugar', 'tipo_movimiento', 'cantidad'];
-        $sort_col = in_array($sort_col, $columnasValidas) ? $sort_col : 'fecha';
-        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
+        if (!in_array($sort_col, $columnasValidas)) {
+            $sort_col = 'fecha';
+        }
+            if (strtoupper($sort_dir) !== 'DESC') {
+                $sort_dir = 'ASC';
+        } else {
+                $sort_dir = 'DESC';
+        }
+
 
         // Consulta base con joins necesarios
         $sql = "
@@ -421,7 +449,8 @@ class EstadisticasModel
      * Se limita a los 5 puntos más frecuentes.
      * @return array
      */
-    public function getPuntosMasUsados(?string $fecha_inicio = null, ?string $fecha_fin = null): array {
+    public function getPuntosMasUsados(string $fecha_inicio = '', string $fecha_fin = ''): array {
+
     // Si no se pasan fechas, usar un rango por defecto, por ejemplo el último mes
         if (!$fecha_inicio || !$fecha_fin) {
             $fecha_fin = date('Y-m-d');
