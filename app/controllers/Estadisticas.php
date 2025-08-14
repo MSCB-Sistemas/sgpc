@@ -51,6 +51,27 @@ class Estadisticas extends Control
         if (!empty($_GET['fecha_fin_resumen'])) {
             $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
         }
+        
+
+        $sort_col = 'fecha';
+
+        if (!empty($_GET['sort_col'])){
+            $sort_col = $_GET['sort_col']; // Por defecto ordenar por fecha
+        }
+
+        $sort_dir = 'ASC';
+
+        if (!empty($_GET['sort_dir']) && in_array($sort_dir, ['ASC', 'DESC'])) {
+            $sort_dir = strtoupper($_GET['sort_dir']); // Por defecto ordenar ascendente
+        }
+
+        // Paginación
+
+        $pagina_actual = 1;
+
+        if (!empty($_GET['pagina'])){
+            $pagina_actual = max(1, (int)$_GET['pagina']);
+        }
 
         // Validar si se busca por chofer pero no se completó DNI
         if ($buscar_por === 'chofer' && empty($dni)) {
@@ -66,26 +87,6 @@ class Estadisticas extends Control
             }
             if ($buscar_por !== 'tipo' && $buscar_por !== 'chofer') {
                 $tipo = null; // Ignorar tipo si no es por tipo o chofer
-            }
-
-            $sort_col = 'fecha';
-
-            if (!empty($_GET['sort_col'])){
-                $sort_col = $_GET['sort_col']; // Por defecto ordenar por fecha
-            }
-
-            $sort_dir = 'ASC';
-
-            if (!empty($_GET['sort_dir']) && in_array($sort_dir, ['ASC', 'DESC'])) {
-                $sort_dir = strtoupper($_GET['sort_dir']); // Por defecto ordenar ascendente
-            }
-
-            // Paginación
-
-            $pagina_actual = 1;
-
-            if (!empty($_GET['pagina'])){
-                $pagina_actual = max(1, (int)$_GET['pagina']);
             }
             $limite_por_pagina = 10;
             $offset            = ($pagina_actual - 1) * $limite_por_pagina;

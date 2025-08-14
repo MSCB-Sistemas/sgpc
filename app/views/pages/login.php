@@ -2,8 +2,15 @@
 
 <body id="body" class="bg-light text-dark d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <main class="w-100" style="max-width: 400px;">
+        <div class="rounded-top-4 card-header text-white text-center py-4" style="background-color: #ff6900 !important;">
+            <div class="d-flex justify-content-center align-items-center">
+                <img src="<?= URL ?>/public/img/logo_claro.png" alt="Escudo Bariloche" 
+                    style="width: 300px; object-fit: contain;">
+                <div class="ms-3 text-start">
+                </div>
+            </div>
+        </div>
         <form id="loginForm" class="rounded-4 shadow p-4 bg-light text-dark" method="POST" action="<?= URL ?>/auth/login">
-            <h1 class="h3 mb-3 fw-normal text-center">Bienvenido</h1>
             <div class="form-floating mb-3">
                 <input type="text" name="user" class="form-control" id="floatingInput" placeholder="name@example.com">
                 <label for="floatingInput">Usuario</label>
@@ -17,14 +24,14 @@
                 <label class="form-check-label" for="remember">Recuérdame</label>
             </div>
             <div>
-                <button class="btn btn-primary w-100 py-2" type="submit">Iniciar sesión</button>
+                <button class="btn btn-primary w-100 py-2" style="border-color: #ff6900; background-color: #ff6900 !important;" type="submit">Iniciar sesión</button>
             </div><br>
             <div>
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?= $error ?></div>
                 <?php endif; ?>
             </div>
-            <p class="mt-5 mb-3 text-center">&copy;2025–2025</p>
+            <p class="mt-5 mb-3 text-center">Sistema de Gestion de Permisos de Circulacion</p>
         </form>
     </main>
 
