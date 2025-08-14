@@ -14,20 +14,42 @@ class Estadisticas extends Control
 
     public function index()
     {
-        // Filtros desde GET
-        $fecha_inicio = $_GET['fecha_inicio'];
-        $fecha_fin    = $_GET['fecha_fin'];
-        $buscar_por   = $_GET['buscar_por'];
-        $dni          = $_GET['dni'];
-        $tipo         = $_GET['tipo'];
-        $fecha_inicio_resumen = $_GET['fecha_inicio_resumen'];
-        $fecha_fin_resumen    = $_GET['fecha_fin_resumen'];
 
-        if (empty($fecha_inicio_resumen)) {
-            $fecha_inicio_resumen = '2000-01-01';
+        // Filtros desde GET
+        $fecha_inicio = '';
+        $fecha_fin    = '';
+        $buscar_por   = '';
+        $dni          = '';
+        $tipo         = '';
+        $fecha_inicio_resumen = '2000-01-01';
+        $fecha_fin_resumen    = date('Y-m-d');
+
+        if (!empty($_GET['fecha_inicio'])) {
+            $fecha_inicio = $_GET['fecha_inicio'];
         }
-        if (empty($fecha_fin_resumen)) {
-            $fecha_fin_resumen = date('Y-m-d');
+
+        if (!empty($_GET['fecha_fin'])) {
+            $fecha_fin = $_GET['fecha_fin'];
+        }
+
+        if (!empty($_GET['buscar_por'])) {
+            $buscar_por = $_GET['buscar_por'];
+        }
+
+        if (!empty($_GET['dni'])) {
+            $dni = $_GET['dni'];
+        }
+
+        if (!empty($_GET['tipo'])) {
+            $tipo = $_GET['tipo'];
+        }        
+
+        if (!empty($_GET['fecha_inicio_resumen'])) {
+            $fecha_inicio_resumen = $_GET['fecha_inicio_resumen'];
+        }
+
+        if (!empty($_GET['fecha_fin_resumen'])) {
+            $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
         }
 
         // Validar si se busca por chofer pero no se completó DNI
@@ -46,16 +68,16 @@ class Estadisticas extends Control
                 $tipo = null; // Ignorar tipo si no es por tipo o chofer
             }
 
-            $sort_col = $_GET['sort_col'];
+            $sort_col = 'fecha';
 
-            if (empty($sort_col)){
-                $sort_col = 'fecha'; // Por defecto ordenar por fecha
+            if (!empty($_GET['sort_col'])){
+                $sort_col = $_GET['sort_col']; // Por defecto ordenar por fecha
             }
 
-            $sort_dir = strtoupper($_GET['sort_dir']);
+            $sort_dir = 'ASC';
 
-            if (empty($sort_dir) || !in_array($sort_dir, ['ASC', 'DESC'])) {
-                $sort_dir = 'ASC'; // Por defecto ordenar ascendente
+            if (!empty($_GET['sort_dir']) && in_array($sort_dir, ['ASC', 'DESC'])) {
+                $sort_dir = strtoupper($_GET['sort_dir']); // Por defecto ordenar ascendente
             }
 
             // Paginación

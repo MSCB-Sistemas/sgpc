@@ -49,7 +49,10 @@ class EstadisticasModel
         $stmt->bindValue(':fin', $fecha_fin);
         $stmt->execute();
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        return (float)($resultado['promedio_diario'] ?? 0);
+        if (empty($resultado['promedio_diario'])) {
+            return 0;
+        }
+        return (float)($resultado['promedio_diario']);
     }
 
     /**
