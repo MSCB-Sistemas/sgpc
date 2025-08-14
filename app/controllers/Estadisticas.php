@@ -15,18 +15,18 @@ class Estadisticas extends Control
     public function index()
     {
         // Filtros desde GET
-        $fecha_inicio = $_GET['fecha_inicio'] ?? null;
-        $fecha_fin    = $_GET['fecha_fin'] ?? null;
-        $buscar_por   = $_GET['buscar_por'] ?? null;
-        $dni          = $_GET['dni'] ?? null;
-        $tipo         = $_GET['tipo'] ?? null;
-        $fecha_inicio_resumen = $_GET['fecha_inicio_resumen'] ?? null;
-        $fecha_fin_resumen    = $_GET['fecha_fin_resumen'] ?? null;
+        $fecha_inicio = $_GET['fecha_inicio'];
+        $fecha_fin    = $_GET['fecha_fin'];
+        $buscar_por   = $_GET['buscar_por'];
+        $dni          = $_GET['dni'];
+        $tipo         = $_GET['tipo'];
+        $fecha_inicio_resumen = $_GET['fecha_inicio_resumen'];
+        $fecha_fin_resumen    = $_GET['fecha_fin_resumen'];
 
-        if (!$fecha_inicio_resumen) {
-        $fecha_inicio_resumen = '2000-01-01';
+        if (empty($fecha_inicio_resumen)) {
+            $fecha_inicio_resumen = '2000-01-01';
         }
-        if (!$fecha_fin_resumen) {
+        if (empty($fecha_fin_resumen)) {
             $fecha_fin_resumen = date('Y-m-d');
         }
 
@@ -46,15 +46,25 @@ class Estadisticas extends Control
                 $tipo = null; // Ignorar tipo si no es por tipo o chofer
             }
 
-            // Ordenamiento
-            $sort_col = $_GET['sort_col'] ?? 'fecha';
-            $sort_dir = strtoupper($_GET['sort_dir'] ?? 'ASC');
-            if (!in_array($sort_dir, ['ASC', 'DESC'])) {
-                $sort_dir = 'ASC';
+            $sort_col = $_GET['sort_col'];
+
+            if (empty($sort_col)){
+                $sort_col = 'fecha'; // Por defecto ordenar por fecha
+            }
+
+            $sort_dir = strtoupper($_GET['sort_dir']);
+
+            if (empty($sort_dir) || !in_array($sort_dir, ['ASC', 'DESC'])) {
+                $sort_dir = 'ASC'; // Por defecto ordenar ascendente
             }
 
             // Paginación
-            $pagina_actual     = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
+
+            $pagina_actual = 1;
+
+            if (!empty($_GET['pagina'])){
+                $pagina_actual = max(1, (int)$_GET['pagina']);
+            }
             $limite_por_pagina = 10;
             $offset            = ($pagina_actual - 1) * $limite_por_pagina;
 
@@ -86,12 +96,12 @@ class Estadisticas extends Control
             'dni'           => $dni,
             'tipo'          => $tipo,
             'buscar_por'    => $buscar_por,
-            'sort_col'      => $sort_col ?? 'fecha',
-            'sort_dir'      => $sort_dir ?? 'ASC',
-            'pagina_actual' => $pagina_actual ?? 1,
-            'total_paginas' => $total_paginas ?? 1,
+            'sort_col'      => $sort_col,
+            'sort_dir'      => $sort_dir,
+            'pagina_actual' => $pagina_actual,
+            'total_paginas' => $total_paginas,
             'error'         => $error,
-            'total_resultados' => $total_resultados ?? 0,
+            'total_resultados' => $total_resultados,
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
         ];  

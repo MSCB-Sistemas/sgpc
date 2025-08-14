@@ -3,8 +3,14 @@
 <?php
 
 // Variables para filtrar y error
-$buscar_por = $_GET['buscar_por'] ?? '';
-$dni = trim($_GET['dni'] ?? '');
+$buscar_por = '';
+$dni = '';
+if (isset($_GET['buscar_por'])) {
+    $buscar_por = $_GET['buscar_por'];
+}
+if (isset($_GET['dni'])) {
+    $dni = trim($_GET['dni']);
+}
 $error = '';
 $filtrar = isset($_GET['filtrar']); // Detecta si se envió el formulario con el botón "Filtrar"
 
@@ -84,37 +90,37 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
         <form method="GET" class="row g-3 mb-4 justify-content-center">
             <div class="col-auto">
                 <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?= htmlspecialchars($datos['fecha_inicio'] ?? '') ?>">
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php if(!empty($datos['fecha_inicio'])){echo htmlspecialchars($datos['fecha_inicio']);} ?>">
             </div>
 
             <div class="col-auto">
                 <label for="fecha_fin" class="form-label">Fecha Fin</label>
-                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?= htmlspecialchars($datos['fecha_fin'] ?? '') ?>">
+                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?php if(!empty($datos['fecha_fin'])){echo htmlspecialchars($datos['fecha_fin']);} ?>">
             </div>
 
             <div class="col-auto">
                 <label for="buscar_por" class="form-label">Buscar por</label>
                 <select name="buscar_por" id="buscar_por" class="form-select" onchange="this.form.submit()">
                     <option value="">-- Seleccionar --</option>
-                    <option value="chofer" <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'selected' : '' ?>>Chofer</option>
-                    <option value="tipo" <?= ($datos['buscar_por'] ?? '') === 'tipo' ? 'selected' : '' ?>>Tipo</option>
+                    <option value="chofer" <?php if(!empty($datos['buscar_por']) && $datos['buscar_por'] === 'chofer'){echo 'selected';}?>>Chofer</option>
+                    <option value="tipo" <?php if(!empty($datos['buscar_por']) && $datos['buscar_por'] === 'tipo'){echo 'selected';}?>>Tipo</option>
                 </select>
             </div>
 
             <!-- Campo DNI solo visible si buscar_por es chofer -->
-            <div class="col-auto" id="campo_dni" style="display: <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'block' : 'none' ?>;">
+            <div class="col-auto" id="campo_dni" style="display: <?php if(!empty($datos['buscar_por']) && $datos['buscar_por'] === 'chofer'){echo 'block';} else {echo 'none';} ?>;">
                 <label for="dni" class="form-label">DNI del Chofer</label>
-                <input type="text" class="form-control" name="dni" id="dni" value="<?= htmlspecialchars($datos['dni'] ?? '') ?>">
+                <input type="text" class="form-control" name="dni" id="dni" value="<?php if(!empty($datos['dni'])){echo htmlspecialchars($datos['dni']);} ?>">
             </div>
 
             <!-- Campo Tipo visible si buscar_por es chofer o tipo -->
-            <div class="col-auto" id="campo_tipo" style="display: <?= in_array($datos['buscar_por'] ?? '', ['chofer','tipo']) ? 'block' : 'none' ?>;">
+            <div class="col-auto" id="campo_tipo" style="display: <?php if(!empty($datos['buscar_por']) && in_array($datos['buscar_por'], ['chofer','tipo'])) {echo 'block';} else {echo 'none';} ?>;">
                 <label for="tipo" class="form-label">Tipo de Servicio</label>
                 <select name="tipo" id="tipo" class="form-select">
                     <option value="">-- Todos --</option>
-                    <option value="linea" <?= ($datos['tipo'] ?? '') === 'linea' ? 'selected' : '' ?>>Línea</option>
-                    <option value="charter" <?= ($datos['tipo'] ?? '') === 'charter' ? 'selected' : '' ?>>Charter</option>
-                    <option value="otros" <?= ($datos['tipo'] ?? '') === 'otros' ? 'selected' : '' ?>>Otros</option>
+                    <option value="linea" <?php if (!empty($datos['tipo']) && $datos['tipo']  === 'linea'){echo 'selected';}?>>Línea</option>
+                    <option value="charter" <?php if (!empty($datos['tipo']) && $datos['tipo']  === 'charter'){echo 'selected';}?>>Charter</option>
+                    <option value="otros" <?php if (!empty($datos['tipo']) && $datos['tipo']  === 'otros'){echo 'selected';}?>>Otros</option>
                 </select>
             </div>
 
@@ -157,13 +163,12 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
             <?php endif; ?>
         </tbody>
     </table>
-
-    <?php if (($datos['total_paginas'] ?? 1) > 1): ?>
+    <?php if (!empty($datos['total_paginas']) && ($datos['total_paginas']) > 1): ?>
         <ul class="pagination">
             <?php for ($i = 1; $i <= $datos['total_paginas']; $i++): ?>
                 <li>
                     <a href="?<?= http_build_query(array_merge($_GET, ['pagina' => $i])) ?>"
-                        class="pagina-link <?= ($i == ($datos['pagina_actual'] ?? 1)) ? 'pagina-activa' : '' ?>">
+                        class="pagina-link <?php if((!empty($datos['pagina_actual']) && $i == ($datos['pagina_actual'])) || (empty($datos['pagina_actual']) && $i == 1)){echo 'pagina-activa';}?>">
                             <?= $i ?>
                     </a>
 
@@ -176,13 +181,20 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
 <?php
 // Función para generar links con ordenamiento (orden asc/desc)
 function generarOrdenLink($columna, $etiqueta, $datos) {
-    $direccion_actual = strtolower($datos['sort_dir'] ?? 'asc');
-    $columna_actual = $datos['sort_col'] ?? '';
+    $direccion_actual = 'asc';
+    if (!empty($datos['sort_dir'])) {
+        $direccion_actual = strtolower($datos['sort_dir']);
+    }
+
+    $columna_actual = '';
+    if (!empty($datos['sort_col'])) {
+        $columna_actual = strtolower($datos['sort_col']);
+    }
 
     // Cambia la dirección si la columna es la misma, sino por defecto asc
     $direccion_siguiente = 'asc';
-    if ($columna_actual === $columna) {
-        $direccion_siguiente = ($direccion_actual === 'asc') ? 'desc' : 'asc';
+    if ($columna_actual === $columna && $direccion_actual === 'asc') {
+        $direccion_siguiente = 'desc';
     }
 
     $query_params = $_GET;
@@ -204,7 +216,7 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
                         class="form-control"
                         name="fecha_inicio_resumen"
                         id="fecha_inicio_resumen"
-                        value="<?= htmlspecialchars($_GET['fecha_inicio_resumen'] ?? '') ?>">
+                        value="<?php if(!empty($_GET['fecha_inicio_resumen'])){echo htmlspecialchars($_GET['fecha_inicio_resumen']);} ?>">
                 </div>
 
                 <div class="col-auto">
@@ -213,7 +225,7 @@ function generarOrdenLink($columna, $etiqueta, $datos) {
                         class="form-control"
                         name="fecha_fin_resumen"
                         id="fecha_fin_resumen"
-                        value="<?= htmlspecialchars($_GET['fecha_fin_resumen'] ?? '') ?>">
+                        value="<?php if(!empty($_GET['fecha_fin_resumen'])){echo htmlspecialchars($_GET['fecha_fin_resumen']);} ?>">
                 </div>
 
                 <div class="col-auto align-self-end">
@@ -275,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center">
                         <h3>📅</h3>
                         <h5>Promedio de Permisos entre fechas</h5>
-                        <h2><?= number_format($datos['promedio_diario'] ?? 0, 2) ?></h2>
+                        <h2><?php $promedio_diario = 0; if(!empty($datos['promedio_diario'])){$promedio_diario = $datos['promedio_diario'];} echo number_format($promedio_diario, 2); ?></h2>
                     </div>
                 </div>
             </div>
@@ -284,9 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center">
                         <h3>🏢</h3>
                         <h4>Empresa más activa</h4>
-                        <h5><?= $datos['empresa_mas_usada']['nombre'] ?? 'N/A' ?></h5>
-                        <h6>Total de Permisos:  <?= $datos['empresa_mas_usada']['total'] ?? 0 ?></h6>
-                        <small><?= number_format($datos['empresa_mas_usada']['promedio_diario'] ?? 0, 2) ?> permisos/día</small>
+                        <h5><?php if (!empty($datos['empresa_mas_usada']['nombre'])){echo $datos['empresa_mas_usada']['nombre'];} else {echo 'N/A';}?></h5>
+                        <h6>Total de Permisos:  <?php if (!empty($datos['empresa_mas_usada']['total'])){echo $datos['empresa_mas_usada']['total'];} else {echo 0;}?></h6>
+                        <small><?php $e_promedio_diario = 0; if(!empty($datos['empresa_mas_usada']['promedio_diario'])){$e_promedio_diario = $datos['empresa_mas_usada']['promedio_diario'];} echo number_format($e_promedio_diario, 2) ?> permisos/día</small>
                     </div>
                 </div>
             </div>
@@ -295,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center">
                         <h3>📅</h3>
                         <h5>Promedio de reservas</h5>
-                        <h2><?= count($datos['promedio_reservas'] ?? []) ?></h2>
+                        <h2><?php if (!empty($datos['promedio_reservas'])){echo count($datos['promedio_reservas']);} else {echo 0;}?></h2>
                     </div>
                 </div>
             </div>
@@ -304,9 +316,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center">
                         <h3>🏨</h3>
                         <h4>Hotel con mas Reservas</h4>
-                        <h5><?= $datos['hoteles_usados'][0]['nombre_hotel'] ?? 'N/A' ?></h5>
-                        <h5><h5><?= $datos['hoteles_usados'][0]['total'] ?? 'N/A' ?></h5></h5>
-                        <h5><h5><?= $datos['hoteles_usados'][0]['promedio'] ?? 'N/A' ?></h5></h5>
+                        <h5><?php if (!empty($datos['hoteles_usados'][0]['nombre_hotel'])){echo $datos['hoteles_usados'][0]['nombre_hotel'];} else {echo 'N/A';} ?></h5>
+                        <h5><h5><?php if (!empty($datos['hoteles_usados'][0]['total'])){echo $datos['hoteles_usados'][0]['total'];} else {echo 'N/A';} ?></h5></h5>
+                        <h5><h5><?php if (!empty($datos['hoteles_usados'][0]['promedio'])){echo $datos['hoteles_usados'][0]['promedio'];} else {echo 'N/A';} ?></h5></h5>
                     </div>
                 </div>
             </div>
@@ -315,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center">
                         <h3>🚍</h3>
                         <h4>Servicio más usado</h4>
-                        <h5><?= ucfirst($datos['por_tipo']['tipo'] ?? 'N/A') ?></h5>
+                        <h5><?php if (!empty($datos['por_tipo']['tipo'])){echo ucfirst($datos['por_tipo']['tipo']);} else {echo 'N/A';} ?></h5>
                     </div>
                 </div>
             </div>
@@ -324,8 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card-body text-center">
                         <h3>🗺️</h3>
                         <h5>Recorrido más usado</h5>
-                        <h6><?= $datos['recorrido_mas_usado']['nombre'] ?? 'N/A' ?></h6>
-                        <small><?= $datos['recorrido_mas_usado']['cantidad'] ?? 0 ?> veces</small>
+                        <h6><?php if (!empty($datos['recorrido_mas_usado']['nombre'])){echo $datos['recorrido_mas_usado']['nombre'];} else {echo 'N/A';} ?></h6>
+                        <small><?php if (!empty($datos['recorrido_mas_usado']['cantidad'])){echo $datos['recorrido_mas_usado']['cantidad'];} else {echo 0;} ?> veces</small>
                     </div>
                 </div>
             </div>
@@ -338,8 +350,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-body text-center">
                     <h3>📍</h3>
                     <h5>Parada más usada</h5>
-                    <h6><?= $datos['punto_mas_usado']['nombre'] ?? 'N/A' ?></h6>
-                    <small><?= $datos['punto_mas_usado']['cantidad'] ?? 0 ?> veces</small>
+                    <h6><?php if (!empty($datos['punto_mas_usado']['nombre'])){echo $datos['punto_mas_usado']['nombre'];} else {echo 'N/A';} ?></h6>
+                    <small><?php if (!empty($datos['punto_mas_usado']['cantidad'])){echo $datos['punto_mas_usado']['cantidad'];} else {echo 0;} ?> veces</small>
                 </div>
             </div>
         </div>
