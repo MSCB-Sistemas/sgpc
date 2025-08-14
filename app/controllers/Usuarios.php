@@ -68,12 +68,12 @@ class Usuarios extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario = trim($_POST["usuario"] ?? '');
-            $nombre = trim($_POST["nombre"] ?? '');
-            $apellido = trim($_POST["apellido"] ?? '');
-            $cargo = trim($_POST["cargo"] ?? '');
-            $sector = trim($_POST["sector"] ?? '');
-            $tipoUsuario = $_POST["tipo_usuario"] ?? '';
+            $usuario = trim($_POST["usuario"] );
+            $nombre = trim($_POST["nombre"] );
+            $apellido = trim($_POST["apellido"] );
+            $cargo = trim($_POST["cargo"] );
+            $sector = trim($_POST["sector"]  );
+            $tipoUsuario = $_POST["tipo_usuario"] ;
 
             $errores = [];
             if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
@@ -128,13 +128,13 @@ class Usuarios extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario = trim($_POST["usuario"] ?? '');
-            $nombre = trim($_POST["nombre"] ?? '');
-            $apellido = trim($_POST["apellido"] ?? '');
-            $cargo = trim($_POST["cargo"] ?? '');
-            $sector = trim($_POST["sector"] ?? '');
-            $contrasenia = trim($_POST["password"] ?? '');
-            $tipoUsuario = $_POST["tipo_usuario"] ?? '';
+            $usuario = trim($_POST["usuario"]);
+            $nombre = trim($_POST["nombre"]);
+            $apellido = trim($_POST["apellido"] );
+            $cargo = trim($_POST["cargo"] );
+            $sector = trim($_POST["sector"] );
+            $contrasenia = trim($_POST["password"] );
+            $tipoUsuario = $_POST["tipo_usuario"];
 
             // Validaciones simples
             $errores = [];
@@ -196,7 +196,7 @@ class Usuarios extends Control
     public function savePass($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $password = trim($_POST["password"] ?? '');
+            $password = trim($_POST["password"] );
 
             $errores = [];
             if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";
