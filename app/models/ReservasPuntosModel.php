@@ -98,7 +98,21 @@ class ReservasPuntosModel {
         return $stmt->rowCount() > 0;
     }
 
-    
+    public function getReservasByPedidoPdf($id_permiso): array {
+        $stmt = $this->db->prepare("SELECT 
+            c.nombre as calle,
+            pd.nombre as parada,
+            h.nombre as hotel,
+            TIME(rp.fecha_horario) as horario
+            from reservas_puntos rp
+            inner join puntos_detencion pd on rp.id_punto_detencion = pd.id_punto_detencion 
+            inner join calles c on pd.id_calle = c.id_calle 
+            left outer join hoteles h ON rp.id_hotel = h.id_hotel
+            where rp.id_permiso = :id_permiso;"
+        );
+        $stmt->execute(['id_permiso' => $id_permiso]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>
