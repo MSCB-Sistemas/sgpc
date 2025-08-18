@@ -102,6 +102,13 @@ class RecorridosPermisosModel
         $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getPermisosByRecorrido($id_recorrido): array 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM recorridos_permisos WHERE id_recorrido = :id_recorrido");
+        $stmt->execute(['id_recorrido' => $id_recorrido]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
   
