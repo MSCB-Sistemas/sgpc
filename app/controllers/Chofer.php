@@ -155,9 +155,11 @@ class Chofer extends Control
             header("Location: " . URL . "/chofer");
             exit;
         }
-        $this->index(["No se puede eliminar el chofer, tiene permisos asignados."]);
+        $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
+        $string_permisos = implode(', ', $ids_permisos);
+        $this->index(["No se puede eliminar el chofer, tiene los siguientes permisos asignados: ". $string_permisos]);
     }
-    
+
     public function saveAjax()
     {
         header('Content-Type: application/json');

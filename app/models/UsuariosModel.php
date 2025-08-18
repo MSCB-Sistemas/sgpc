@@ -59,7 +59,8 @@ class UsuariosModel {
     }
 
     public function getUsuarioByNombreUsuario($nombre_usuario) : array|bool {
-        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE usuario = :usuario");
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE usuario = :usuario and activo = 1");
+         // Asegurarse de que el nombre de usuario no sea nulo o vacío
         $stmt->execute(['usuario' => $nombre_usuario]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
