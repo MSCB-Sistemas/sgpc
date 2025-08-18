@@ -113,6 +113,12 @@ class ReservasPuntosModel {
         $stmt->execute(['id_permiso' => $id_permiso]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getReservasPuntosByHotel($id_hotel) : array {
+        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_hotel = :id_hotel");
+        $stmt->execute(['id_hotel' => $id_hotel]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>

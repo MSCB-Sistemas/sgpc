@@ -13,7 +13,7 @@ class Hoteles extends Control
     }
 
     // Listar todos los hoteles.
-    public function index()
+    public function index($errores = [])
     {
         $hoteles = $this->model->getAllHoteles();
         $datos = [
@@ -30,6 +30,7 @@ class Hoteles extends Control
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
                 ';
             }
+            ,'errores' => $errores
         ];
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -135,11 +136,19 @@ class Hoteles extends Control
     // Eliminar hotel.
     public function delete($id)
     {
-        $eliminado = $this->model->deleteHotel($id);
-        if (!$eliminado) {
-            die("No se puede eliminar el hotel.");
+        $reservasModel = $this->load_model("ReservasPuntosModel");
+        $reservas = $reservasModel->getReservasPuntosByHotel($id);
+        if (empty($reservas)) {
+            $eliminado = $this->model->deleteHotel($id);
+            if (!$eliminado) {
+                $this->index(["No se pudo eliminar el Hotel."]);
+            }
+
+            header("Location: " . URL . "/hoteles");
+            exit;
         }
-        header("Location: " . URL . "/hoteles");
-        exit;
+        $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
+        $string_reservas = implode(', ', $nombres_reservas);
+        $this->index(["No se puede eliminar el hotel, esta asignado a los siguientes permisos: ". $string_reservas]);
     }
 }

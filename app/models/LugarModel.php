@@ -95,6 +95,13 @@ class LugarModel
         $stmt->execute(['id_lugar' => $id_lugar]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getPermisosByLugarId($id_lugar): array 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_lugar = :id_lugar");
+        $stmt->execute(['id_lugar' => $id_lugar]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
   
