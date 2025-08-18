@@ -61,7 +61,7 @@ class PermisoModel
         JOIN usuarios u ON p.id_usuario = u.id_usuario
         JOIN servicios s ON p.id_servicio = s.id_servicio
         JOIN empresas e ON s.id_empresa = e.id_empresa
-        JOIN lugares l ON p.id_lugar = l.id_lugar;
+        JOIN lugares l ON p.id_lugar = l.id_lugar
         ";
 
         if ($activos === true) {
