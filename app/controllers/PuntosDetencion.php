@@ -15,7 +15,7 @@ class PuntosDetencion extends Control
     }
 
     // Mostrar todos los puntos de detención
-    public function index()
+    public function index($errores = null)
     {
         $puntos = $this->model->getAllPuntosDetencion();
         $datos = [
@@ -31,7 +31,8 @@ class PuntosDetencion extends Control
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este punto?\');">Eliminar</a>
                 ';
-            }
+            },
+            'errores' => $errores
         ];
 
         $this->load_view('partials/tablaAbm', $datos);
@@ -149,13 +150,20 @@ class PuntosDetencion extends Control
     // Eliminar un punto
     public function delete($id)
     {
-        $eliminado = $this->model->deletePuntoDetencion($id);
+        $reservas = $this->model->getReservaByPunto($id);
+        if (empty($reservas)) {
+            $eliminado = $this->model->deletePuntoDetencion($id);
+            if (!$eliminado) {
+                $this->index(["No se pudo eliminar el punto de detención."]);
+            }
 
-        if (!$eliminado) {
-            die("No se pudo eliminar el punto de detención.");
+            header("Location: " . URL . "/puntosDetencion");
+            exit;
         }
 
-        header("Location: " . URL . "/puntosDetencion");
-        exit;
+        $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
+        $string_reservas = implode(', ', $nombres_reservas);
+        $this->index(["No se puede eliminar el punto de detencion, esta reservado por los siguientes permisos: ". $string_reservas]);
+
     }
 }

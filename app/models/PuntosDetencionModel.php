@@ -97,6 +97,13 @@ class PuntosDetencionModel {
         $stmt->execute(['id_calle' => $id_calle]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getReservaByPunto($id_punto_detencion): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_punto_detencion = :id_punto_detencion");
+        $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>
