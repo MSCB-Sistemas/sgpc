@@ -32,9 +32,9 @@ class PermisoModel
      *
      * @return array Arreglo asociativo con todos los registros de la tabla `permisos`.
      */
-    public function getAllPermisos(): array
+    public function getAllPermisos($activos): array
     {
-        $stmt = $this->db->query("SELECT
+        $sql = "SELECT
             p.id_permiso,
             p.tipo,
             p.fecha_reserva,
@@ -62,7 +62,13 @@ class PermisoModel
         JOIN servicios s ON p.id_servicio = s.id_servicio
         JOIN empresas e ON s.id_empresa = e.id_empresa
         JOIN lugares l ON p.id_lugar = l.id_lugar;
-        ");
+        ";
+
+        if ($activos === true) {
+            $sql .= " WHERE p.activo = 1";
+        }
+
+        $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
 
