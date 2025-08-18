@@ -1,3 +1,13 @@
+
+<?php if (!empty($datos['errores'])): ?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach ($datos['errores'] as $e): ?>
+                <li><?= htmlspecialchars($e) ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>
 <div class="container-fluid mt-5 px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><?= $datos['title'] ?></h2>
