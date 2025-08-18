@@ -57,8 +57,7 @@ class ChoferesModel {
      */
     public function updateChofer($id_chofer, $dni, $nombre, $apellido, $nacionalidad) : bool {
         $stmt = $this->db->prepare("UPDATE choferes SET dni = :dni, nombre = :nombre, apellido = :apellido, id_nacionalidad = :nacionalidad WHERE id_chofer = :id_chofer");
-        $stmt->execute(['id_chofer' => $id_chofer, 'dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad]);
-        return $stmt->rowCount() > 0;
+        return $stmt->execute(['id_chofer' => $id_chofer, 'dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad]);
     }
 
     /**

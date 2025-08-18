@@ -27,13 +27,18 @@ class Usuarios extends Control
         'acciones' => function($fila) {
             $id = $fila['id_usuario'];
             $url = URL . '/usuarios';
-            return '
-                <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
-                <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
-                <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
-            ';
-        
+            if ($fila['activo']) {
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
+                    <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
+                ';
+            } else {
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
+                ';
+            }
         }
         ];
     $this->load_view('partials/tablaAbm', $datos);

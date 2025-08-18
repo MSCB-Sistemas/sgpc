@@ -85,12 +85,11 @@ class CalleRecorridoModel
              SET id_recorrido = :id_recorrido, id_calle = :id_calle 
              WHERE id_calle_recorrido = :id"
         );
-        $stmt->execute([
+        return $stmt->execute([
             'id' => $id,
             'id_recorrido' => $id_recorrido,
             'id_calle' => $id_calle
         ]);
-        return $stmt->rowCount() > 0;
     }
 
     /**

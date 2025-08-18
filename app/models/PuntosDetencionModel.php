@@ -62,8 +62,8 @@ class PuntosDetencionModel {
      */
     public function updatePuntoDetencion($id_punto_detencion, $nombre, $id_calle) : bool {
         $stmt = $this->db->prepare("UPDATE puntos_detencion SET nombre = :nombre, id_calle = :id_calle WHERE id_punto_detencion = :id_punto_detencion");
-        $stmt->execute(['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle]);
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle]);
     }
 
     /**

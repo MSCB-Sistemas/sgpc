@@ -66,10 +66,9 @@ class RecorridosPermisosModel
         $stmt = $this->db->prepare("UPDATE recorridos SET id_recorrido = :id_recorrido, id_permiso =
         :id_permiso WHERE id_recorrido_permiso = :id_recorrido_permiso");
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso,'id_permiso' => $id_permiso, 
+        
+        return $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso,'id_permiso' => $id_permiso, 
         'id_recorrido' => $id_recorrido]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
     }
  
     /**

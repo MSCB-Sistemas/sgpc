@@ -80,8 +80,8 @@ class UsuariosModel {
      */
     public function updateUsuario($id_usuario, $usuario, $nombre, $apellido, $cargo, $sector, $id_tipo_usuario) : bool {
         $stmt = $this->db->prepare("UPDATE usuarios SET usuario = :usuario, nombre = :nombre, apellido = :apellido, cargo = :cargo, sector = :sector, id_tipo_usuario = :id_tipo_usuario WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'id_tipo_usuario' => $id_tipo_usuario]);
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'id_tipo_usuario' => $id_tipo_usuario]);
     }
 
     /**

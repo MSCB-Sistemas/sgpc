@@ -172,7 +172,8 @@ class PermisoModel
                 fecha_reserva = :fecha_reserva, fecha_emision = :fecha_emision, arribo_salida = :arribo_salida,
                 observacion = :observacion, activo = :activo
             WHERE id_permiso = :id");
-        $stmt->execute([
+        
+        return $stmt->execute([
             'id' => $id,
             'id_chofer' => $id_chofer,
             'id_usuario' => $id_usuario,
@@ -184,7 +185,6 @@ class PermisoModel
             'observacion' => $observacion,
             'activo' => $activo
         ]);
-        return $stmt->rowCount() > 0;
     }
 
     /**
