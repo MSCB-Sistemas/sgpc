@@ -15,7 +15,7 @@ class Servicio extends Control
     }
 
     // Mostrar todos los servicios
-    public function index()
+    public function index($errores = [])
     {
         $servicios = $this->model->getAllServicios();
         $datos = [
@@ -31,7 +31,8 @@ class Servicio extends Control
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
                 ';
-            }
+            },
+            'errores' => $errores
         ];
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -206,13 +207,21 @@ class Servicio extends Control
     // Eliminar un servicio
     public function delete($id)
     {
-        $eliminado = $this->model->deleteServicio($id);
+        $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
 
-        if (!$eliminado) {
-            die("Error al eliminar el servicio.");
+        if (empty($permisos)) {
+            $eliminado = $this->model->deleteServicio($id);
+
+            if (!$eliminado) {
+                $this->index(["Error al eliminar el servicio"]);
+            }
+            header("Location: " . URL . "/servicio");
+            exit;
         }
-        header("Location: " . URL . "/servicio/index");
-        exit;
+        
+        $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
+        $string_permisos = implode(', ', $ids_permisos);
+        $this->index(["No se puede eliminar el servicio, tiene los siguientes permisos asignados: ". $string_permisos]);
     }
     
     public function saveAjax()

@@ -200,4 +200,11 @@ class PermisoModel
         return $stmt->rowCount() > 0;
     }
 
+    public function getPermisosByServicio($id): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_servicio = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchAll();
+    }
+
 }
