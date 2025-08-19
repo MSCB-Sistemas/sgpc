@@ -192,12 +192,30 @@ class Servicio extends Control
                 ]);
                 return;
             }
+            try {
+                if ($this->model->updateServicio($id, $empresa, $interno, $dominio)) {
+                    header("Location: " . URL . "/servicio/index");
+                    exit;
+                } else {
+                    die("Error al actualizar el servicio.");
+                }
+            } catch (\PDOException $e) {
+                $empresaData = $this->empresaModel->getEmpresa($empresa);
+                $empresaNombre = $empresaData['nombre'];
 
-            if ($this->model->updateServicio($id, $empresa, $interno, $dominio)) {
-                header("Location: " . URL . "/servicio/index");
-                exit;
-            } else {
-                die("Error al actualizar el servicio.");
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El servicio ($empresaNombre, $interno, $dominio) ya existe.";
+                } else {
+                    $errores[] = "Error al guardar el servicio: " . $e->getMessage();
+                }
+                $empresas = $this->empresaModel->getAllEmpresas();
+                $this->load_view('servicios/form', [
+                    'title' => 'Crear nuevo servicio',
+                    'action' => URL . '/servicio/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'empresas' => $empresas
+                ]);
             }
         }
     }

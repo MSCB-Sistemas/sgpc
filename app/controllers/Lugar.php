@@ -129,12 +129,25 @@ class Lugar extends Control
                 ]);
                 return;
             }
-
-            if ($this->model->updateLugar($id,  $nombre)) {
-                header("Location: " . URL . "/lugar");
-                exit;
-            } else {
-                die("Error al actualizar lugar");
+            try {
+                if ($this->model->updateLugar($id,  $nombre)) {
+                    header("Location: " . URL . "/lugar");
+                    exit;
+                } else {
+                    die("Error al actualizar lugar");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El lugar '{$_POST['nombre']}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar lugar: " . $e->getMessage();
+                }
+                $this->load_view('lugares/form', [
+                    'title' => 'Crear nuevo Lugar',
+                    'action' => URL . '/lugar/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]); 
             }
         }
     }

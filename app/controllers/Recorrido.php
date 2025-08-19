@@ -197,21 +197,39 @@ class Recorrido extends Control
                 $this->load_view('recorridos/form', $datos);
                 return;
             }
-
-            // actualizar nombre
-            if (!$this->model->updateRecorrido($id, $nombre)) {
-                die("Error al actualizar el recorrido");
-            }
-
-            // borrar calles viejas e insertar nuevas
-            $this->calleRecorridoModel->deleteByRecorrido($id);
-            foreach ($calles as $idCalle) {
-                if (!$this->calleRecorridoModel->insertCalleRecorrido($id, $idCalle)) {
-                    die("Error al guardar las calles del recorrido");
+            try {
+                // actualizar nombre
+                if (!$this->model->updateRecorrido($id, $nombre)) {
+                    die("Error al actualizar el recorrido");
                 }
-            }
 
-            header('Location: ' . URL . '/recorrido');
+                // borrar calles viejas e insertar nuevas
+                $this->calleRecorridoModel->deleteByRecorrido($id);
+                foreach ($calles as $idCalle) {
+                    if (!$this->calleRecorridoModel->insertCalleRecorrido($id, $idCalle)) {
+                        die("Error al guardar las calles del recorrido");
+                    }
+                }
+
+                header('Location: ' . URL . '/recorrido');
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El recorrido '{$nombre}' ya existe.";
+                } else {
+                    $errores[] = "Error al guardar el recorrido: " . $e->getMessage();
+                }
+                $datos = [
+                    'title' => 'Nuevo Recorrido',
+                    'action' => URL . '/recorrido/save',
+                    'values' => [
+                        'nombre' => $nombre,
+                        'calles_array' => $this->mapCalles($calles)
+                    ],
+                    'calles' => $this->calleModel->getAllCalles(),
+                    'errores' => $errores
+                ];
+                $this->load_view('recorridos/form', $datos);
+            }
         }
     }
 

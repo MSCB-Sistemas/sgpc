@@ -73,13 +73,27 @@ class Empresa extends Control
                 ]);
                 return;
             }
-
-            if ($this->model->updateEmpresa($id,$nombre)) {
-                header("Location: " . URL . "/empresa");
-                exit;
-            } else {
-                die("Error al actualizar la empresa");
-            }
+            try {
+                if ($this->model->updateEmpresa($id,$nombre)) {
+                    header("Location: " . URL . "/empresa");
+                    exit;
+                } else {
+                    die("Error al actualizar la empresa");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "La empresa '{$_POST['nombre']}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar la empresa: " . $e->getMessage();
+                }
+                $this->load_view('empresas/form', [
+                    'title' => 'Crear nueva empresa',
+                    'action' => URL . '/empresa/save',
+                    'values' => $_POST,
+                    'errores' => $errores
+                ]);
+                return;
+            }    
         }
     }
 

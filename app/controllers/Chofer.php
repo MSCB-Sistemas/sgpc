@@ -89,12 +89,28 @@ class Chofer extends Control
                 ]);
                 return;
             }
-
-            if ($this->modelo->updateChofer($id, $dni, $nombre, $apellido, $nacionalidad)) {
-                header("Location: " . URL . "/chofer");
-                exit;
-            } else {
-                die("Error al actualizar el chofer");
+            try {
+                if ($this->modelo->updateChofer($id, $dni, $nombre, $apellido, $nacionalidad)) {
+                    header("Location: " . URL . "/chofer");
+                    exit;
+                } else {
+                    die("Error al actualizar el chofer");
+                }
+            } catch (Exception $e) {
+                $nombre_nacionalidad = $this->modeloNacionalidades->getNacionalidad($nacionalidad)['nacionalidad'];
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El chofer '{$dni}' de nacionalidad '{$nombre_nacionalidad}'  ya está registrado en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el chofer: " . $e->getMessage();
+                }
+                $nacionalidades = $this->modeloNacionalidades->getAllNacionalidades();
+                 $this->load_view('choferes/form', [
+                    'title' => 'Crear nuevo chofer',
+                    'action' => URL . '/chofer/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'nacionalidades' => $nacionalidades
+                ]);
             }
         }
     }
