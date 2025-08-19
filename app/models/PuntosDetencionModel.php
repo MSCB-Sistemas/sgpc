@@ -62,8 +62,8 @@ class PuntosDetencionModel {
      */
     public function updatePuntoDetencion($id_punto_detencion, $nombre, $id_calle) : bool {
         $stmt = $this->db->prepare("UPDATE puntos_detencion SET nombre = :nombre, id_calle = :id_calle WHERE id_punto_detencion = :id_punto_detencion");
-        $stmt->execute(['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle]);
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle]);
     }
 
     /**
@@ -95,6 +95,13 @@ class PuntosDetencionModel {
     {
         $stmt = $this->db->prepare("SELECT * FROM puntos_detencion WHERE id_calle = :id_calle order by nombre asc");
         $stmt->execute(['id_calle' => $id_calle]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getReservaByPunto($id_punto_detencion): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_punto_detencion = :id_punto_detencion");
+        $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

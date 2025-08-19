@@ -13,7 +13,7 @@ class Empresa extends Control
     }
 
     // Mostrar listado de empresas
-    public function index()
+    public function index($errores = [])
     {
         $empresas = $this->model->getAllEmpresas();
         $datos = [
@@ -29,7 +29,8 @@ class Empresa extends Control
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>
                 ';
-            }
+            },
+            'errores' => $errores
         ];
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -124,10 +125,17 @@ class Empresa extends Control
         $serviciosModel = $this->load_model("ServicioModel");
         $servicios = $serviciosModel->getServicioByEmpresa($id);
         if (empty($servicios)) {
-            $this->model->deleteEmpresa($id);
+            $eliminado = $this->model->deleteEmpresa($id);
+
+            if (!$eliminado) {
+                $this->index(["Error al eliminar la empresa"]);
+            }
             header("Location: " . URL . "/empresa");
             exit;
         }
-            die("No se puede eliminar la empresa, tiene servicios asignados.");
+        
+        $internos = $servicios ? array_column($servicios, 'interno') : [];
+        $string_internos = implode(', ', $internos);
+        $this->index(["No se puede eliminar la empresa, tiene asignados los servicios con numero de interno: ". $string_internos]);
     }
 }

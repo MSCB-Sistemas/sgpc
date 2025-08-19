@@ -17,7 +17,7 @@ class Recorrido extends Control
     }
 
     // Mostrar todos los recorridos
-    public function index()
+    public function index($errores = [])
     {
         $recorridos = $this->model->getAllRecorridos();
         foreach ($recorridos as &$recorrido) {
@@ -41,7 +41,8 @@ class Recorrido extends Control
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
                 ';
-            }
+            },
+            'errores' => $errores
         ];
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -199,13 +200,20 @@ class Recorrido extends Control
     // Eliminar un recorrido
     public function delete($id)
     {
-        $eliminado = $this->model->deleteRecorrido($id);
+        $permisos = $this->load_model("RecorridosPermisosModel")->getPermisosByRecorrido($id);
+        if (empty($permisos)) {
 
-        if (!$eliminado) {
-            die("Error al eliminar el recorrido");
+            $eliminado = $this->model->deleteRecorrido($id);
+            if (!$eliminado) {
+                $this->index(["Error al eliminar el recorrido"]);
+            }
+            header("Location: " . URL . "/recorrido");
+            exit;
         }
-        header("Location: " . URL . "/recorrido");
-        exit;
+        
+        $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
+        $string_permisos = implode(', ', $ids_permisos);
+        $this->index(["No se puede eliminar el recorrido, tiene los siguientes permisos asignados: ". $string_permisos]);
     }
 
     public function saveAjax()

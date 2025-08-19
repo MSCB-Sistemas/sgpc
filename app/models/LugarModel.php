@@ -61,9 +61,8 @@ class LugarModel
         $stmt = $this->db->prepare("UPDATE lugares SET nombre = :nombre 
         WHERE id_lugar = :id_lugar");
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_lugar' => $id_lugar,'nombre' => $nombre_lugar]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_lugar' => $id_lugar,'nombre' => $nombre_lugar]);
     }
     /** 
      * Funcion que ejecuta una query para insertar un nuevo lugar.
@@ -94,6 +93,13 @@ class LugarModel
         // Ejecuta la consulta pasando los valores
         $stmt->execute(['id_lugar' => $id_lugar]);
         return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByLugarId($id_lugar): array 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_lugar = :id_lugar");
+        $stmt->execute(['id_lugar' => $id_lugar]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 

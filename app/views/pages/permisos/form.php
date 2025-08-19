@@ -171,17 +171,12 @@
     <!-- Observación -->
     <div class="mb-3">
         <label for="observacion" class="form-label">Observación</label>
-        <textarea class="form-control" id="observacion" name="observacion" rows="3">
-            <?php 
+        <textarea class="form-control" id="observacion" name="observacion" rows="3"><?php 
                 if (isset($datos['values']['observacion'])) 
                 { 
                     $valorObservacion = htmlspecialchars($datos['values']['observacion']);
-                } else 
-                {
-                    $valorObservacion = '';
-                } 
-            ?>
-        </textarea>
+                }
+            ?></textarea>
     </div>
 
     <button type="submit" class="btn btn-success">Guardar</button>

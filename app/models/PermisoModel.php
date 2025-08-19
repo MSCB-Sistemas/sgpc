@@ -32,9 +32,9 @@ class PermisoModel
      *
      * @return array Arreglo asociativo con todos los registros de la tabla `permisos`.
      */
-    public function getAllPermisos(): array
+    public function getAllPermisos($activos): array
     {
-        $stmt = $this->db->query("SELECT
+        $sql = "SELECT
             p.id_permiso,
             p.tipo,
             p.fecha_reserva,
@@ -61,8 +61,14 @@ class PermisoModel
         JOIN usuarios u ON p.id_usuario = u.id_usuario
         JOIN servicios s ON p.id_servicio = s.id_servicio
         JOIN empresas e ON s.id_empresa = e.id_empresa
-        JOIN lugares l ON p.id_lugar = l.id_lugar;
-        ");
+        JOIN lugares l ON p.id_lugar = l.id_lugar
+        ";
+
+        if ($activos === true) {
+            $sql .= " WHERE p.activo = 1";
+        }
+
+        $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
 
@@ -172,7 +178,8 @@ class PermisoModel
                 fecha_reserva = :fecha_reserva, fecha_emision = :fecha_emision, arribo_salida = :arribo_salida,
                 observacion = :observacion, activo = :activo
             WHERE id_permiso = :id");
-        $stmt->execute([
+        
+        return $stmt->execute([
             'id' => $id,
             'id_chofer' => $id_chofer,
             'id_usuario' => $id_usuario,
@@ -184,7 +191,6 @@ class PermisoModel
             'observacion' => $observacion,
             'activo' => $activo
         ]);
-        return $stmt->rowCount() > 0;
     }
 
     /**
@@ -198,6 +204,13 @@ class PermisoModel
         $stmt = $this->db->prepare("UPDATE permisos SET activo = 0 WHERE id_permiso = :id");
         $stmt->execute(['id' => $id]);
         return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByServicio($id): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_servicio = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchAll();
     }
 
 }

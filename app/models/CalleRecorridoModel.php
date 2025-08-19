@@ -85,12 +85,11 @@ class CalleRecorridoModel
              SET id_recorrido = :id_recorrido, id_calle = :id_calle 
              WHERE id_calle_recorrido = :id"
         );
-        $stmt->execute([
+        return $stmt->execute([
             'id' => $id,
             'id_recorrido' => $id_recorrido,
             'id_calle' => $id_calle
         ]);
-        return $stmt->rowCount() > 0;
     }
 
     /**
@@ -120,6 +119,17 @@ class CalleRecorridoModel
              WHERE calles_recorridos.id_recorrido = :id_recorrido"
         );
         $stmt->execute(['id_recorrido' => $id_recorrido]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getRecorridosByCalle($id_calle): bool|array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT r.nombre FROM recorridos r
+             JOIN calles_recorridos ON r.id_recorrido = calles_recorridos.id_recorrido 
+             WHERE calles_recorridos.id_calle = :id_calle"
+        );
+        $stmt->execute(['id_calle' => $id_calle]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     

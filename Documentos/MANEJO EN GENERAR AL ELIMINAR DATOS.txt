@@ -1,0 +1,24 @@
+MANEJO EN GENERAR AL ELIMINAR DATOS ASIGNADOS A OTRAS TABLAS POR CLAVES FORANEAS
+
+activar un usuario activado o desactivar un usuario desactivado (error )
+
+error al querer borrar una calle asignada a un calle_recorrido id por el tema de la clave foránea 
+editr una calle sin cambios (error), crear calles con el mismo nombre?
+
+editar chofer sin hacer cambios (error) 
+que no se pueda volver a crear el mismo chofer (mismo dni con misma nacionalidad)
+
+editar empresa sin hacer cambios (error), crear la misma empresa varias veces?
+
+editar hotel sin hacer cambios (error), repetir el hotel con la misma dirección?
+
+error al eliminar (desactivar un permiso dos veces) mostrar en pantalla permisos desactivados?
+
+editar puntos de dentencion sin hacer cambios (error) , crear el mismo punto con la misma calle de nuevo?
+
+editar el recorrido sin hacer cambios permitido? poder volver a crear el mismo recorrido repetido? poder eliminar las calles? error al eliminar un recorrido por las claves foráneas.
+
+editar servicio sin hacer cambios (error) , que se pueda crear el mismo servicio multiples veces? 
+
+editar lugar sin hacer cambios (error) 
+

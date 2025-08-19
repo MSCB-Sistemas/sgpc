@@ -18,7 +18,12 @@ class Permiso extends Control
     // Mostrar lista de permisos
     public function index()
     {
-        $permisos = $this->model->getAllPermisos();
+        if ($_SESSION['usuario_tipo'] == '1') {
+            $permisos = $this->model->getAllPermisos(false);
+        } else {
+            $permisos = $this->model->getAllPermisos(true);
+        }
+        
         $datos = [
             'title' => 'Listado de Permisos',
             'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
@@ -58,25 +63,13 @@ class Permiso extends Control
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
                     <a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a>
                 ';
-            } : null,
+            } : null
         ];
 
         $this->load_view('partials/tablaAbm', $datos);
     }
 
-    // Mostrar detalles de un permiso específico
-    public function show($id)
-    {
-        $permiso = $this->model->getPermiso($id);
-        if (!$permiso) {
-            $this->load_view('permisos/index', [
-                'error' => 'Permiso no encontrado.',
-                'permisos' => $this->model->getAllPermisos()
-            ]);
-            return;
-        }
-        $this->load_view('permisos/show', ['permiso' => $permiso]);
-    }
+   
 
     // Mostrar formulario para crear permiso
     public function nuevo()

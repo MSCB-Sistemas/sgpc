@@ -62,9 +62,7 @@ class CalleModel
         $stmt = $this->db->prepare("UPDATE calles SET nombre = :nombre 
         WHERE id_calle = :id_calle");
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_calle' => $id_calle,'nombre' => $nombre_calle ]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        return $stmt->execute(['id_calle' => $id_calle,'nombre' => $nombre_calle ]);
     }
     /** 
         * Funcion que ejecuta una query para insertar una nueva calle en la base de datos.

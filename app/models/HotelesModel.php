@@ -55,8 +55,8 @@ class HotelesModel {
      */
     public function updateHotel($id_hotel, $nombre_hotel, $direccion) : bool {
         $stmt = $this->db->prepare("UPDATE hoteles SET nombre = :nombre, direccion = :direccion WHERE id_hotel = :id_hotel");
-        $stmt->execute(['id_hotel' => $id_hotel, 'nombre' => $nombre_hotel, 'direccion' => $direccion]);
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_hotel' => $id_hotel, 'nombre' => $nombre_hotel, 'direccion' => $direccion]);
     }
 
     /**

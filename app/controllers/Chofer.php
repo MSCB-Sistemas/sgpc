@@ -12,7 +12,7 @@ class Chofer extends Control
         $this->modeloNacionalidades = $this->load_model('NacionalidadModel');
     }
 
-    public function index()
+    public function index($errores = [])
     {
         $choferes = $this->modelo->getAllChoferes();
         $datos = [
@@ -28,7 +28,8 @@ class Chofer extends Control
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este chofer?\');">Eliminar</a>
                 ';
-            }
+            },
+            'errores' => $errores
         ];    
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -154,7 +155,9 @@ class Chofer extends Control
             header("Location: " . URL . "/chofer");
             exit;
         }
-            die("No se puede eliminar la chofer, tiene permisos asignados.");
+        $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
+        $string_permisos = implode(', ', $ids_permisos);
+        $this->index(["No se puede eliminar el chofer, tiene los siguientes permisos asignados: ". $string_permisos]);
     }
 
     public function saveAjax()

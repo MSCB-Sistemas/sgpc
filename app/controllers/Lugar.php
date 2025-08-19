@@ -13,7 +13,7 @@ class Lugar extends Control
     }
 
     // Mostrar todos los lugares en una vista.
-    public function index()
+    public function index($errores = [])
     {
         $lugares = $this->model->getAllLugares();
         $datos = [
@@ -30,6 +30,7 @@ class Lugar extends Control
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este lugar?\');">Eliminar</a>
                 ';
             }
+            ,'errores' => $errores
         ];    
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -128,14 +129,19 @@ class Lugar extends Control
     // Eliminar un lugar.
     public function delete($id)
     {
-        $eliminado = $this->model->deleteLugar($id);
-        if (!$eliminado) {
-            die("No se puede eliminar el lugar.");
+        $permiso = $this->model->getPermisosByLugarId($id);
+        if (empty($permiso)) {
+            $eliminado = $this->model->deleteLugar($id);
+            if (!$eliminado) {
+                $this->index(["No se pudo eliminar el Lugar."]);
+            }
+
+            header("Location: " . URL . "/lugar");
+            exit;
         }
-        header("Location: " . URL . "/lugar");
-        exit;
-        
-        
+        $nombres_permisos = $permiso ? array_column($permiso, 'id_permiso') : [];
+        $string_permisos = implode(', ', $nombres_permisos);
+        $this->index(["No se puede eliminar el lugar, esta asignado a los siguientes permisos: ". $string_permisos]);
     }
     
     public function saveAjax()
