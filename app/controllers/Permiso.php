@@ -79,8 +79,23 @@ class Permiso extends Control
     }
 
     // Mostrar formulario para crear permiso
-    public function nuevo($errores = [], $mensajes = [])
+    public function nuevo()
     {
+        $errores = [];
+        $mensajes = [];
+        $imprimir = [];
+        if (!empty( $_SESSION['errores'])){
+            $errores = [$_SESSION['errores']];
+        }
+        if (!empty( $_SESSION['mensajes'])){
+            $mensajes = $_SESSION['mensajes'];
+        }
+        if (!empty( $_SESSION['imprimir_permiso'])){
+            $imprimir = $_SESSION['imprimir_permiso'];
+        }
+        
+        unset($_SESSION['errores'], $_SESSION['mensajes'], $_SESSION['imprimir_permiso']);
+
         $servicios = $this->load_model('ServicioModel')->getAllServicios();
         $recorridos = $this->load_model('RecorridoModel')->getAllRecorridos();
         $choferes = $this->load_model('ChoferesModel')->getAllChoferes();
@@ -103,7 +118,8 @@ class Permiso extends Control
             'hoteles'=> $hoteles,
             'lugares' => $lugares,
             'errores' => $errores,
-            'mensajes' => $mensajes
+            'mensajes' => $mensajes,
+            'imprimir' => $imprimir
         ]);
     }
     
@@ -125,7 +141,6 @@ class Permiso extends Control
         $puntos_detencion = json_decode($puntos_detencion, true);
         $pasajeros = $_POST['pasajeros'];
         $errores = [];
-        $mensajes = [];
 
         $modelRecorridosPermisos = $this->load_model('RecorridosPermisosModel');
         $modelReservasPuntos = $this->load_model('ReservasPuntosModel');
@@ -181,16 +196,22 @@ class Permiso extends Control
             }
         }
         if (empty($errores)) {
-            $mensajes[] = "Permiso {$idPermiso} creado correctamente.";
             if (!empty($_POST['imprimir'])) {
                 // Generar el PDF
-                 echo "<script>
-                        window.open('/sgpc/permiso/imprimir/{$idPermiso}', '_blank');
-                    </script>";
+                $_SESSION['imprimir_permiso'] = $idPermiso;
             }
         }
 
-        $this->nuevo($errores, $mensajes);
+        // Después de procesar el guardado
+        if (empty($errores)) {
+            $_SESSION['mensajes'] = ["Permiso {$idPermiso} creado correctamente."];
+        } else {
+            $_SESSION['errores'] = $errores;
+        }
+
+        // Redirigir al formulario
+        header('Location: /sgpc/permiso/nuevo');
+        exit;
     }
 
     public function imprimir($idPermiso) {

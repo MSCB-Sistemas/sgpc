@@ -93,7 +93,7 @@ class PuntosDetencionModel {
 
     public function getPuntosByCalle($id_calle): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM puntos_detencion WHERE id_calle = :id_calle");
+        $stmt = $this->db->prepare("SELECT * FROM puntos_detencion WHERE id_calle = :id_calle order by nombre asc");
         $stmt->execute(['id_calle' => $id_calle]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -189,6 +189,11 @@
 </form>
 
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>
+<?php if(!empty($datos['imprimir'])): ?>
+<script>
+    window.open('/sgpc/permiso/imprimir/<?= $datos['imprimir'] ?>', '_blank');
+</script>
+<?php endif; ?>
 <script>
     _URL = '<?= URL ?>';
     window._HOTELES = <?= json_encode($datos['hoteles']) ?>;

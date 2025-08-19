@@ -206,9 +206,12 @@ class ReservasPuntos extends Control
 
         // Consultar horarios ocupados
         $ocupados = $this->model->getHorariosPunto($id_punto, $fecha);
+        $ocupadosFormateados = array_map(function($r) {
+            return date('H:i', strtotime($r['hora']));
+        }, $ocupados);
 
         // Filtrar horarios libres
-        $libres = array_values(array_diff($horarios, $ocupados));
+        $libres = array_values(array_diff($horarios, $ocupadosFormateados));
 
         header('Content-Type: application/json');
         echo json_encode($libres);
