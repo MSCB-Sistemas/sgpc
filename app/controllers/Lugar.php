@@ -55,10 +55,7 @@ class Lugar extends Control
             // Validaciones simples
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-
-
-            try {
-                if (!empty($errores)) {
+            if (!empty($errores)) {
                     $this->load_view('lugares/form', [
                         'title' => 'Crear nuevo Lugar',
                         'action' => URL . '/lugar/save',
@@ -67,7 +64,7 @@ class Lugar extends Control
                     ]);
                     return;
                 }
-
+            try {
                 if ($this->model->insertLugar( $nombre)) {
                     header("Location: " . URL . "/lugar");
                     exit;

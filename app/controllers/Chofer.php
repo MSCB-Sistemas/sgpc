@@ -118,14 +118,15 @@ class Chofer extends Control
             $apellido = trim($_POST["apellido"]);
             $dni = trim($_POST["dni"]);
             $nacionalidad = $_POST["nacionalidad"];
-
+            $nacionalidades = $this->modeloNacionalidades->getAllNacionalidades();
+            
             // Validaciones simples
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
             if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
             if (empty($dni)) $errores[] = "El DNI es obligatorio.";
             if (empty($nacionalidad)) $errores[] = "Debe seleccionar una nacionalidad.";
-
+            
             if (!empty($errores)) {
                 $nacionalidades = $this->modeloNacionalidades->getAll();
                 $this->load_view('choferes/form', [
@@ -137,15 +138,31 @@ class Chofer extends Control
                 ]);
                 return;
             }
-
-            if ($this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad)) {
-                header("Location: " . URL . "/chofer");
-                exit;
-            } else {
-                die("Error al guardar el chofer");
+            try{
+                if ($this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad)) {
+                    header("Location: " . URL . "/chofer");
+                    exit;
+                } else {
+                    die("Error al guardar el chofer");
+                }
+            } catch (Exception $e) {
+                $nombre_nacionalidad = $this->modeloNacionalidades->getNacionalidad($nacionalidad)['nacionalidad'];
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El chofer '{$dni}' de nacionalidad '{$nombre_nacionalidad}'  ya está registrado en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el chofer: " . $e->getMessage();
+                }
+                 $this->load_view('choferes/form', [
+                    'title' => 'Crear nuevo chofer',
+                    'action' => URL . '/chofer/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'nacionalidades' => $nacionalidades
+                ]);
             }
         }
     }
+    
 
     public function delete($id){
         $permisosModel = $this->load_model("PermisoModel");

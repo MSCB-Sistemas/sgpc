@@ -66,14 +66,27 @@ class Hoteles extends Control
                 ]);
                 return;
             }
-
-            if ($this->model->insertHotel($nombre, $direccion)) {
-                header("Location: " . URL . "/hoteles");
-                exit;
-            } else {
-                die("Error al guardar hotel");
+            try{
+                if ($this->model->insertHotel($nombre, $direccion)) {
+                    header("Location: " . URL . "/hoteles");
+                    exit;
+                } else {
+                    die("Error al guardar hotel");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El hotel '{$nombre}' en '{$direccion}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el Hotel: " . $e->getMessage();
+                }
+                $this->load_view('hoteles/form', [
+                    'title' => 'Crear nuevo hotel',
+                    'action' => URL . '/hoteles/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]);
             }
-        }
+        }   
     }
 
     // Mostrar formulario para editar hotel.

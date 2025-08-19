@@ -90,18 +90,37 @@ class Recorrido extends Control
                 return;
             }
 
-            $idRecorrido = $this->model->insertRecorrido($nombre);
-            if ($idRecorrido) {
-                foreach ($calles as $idCalle) {
-                    if(!$this->calleRecorridoModel->insertCalleRecorrido($idRecorrido, $idCalle)){
-                        die("Error al guardar la calle del recorrido");
-                    };
+            try{
+                $idRecorrido = $this->model->insertRecorrido($nombre);
+                if ($idRecorrido) {
+                    foreach ($calles as $idCalle) {
+                        if(!$this->calleRecorridoModel->insertCalleRecorrido($idRecorrido, $idCalle)){
+                            die("Error al guardar la calle del recorrido");
+                        };
+                    }
+                } else {
+                    die("Error al guardar el recorrido");
                 }
-            } else {
-                die("Error al guardar el recorrido");
-            }
 
-            header('Location: ' . URL . '/recorrido');
+                header('Location: ' . URL . '/recorrido');
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El recorrido '{$nombre}' ya existe.";
+                } else {
+                    $errores[] = "Error al guardar el recorrido: " . $e->getMessage();
+                }
+                $datos = [
+                    'title' => 'Nuevo Recorrido',
+                    'action' => URL . '/recorrido/save',
+                    'values' => [
+                        'nombre' => $nombre,
+                        'calles_array' => $this->mapCalles($calles)
+                    ],
+                    'calles' => $this->calleModel->getAllCalles(),
+                    'errores' => $errores
+                ];
+                $this->load_view('recorridos/form', $datos);
+            }
         }
     }
     

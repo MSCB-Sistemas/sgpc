@@ -12,20 +12,21 @@ CREATE TABLE `calles` (
 
 CREATE TABLE `empresas` (
   `id_empresa` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  PRIMARY KEY (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  PRIMARY KEY (`id_empresa`),
+  UNIQUE KEY `empresas_unique` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_c
 
 
 -- sgpc.hoteles definition
 
 CREATE TABLE `hoteles` (
   `id_hotel` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `direccion` varchar(100) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
-  PRIMARY KEY (`id_hotel`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
-
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `direccion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  PRIMARY KEY (`id_hotel`),
+  UNIQUE KEY `hoteles_unique` (`nombre`,`direccion`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- sgpc.nacionalidades definition
 
@@ -40,9 +41,10 @@ CREATE TABLE `nacionalidades` (
 
 CREATE TABLE `recorridos` (
   `id_recorrido` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  PRIMARY KEY (`id_recorrido`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  PRIMARY KEY (`id_recorrido`),
+  UNIQUE KEY `recorridos_unique` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 
 -- sgpc.usuarios_tipos definition
@@ -72,27 +74,28 @@ CREATE TABLE `calles_recorridos` (
 
 CREATE TABLE `choferes` (
   `id_chofer` int NOT NULL AUTO_INCREMENT,
-  `dni` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `nombre` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `apellido` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `dni` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `apellido` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `id_nacionalidad` int NOT NULL,
   PRIMARY KEY (`id_chofer`),
+  UNIQUE KEY `choferes_unique` (`dni`,`id_nacionalidad`),
   KEY `choferes_FK` (`id_nacionalidad`),
   CONSTRAINT `choferes_FK` FOREIGN KEY (`id_nacionalidad`) REFERENCES `nacionalidades` (`id_nacionalidad`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 
 -- sgpc.puntos_detencion definition
 
 CREATE TABLE `puntos_detencion` (
   `id_punto_detencion` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `id_calle` int NOT NULL,
   PRIMARY KEY (`id_punto_detencion`),
+  UNIQUE KEY `puntos_detencion_unique` (`nombre`,`id_calle`),
   KEY `puntos_detencion_FK` (`id_calle`),
   CONSTRAINT `puntos_detencion_FK` FOREIGN KEY (`id_calle`) REFERENCES `calles` (`id_calle`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
-
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- sgpc.servicios definition
 
