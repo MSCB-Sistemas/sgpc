@@ -76,21 +76,36 @@ class Calle extends Control
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
 
-            if (!empty($errores)) {
+            try{
+                if (!empty($errores)) {
+                    $this->load_view('calle/form', [
+                        'title' => 'Crear nueva calle',
+                        'action' => URL . '/calle/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                    ]);
+                    return;
+                }
+
+                if ($this->model->insertCalle( $nombre)) {
+                    header("Location: " . URL . "/calle");
+                    exit;
+                } else {
+                    die("Error al guardar calle");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "La calle '{$_POST['nombre']}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar calle: " . $e->getMessage();
+                }
                 $this->load_view('calle/form', [
                     'title' => 'Crear nueva calle',
                     'action' => URL . '/calle/save',
                     'values' => $_POST,
                     'errores' => $errores,
                 ]);
-                return;
-            }
 
-            if ($this->model->insertCalle( $nombre)) {
-                header("Location: " . URL . "/calle");
-                exit;
-            } else {
-                die("Error al guardar calle");
             }
         }
     }

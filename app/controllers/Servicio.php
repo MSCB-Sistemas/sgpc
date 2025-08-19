@@ -70,36 +70,16 @@ class Servicio extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-            if(isset($_POST["empresa"])) { 
-                $empresa = trim($_POST['empresa']) ;
-            } else {
-                $empresa = '';
-            }
-            
-            if(isset($_POST['interno'])) {
-                $interno = trim($_POST['interno']);
-            } else {
-                $interno = '';
-            }
-            
-            if(isset($_POST['dominio'])) {
-                $dominio = trim($_POST['dominio'] );
-            } else {
-                $dominio = '';
-            }
+            $empresa = isset($_POST["empresa"]) ? trim($_POST['empresa']) : '';
+            $interno = isset($_POST['interno']) ? trim($_POST['interno']) : '';
+            $dominio = isset($_POST['dominio']) ? trim($_POST['dominio']) : '';
 
             $errores = [];
-            if ($empresa === '') {
-                $errores[] = 'La empresa es obligatoria';
-                }
-            if ($interno === '') {
-                 $errores[] = 'El interno es obligatorio.'; 
-                }
-            if ($dominio === '') { 
-                $errores[] = 'El dominio es obligatorio'; }
+            if ($empresa === '') $errores[] = 'La empresa es obligatoria';
+            if ($interno === '') $errores[] = 'El interno es obligatorio.';
+            if ($dominio === '') $errores[] = 'El dominio es obligatorio';
 
-
+            // Validación antes de intentar insertar
             if (!empty($errores)) {
                 $empresas = $this->empresaModel->getAllEmpresas();
                 $this->load_view('servicios/form', [
@@ -109,18 +89,36 @@ class Servicio extends Control
                     'errores' => $errores,
                     'empresas' => $empresas
                 ]);
-
                 return;
             }
-            
-            if ($this->model->insertServicio($empresa, $interno, $dominio)) {
+
+            try {
+                $this->model->insertServicio($empresa, $interno, $dominio);
+                // redirect para bloquear reenvío de POST
                 header("Location: " . URL . "/servicio/index");
                 exit;
-            } else {
-                die("Error al guardar el servicio.");
+            } catch (\PDOException $e) {
+                $empresaData = $this->empresaModel->getEmpresa($empresa);
+                $empresaNombre = $empresaData['nombre'];
+
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El servicio ($empresaNombre, $interno, $dominio) ya existe.";
+                } else {
+                    $errores[] = "Error al guardar el servicio: " . $e->getMessage();
+                }
+                $empresas = $this->empresaModel->getAllEmpresas();
+                $this->load_view('servicios/form', [
+                    'title' => 'Crear nuevo servicio',
+                    'action' => URL . '/servicio/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'empresas' => $empresas
+                ]);
             }
         }
     }
+
+
 
     // Formulario para editar un servicio
     public function edit($id)

@@ -99,11 +99,12 @@ CREATE TABLE `servicios` (
   `id_servicio` int NOT NULL AUTO_INCREMENT,
   `id_empresa` int NOT NULL,
   `interno` int NOT NULL,
-  `dominio` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `dominio` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   PRIMARY KEY (`id_servicio`),
+  UNIQUE KEY `servicios_unique` (`id_empresa`,`interno`,`dominio`),
   KEY `servicios_FK` (`id_empresa`),
   CONSTRAINT `servicios_FK` FOREIGN KEY (`id_empresa`) REFERENCES `empresas` (`id_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 
 -- sgpc.usuarios definition
@@ -155,8 +156,9 @@ CREATE TABLE `permisos` (
 CREATE TABLE `lugares` (
   `id_lugar` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
-  PRIMARY KEY (`id_lugar`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id_lugar`),
+  UNIQUE KEY `lugares_unique` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- sgpc.recorridos_permisos definition
 
