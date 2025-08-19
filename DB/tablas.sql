@@ -2,9 +2,10 @@
 
 CREATE TABLE `calles` (
   `id_calle` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  PRIMARY KEY (`id_calle`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  PRIMARY KEY (`id_calle`),
+  UNIQUE KEY `calles_unique` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 
 -- sgpc.empresas definition
