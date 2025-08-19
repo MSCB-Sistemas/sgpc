@@ -31,5 +31,6 @@ no elegir el mismo horario de reserva al mismo tiempo
 
 quitar editar o anular la posibilidad de editar un dato asociado a un permiso
 
-
-
+------------------------------------------------------------------------------------------
+agregar el campo chofer en vez de empresa en la tabla de estadísticas
+agregar los modelos con las query para los cuadros de resúmenes de estadisticas
