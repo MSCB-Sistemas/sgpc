@@ -35,25 +35,26 @@ class PermisoModel
     public function getAllPermisos($activos): array
     {
         $sql = "SELECT
-            p.id_permiso,
-            p.tipo,
-            p.fecha_reserva,
-            p.fecha_emision,
-            p.arribo_salida,
-            p.observacion,
-            p.pasajeros,
-            l.nombre as lugar,
+            p.id_permiso as 'Permiso Nro.',
+            p.tipo as 'Tipo',
+            DATE(p.fecha_reserva) as 'Fecha reserva',
+            p.fecha_emision as 'Fecha emision',
+            p.arribo_salida as 'Arribo / Salida',
+            p.observacion as 'Observacion',
+            p.pasajeros as 'Pasajeros',
+            l.nombre as 'Origen / destino',
 
             -- Datos del chofer
-            CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS chofer,
+            CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS Chofer,
 
             -- Datos del usuario
-            CONCAT(u.nombre,' ',u.apellido) AS usuario,
+            CONCAT(u.nombre,' ',u.apellido) AS Usuario,
 
             -- Datos del servicio
-            s.interno AS servicio_interno,
-            s.dominio AS servicio_dominio,
-            e.nombre AS empresa_nombre
+            s.interno AS 'Nro. Interno',
+            s.dominio AS 'Dominio',
+            e.nombre AS 'Empresa',
+            rp.id_recorrido
 
         FROM permisos p
         JOIN choferes c ON p.id_chofer = c.id_chofer
@@ -62,11 +63,13 @@ class PermisoModel
         JOIN servicios s ON p.id_servicio = s.id_servicio
         JOIN empresas e ON s.id_empresa = e.id_empresa
         JOIN lugares l ON p.id_lugar = l.id_lugar
+        join recorridos_permisos rp on p.id_permiso = rp.id_permiso
         ";
 
         if ($activos === true) {
             $sql .= " WHERE p.activo = 1";
         }
+        $sql .= "order by 4 desc;";
 
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();

@@ -23,45 +23,42 @@ class Permiso extends Control
         } else {
             $permisos = $this->model->getAllPermisos(true);
         }
-        
+        foreach ($permisos as &$permiso) {
+            $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['Permiso Nro.']);
+            $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
+            $permiso['Recorrido'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
+            $permiso['Paradas'] = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
+        }
+        unset($permiso);
         $datos = [
             'title' => 'Listado de Permisos',
             'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
             'columnas' => [
+                'Nro. Permiso',
                 'Tipo',
                 'Fecha Reserva',
                 'Fecha Emisión',
                 'Chofer',
-                'Usuario',
-                'Servicio',
                 'Dominio',
-                'Empresa',
-                'Pasajeros',
-                'Origen/Destino',
-                'Observación',
-                'Arribo/Salida'
+                'Empresa'
             ],
             'columnas_claves' => [
-                'tipo',
-                'fecha_reserva',
-                'fecha_emision',
-                'chofer',
-                'usuario',
-                'servicio_interno',
-                'servicio_dominio',
-                'empresa_nombre',
-                'pasajeros',
-                'lugar',
-                'observacion',
-                'arribo_salida'
+                'Permiso Nro.',
+                'Tipo',
+                'Fecha reserva',
+                'Fecha emision',
+                'Chofer',
+                'Dominio',
+                'Empresa'
             ],
             'data' => $permisos, 
             'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
-                $id = $fila['id_permiso'];
+                $id = $fila['Permiso Nro.'];
                 $url = URL . '/permiso';
                 return '
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
                     <a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a>
+                    <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>
                 ';
             } : null
         ];
