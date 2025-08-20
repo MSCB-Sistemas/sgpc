@@ -32,7 +32,7 @@ class PermisoModel
      *
      * @return array Arreglo asociativo con todos los registros de la tabla `permisos`.
      */
-    public function getAllPermisos($activos): array
+    public function getAllPermisos($activos, $fecha_desde = null, $fecha_hasta = null): array
     {
         $sql = "SELECT
             p.id_permiso as 'Permiso Nro.',
@@ -64,15 +64,31 @@ class PermisoModel
         JOIN servicios s ON p.id_servicio = s.id_servicio
         JOIN empresas e ON s.id_empresa = e.id_empresa
         JOIN lugares l ON p.id_lugar = l.id_lugar
-        join recorridos_permisos rp on p.id_permiso = rp.id_permiso
+        JOIN recorridos_permisos rp ON p.id_permiso = rp.id_permiso
+        WHERE 1=1
         ";
 
+        // Activos
         if ($activos === true) {
-            $sql .= " WHERE p.activo = 1";
+            $sql .= " AND p.activo = 1";
         }
-        $sql .= "order by 4 desc;";
 
-        $stmt = $this->db->query($sql);
+        // Fechas
+        $params = [];
+        if ($fecha_desde) {
+            $sql .= " AND p.fecha_emision >= :desde";
+            $params[':desde'] = $fecha_desde;
+        }
+        if ($fecha_hasta) {
+            $sql .= " AND p.fecha_emision <= :hasta";
+            $params[':hasta'] = $fecha_hasta;
+        }
+
+        $sql .= " ORDER BY p.fecha_emision DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
         return $stmt->fetchAll();
     }
 

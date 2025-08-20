@@ -15,6 +15,19 @@
             <a href="<?= $datos['urlCrear'] ?>" class="btn btn-success">+ Nuevo</a>
         <?php endif; ?>
     </div>
+    <div class="row mb-3">
+    <div class="col-md-2">
+        <label for="fecha_desde" class="form-label">Fecha de emision desde</label>
+        <input type="date" id="fecha_desde" class="form-control" value="<?php if(!empty($datos['fecha_desde'])){echo $datos['fecha_desde'];} else {echo date('Y-m-d', strtotime("-1 week"));}?>">
+    </div>
+    <div class="col-md-2">
+        <label for="fecha_hasta" class="form-label">Fecha de emision hasta</label>
+        <input type="date" id="fecha_hasta" class="form-control" value="<?php if(!empty($datos['fecha_hasta'])){echo $datos['fecha_hasta'];} else {echo date('Y-m-d');}?>">
+    </div>
+    <div class="col-md-1 d-flex align-items-end">
+        <button id="btnFiltrar" class="btn btn-primary w-100">Filtrar</button>
+    </div>
+    </div>
 
     <div class="mb-3">
         <input type="text" id="busqueda" class="form-control" placeholder="Buscar...">
@@ -73,3 +86,25 @@
         </script>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btnFiltrar');
+    btn.addEventListener('click', () => {
+        const desde = document.getElementById('fecha_desde').value;
+        const hasta = document.getElementById('fecha_hasta').value;
+
+        let url = "<?= URL ?>/permiso/index";
+
+        if (desde && hasta) {
+            url += "/" + desde + "/" + hasta;
+        } else if (desde) {
+            url += "/" + desde;
+        } else if (hasta) {
+            url += "/0/" + hasta; // ejemplo: "0" cuando no hay fecha desde
+        }
+
+        window.location.href = url;
+    });
+});
+</script>
+<?php require_once APP . '/views/pages/partials/modalPermisoIndex.php' ?>

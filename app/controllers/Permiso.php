@@ -16,12 +16,22 @@ class Permiso extends Control
     }
 
     // Mostrar lista de permisos
-    public function index()
+    public function index($fecha_desde = null, $fecha_hasta = null)
     {
+    // Si no hay parámetros → cargar última semana
+        if (!$fecha_desde && !$fecha_hasta) {
+            $fecha_hasta = date('Y-m-d');
+            $fecha_desde = date('Y-m-d', strtotime('-1 week'));
+        }
+
+        if ($fecha_desde === '0') {
+            $fecha_desde = null; // Caso "0" para omitir fecha desde
+        }
+
         if ($_SESSION['usuario_tipo'] == '1') {
-            $permisos = $this->model->getAllPermisos(false);
+            $permisos = $this->model->getAllPermisos(false, $fecha_desde, $fecha_hasta);
         } else {
-            $permisos = $this->model->getAllPermisos(true);
+            $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta);
         }
         foreach ($permisos as &$permiso) {
             $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
@@ -61,7 +71,9 @@ class Permiso extends Control
                 'Dominio',
                 'Empresa'
             ],
-            'data' => $permisos, 
+            'data' => $permisos,
+            'fecha_desde' => $fecha_desde,
+            'fecha_hasta' => $fecha_hasta,
             'acciones' => function($fila) {
                 $id = $fila['Permiso Nro.'];
                 $url = URL . '/permiso';
@@ -78,7 +90,7 @@ class Permiso extends Control
             }
         ];
 
-        $this->load_view('partials/tablaAbm', $datos);
+        $this->load_view('partials/tablaAbmPermiso', $datos);
     }
 
    
