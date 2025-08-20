@@ -24,15 +24,25 @@ class Permiso extends Control
             $permisos = $this->model->getAllPermisos(true);
         }
         foreach ($permisos as &$permiso) {
-            $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['Permiso Nro.']);
+            $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
             $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
             $permiso['Recorrido'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
-            $permiso['Paradas'] = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
+            $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
+            $paradasArray = [];
+            foreach ($paradas as $parada) {
+                $paradaString = $parada['horario'].': '.$parada['calle'].' - '.$parada['parada'];
+                if (!empty($parada['hotel'])){
+                    $paradaString .= ' (Hotel: '.$parada['hotel'].')';
+                }
+                $paradasArray[] = $paradaString;
+            }
+            $permiso['Paradas'] = $paradasArray ? implode('<br>', $paradasArray) : 'Sin paradas';
         }
+
         unset($permiso);
         $datos = [
             'title' => 'Listado de Permisos',
-            'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
+            'urlCrear' => null, // Cambiado a null para no mostrar botón de crear.
             'columnas' => [
                 'Nro. Permiso',
                 'Tipo',

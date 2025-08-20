@@ -40,20 +40,20 @@ class PermisoModel
             DATE(p.fecha_reserva) as 'Fecha reserva',
             p.fecha_emision as 'Fecha emision',
             p.arribo_salida as 'Arribo / Salida',
-            p.observacion as 'Observacion',
-            p.pasajeros as 'Pasajeros',
             l.nombre as 'Origen / destino',
 
             -- Datos del chofer
             CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS Chofer,
 
-            -- Datos del usuario
-            CONCAT(u.nombre,' ',u.apellido) AS Usuario,
-
             -- Datos del servicio
             s.interno AS 'Nro. Interno',
             s.dominio AS 'Dominio',
             e.nombre AS 'Empresa',
+            p.pasajeros as 'Pasajeros',
+            p.observacion as 'Observacion',
+
+            -- Datos del usuario
+            CONCAT(u.nombre,' ',u.apellido) AS Usuario,
             rp.id_recorrido
 
         FROM permisos p
