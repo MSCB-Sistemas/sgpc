@@ -23,8 +23,8 @@ MANEJO EN GENERAR AL ELIMINAR DATOS ASIGNADOS A OTRAS TABLAS POR CLAVES FORANEAS
 --🍳unicidad de choferes al editar y crear
 --🥖unicidad de puntos de detención al editar y crear
 --🧆unicidad de recorridos al editar y crear
+--🦪error al eliminar (desactivar un permiso dos veces) mostrar en pantalla permisos desactivados?
 
-error al eliminar (desactivar un permiso dos veces) mostrar en pantalla permisos desactivados?
 poder eliminar las calles de recorrido?
 
 no elegir el mismo horario de reserva al mismo tiempo
