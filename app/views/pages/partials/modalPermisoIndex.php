@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Generar filas dinámicamente
         Object.entries(filaData).forEach(([key, value]) => {
-            if (key != 'id_recorrido' ){
+            if (key != 'id_recorrido' && key != 'activo') { // Excluir campos no deseados
                 tbody.innerHTML += `<tr><th>${key}</th><td>${value}</td></tr>`;
             }
         });

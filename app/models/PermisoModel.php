@@ -54,7 +54,8 @@ class PermisoModel
 
             -- Datos del usuario
             CONCAT(u.nombre,' ',u.apellido) AS Usuario,
-            rp.id_recorrido
+            rp.id_recorrido,
+            p.activo
 
         FROM permisos p
         JOIN choferes c ON p.id_chofer = c.id_chofer

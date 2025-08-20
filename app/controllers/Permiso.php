@@ -62,15 +62,20 @@ class Permiso extends Control
                 'Empresa'
             ],
             'data' => $permisos, 
-            'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
+            'acciones' => function($fila) {
                 $id = $fila['Permiso Nro.'];
                 $url = URL . '/permiso';
-                return '
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
-                    <a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a>
-                    <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>
-                ';
-            } : null
+                $botones = '';
+                if ($fila['activo']==1){
+                    if ($_SESSION['usuario_tipo'] == '1'){
+                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
+                    }
+                    $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
+                }
+                            
+                $botones .= '<a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>';
+                return $botones;                            
+            }
         ];
 
         $this->load_view('partials/tablaAbm', $datos);
