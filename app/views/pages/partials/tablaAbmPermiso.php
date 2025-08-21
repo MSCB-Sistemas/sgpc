@@ -89,9 +89,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('btnFiltrar');
-    btn.addEventListener('click', () => {
-        const desde = document.getElementById('fecha_desde').value;
-        const hasta = document.getElementById('fecha_hasta').value;
+    const fechaDesde = document.getElementById('fecha_desde');
+    const fechaHasta = document.getElementById('fecha_hasta');
+
+    function filtrar() {
+        const desde = fechaDesde.value;
+        const hasta = fechaHasta.value;
 
         let url = "<?= URL ?>/permiso/index";
 
@@ -104,6 +107,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.location.href = url;
+    }
+
+    // Click en el botón
+    btn.addEventListener('click', filtrar);
+
+    // Enter en los inputs
+    [fechaDesde, fechaHasta].forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // evita enviar un form si hubiera
+                filtrar();
+            }
+        });
     });
 });
 </script>
