@@ -87,9 +87,7 @@
         </a>
         <ul class="dropdown-menu text-small shadow">
             <li><button class="dropdown-item" id="toggleTheme">Cambiar tema</button></li>
-            <?php if (isset($datos['title']) && $datos['title'] != "Login") : ?>
-                <li><a class="dropdown-item text-danger" href="<?= URL ?>/auth/logout">Cerrar sesión</a></li>
-            <?php endif; ?>
+            <li><a class="dropdown-item text-danger" href="<?= URL ?>/auth/logout">Cerrar sesión</a></li>
         </ul>
     </div>
 </div>
