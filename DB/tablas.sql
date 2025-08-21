@@ -42,10 +42,9 @@ CREATE TABLE `nacionalidades` (
 CREATE TABLE `recorridos` (
   `id_recorrido` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
-  PRIMARY KEY (`id_recorrido`),
-  UNIQUE KEY `recorridos_unique` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
-
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id_recorrido`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- sgpc.usuarios_tipos definition
 

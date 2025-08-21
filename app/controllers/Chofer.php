@@ -38,9 +38,16 @@ class Chofer extends Control
     {
         $chofer = $this->modelo->getChofer($id);  
         $nacionalidades = $this->modeloNacionalidades->getAllNacionalidades();
+        $permisosModel = $this->load_model("PermisoModel");
+        $permisos = $permisosModel->getPermisosByChofer($id);
 
         if (!$chofer) {
             die("Chofer no encontrado");
+        }
+
+        if (!empty($permisos)){
+            $errores[] = 'Error: No se puede editar un chofer con permisos asignados.';
+            $this->index($errores);
         }
 
         $this->load_view('choferes/form', [

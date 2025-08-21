@@ -125,9 +125,16 @@ class Servicio extends Control
     {
         $servicio = $this->model->getServicio($id);
         $empresas = $this->empresaModel->getAllEmpresas();
+        
+        $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
 
         if (!$servicio) {
             die("Servicio no encontrado.");
+        }
+
+        if (!empty($permisos)){
+            $errores[] = 'Error: No se puede editar un servicio con permisos asignados.';
+            $this->index($errores);
         }
 
         $this->load_view('servicios/form', [

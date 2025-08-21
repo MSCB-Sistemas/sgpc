@@ -105,4 +105,12 @@
             document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
         }
     });
+
+    document.getElementById('tablaCalles').addEventListener('click', function (e) {
+        if (e.target.classList.contains('removeCalle')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    selectCalle.focus();
 </script>

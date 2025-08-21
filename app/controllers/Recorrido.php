@@ -198,19 +198,33 @@ class Recorrido extends Control
                 return;
             }
             try {
-                // actualizar nombre
-                if (!$this->model->updateRecorrido($id, $nombre)) {
-                    die("Error al actualizar el recorrido");
-                }
+                $permisos = $this->load_model("RecorridosPermisosModel")->getPermisosByRecorrido($id);
+                if (empty($permisos)) {
+                    // actualizar nombre
+                    if (!$this->model->updateRecorrido($id, $nombre)) {
+                        die("Error al actualizar el recorrido");
+                    }
 
-                // borrar calles viejas e insertar nuevas
-                $this->calleRecorridoModel->deleteByRecorrido($id);
-                foreach ($calles as $idCalle) {
-                    if (!$this->calleRecorridoModel->insertCalleRecorrido($id, $idCalle)) {
-                        die("Error al guardar las calles del recorrido");
+                    // borrar calles viejas e insertar nuevas
+                    $this->calleRecorridoModel->deleteByRecorrido($id);
+                    foreach ($calles as $idCalle) {
+                        if (!$this->calleRecorridoModel->insertCalleRecorrido($id, $idCalle)) {
+                            die("Error al guardar las calles del recorrido");
+                        }
+                    }
+                } else {
+                    $this->model->desactivarRecorrido($id);
+                    $id_nuevo = $this->model->insertRecorrido($nombre);
+                    if(empty($id_nuevo)) {
+                        die("Error al actualizar el recorrido");
+                    }
+                    
+                    foreach ($calles as $idCalle) {
+                        if (!$this->calleRecorridoModel->insertCalleRecorrido($id_nuevo, $idCalle)) {
+                            die("Error al guardar las calles del recorrido");
+                        }
                     }
                 }
-
                 header('Location: ' . URL . '/recorrido');
             } catch (Exception $e) {
                 if ($e->getCode() == 23000) {
