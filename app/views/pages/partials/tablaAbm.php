@@ -20,7 +20,7 @@
         <input type="text" id="busqueda" class="form-control" placeholder="Buscar...">
     </div>
 
-    <div class="table-responsive-lg shadow rounded" style="overflow: hidden;">
+    <div class="table-responsive-lg shadow rounded" style="max-height: 500px;">
         <table class="table table-hover align-middle mb-0" id="tablaABM" style="min-width: 800px;">
             <thead class="table-light">
                 <tr>

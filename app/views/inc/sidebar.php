@@ -39,31 +39,6 @@
                 Registrar permiso
             </a>
         </li>
-        <!-- <li>
-            <a class="nav-link text-white" href="#">
-                <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
-                    <use xlink:href="#grid">
-                        <symbol id="grid" viewBox="0 0 16 16">
-                            <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"></path>
-                        </symbol>
-                    </use>
-                </svg>
-                Registrar chofer
-            </a>
-        </li> -->
-        <!-- <li>
-            <a class="nav-link text-white" href="#">
-                <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
-                    <use xlink:href="#people-circle">
-                        <symbol id="people-circle" viewBox="0 0 16 16">
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
-                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"></path>
-                        </symbol>
-                    </use>
-                </svg>
-                C
-            </a>
-        </li> -->
         <li>
             <a class="nav-link text-white position-relative" 
             data-bs-toggle="collapse" 
@@ -101,9 +76,20 @@
             </div>
         </li>
     </ul>
-    <hr>
-    <div class="d-flex justify-content-center align-items-center">
-        <?php echo ucfirst($_SESSION['usuario_nombre'])." ".ucfirst($_SESSION['usuario_apellido']);?> </strong>
+    <div class="dropup mt-auto text-center">
+        <hr>
+        <a class="d-block text-white dropdown-toggle fw-bold fs-6 text-decoration-none" 
+        href="#" 
+        role="button" 
+        data-bs-toggle="dropdown" 
+        aria-expanded="false">
+            <?= ucfirst($_SESSION['usuario_nombre'])." ".ucfirst($_SESSION['usuario_apellido']); ?>
         </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><button class="dropdown-item" id="toggleTheme">Cambiar tema</button></li>
+            <?php if (isset($datos['title']) && $datos['title'] != "Login") : ?>
+                <li><a class="dropdown-item text-danger" href="<?= URL ?>/auth/logout">Cerrar sesión</a></li>
+            <?php endif; ?>
+        </ul>
     </div>
 </div>
