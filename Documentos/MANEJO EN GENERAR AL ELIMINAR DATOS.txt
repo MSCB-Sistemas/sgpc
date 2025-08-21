@@ -23,13 +23,12 @@ MANEJO EN GENERAR AL ELIMINAR DATOS ASIGNADOS A OTRAS TABLAS POR CLAVES FORANEAS
 --🍳unicidad de choferes al editar y crear
 --🥖unicidad de puntos de detención al editar y crear
 --🧆unicidad de recorridos al editar y crear
+
 --🦪error al eliminar (desactivar un permiso dos veces) mostrar en pantalla permisos desactivados?
 
-poder eliminar las calles de recorrido?
+--🐄poder eliminar las calles de recorrido?
 
-no elegir el mismo horario de reserva al mismo tiempo
-
-quitar editar o anular la posibilidad de editar un dato asociado a un permiso
+--⛰️quitar editar o anular la posibilidad de editar un dato asociado a un permiso
 
 ------------------------------------------------------------------------------------------
 agregar el campo chofer en vez de empresa en la tabla de estadísticas
