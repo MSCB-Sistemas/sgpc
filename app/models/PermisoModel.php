@@ -32,28 +32,30 @@ class PermisoModel
      *
      * @return array Arreglo asociativo con todos los registros de la tabla `permisos`.
      */
-    public function getAllPermisos($activos): array
+    public function getAllPermisos($activos, $fecha_desde = null, $fecha_hasta = null): array
     {
         $sql = "SELECT
-            p.id_permiso,
-            p.tipo,
-            p.fecha_reserva,
-            p.fecha_emision,
-            p.arribo_salida,
-            p.observacion,
-            p.pasajeros,
-            l.nombre as lugar,
+            p.id_permiso as 'Permiso Nro.',
+            p.tipo as 'Tipo',
+            DATE(p.fecha_reserva) as 'Fecha reserva',
+            p.fecha_emision as 'Fecha emision',
+            p.arribo_salida as 'Arribo / Salida',
+            l.nombre as 'Origen / destino',
 
             -- Datos del chofer
-            CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS chofer,
-
-            -- Datos del usuario
-            CONCAT(u.nombre,' ',u.apellido) AS usuario,
+            CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS Chofer,
 
             -- Datos del servicio
-            s.interno AS servicio_interno,
-            s.dominio AS servicio_dominio,
-            e.nombre AS empresa_nombre
+            s.interno AS 'Nro. Interno',
+            s.dominio AS 'Dominio',
+            e.nombre AS 'Empresa',
+            p.pasajeros as 'Pasajeros',
+            p.observacion as 'Observacion',
+
+            -- Datos del usuario
+            CONCAT(u.nombre,' ',u.apellido) AS Usuario,
+            rp.id_recorrido,
+            p.activo
 
         FROM permisos p
         JOIN choferes c ON p.id_chofer = c.id_chofer
@@ -62,13 +64,31 @@ class PermisoModel
         JOIN servicios s ON p.id_servicio = s.id_servicio
         JOIN empresas e ON s.id_empresa = e.id_empresa
         JOIN lugares l ON p.id_lugar = l.id_lugar
+        JOIN recorridos_permisos rp ON p.id_permiso = rp.id_permiso
+        WHERE 1=1
         ";
 
+        // Activos
         if ($activos === true) {
-            $sql .= " WHERE p.activo = 1";
+            $sql .= " AND p.activo = 1";
         }
 
-        $stmt = $this->db->query($sql);
+        // Fechas
+        $params = [];
+        if ($fecha_desde) {
+            $sql .= " AND p.fecha_emision >= :desde";
+            $params[':desde'] = $fecha_desde;
+        }
+        if ($fecha_hasta) {
+            $sql .= " AND p.fecha_emision <= :hasta";
+            $params[':hasta'] = $fecha_hasta;
+        }
+
+        $sql .= " ORDER BY p.fecha_emision DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
         return $stmt->fetchAll();
     }
 

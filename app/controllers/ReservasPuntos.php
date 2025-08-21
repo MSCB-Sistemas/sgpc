@@ -68,23 +68,23 @@ class ReservasPuntos extends Control
     public function store()
     {
         if (isset($_POST['fecha_horario'])) {
-            $fecha_horario = trim($_POST['fecha_horario'] );
+            $fecha_horario = trim($_POST['fecha_horario'] ?? '');
         } else {
             $fecha_horario = '';
         }   
 
         if(isset($_POST['id_hotel'])) {
-            $id_hotel = $_POST['id_hotel'] ;
+            $id_hotel = $_POST['id_hotel'] ?? '';
         } else {
             $id_hotel = '';
         }
         if(isset($_POST['id_permiso'])) {
-            $id_permiso = $_POST['id_permiso'] ;
+            $id_permiso = $_POST['id_permiso'] ?? '';
         } else {
             $id_permiso = '';
         }
         if(isset($_POST['id_punto_detencion'])) {
-            $id_punto_detencion = $_POST['id_punto_detencion'] ;
+            $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
         } else {
             $id_punto_detencion = '';
         }
@@ -130,25 +130,25 @@ class ReservasPuntos extends Control
     public function update($id)
     {
         if(isset($_POST['fecha_horario'])) {
-            $fecha_horario = trim($_POST['fecha_horario'] );
+            $fecha_horario = trim($_POST['fecha_horario'] ?? '');
         } else {
             $fecha_horario = '';
         }
 
         if(isset($_POST['id_hotel'])) {
-            $id_hotel = $_POST['id_hotel'] ;
+            $id_hotel = $_POST['id_hotel'] ?? '';
         } else {
             $id_hotel = '';
         }
 
         if(isset($_POST['id_permiso'])) {
-            $id_permiso = $_POST['id_permiso'] ;
+            $id_permiso = $_POST['id_permiso'] ?? '';
         } else {
             $id_permiso = '';
         }
      
         if(isset($_POST['id_punto_detencion'])) {
-            $id_punto_detencion = $_POST['id_punto_detencion'] ;
+            $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
         } else {
             $id_punto_detencion = '';
         }
@@ -191,6 +191,31 @@ class ReservasPuntos extends Control
             'message' => 'Reserva eliminada correctamente.',
             'reservas' => $reservas
         ]);
+    }
+
+    public function horariosDisponibles($id_punto, $fecha)
+    {
+        // Generar todos los horarios fijos (06:00 a 23:30)
+        $horarios = [];
+        $horaInicio = strtotime('06:00');
+        $horaFin = strtotime('23:30');
+
+        for ($t = $horaInicio; $t <= $horaFin; $t += 1800) { // 1800 seg = 30 min
+            $horarios[] = date('H:i', $t);
+        }
+
+        // Consultar horarios ocupados
+        $ocupados = $this->model->getHorariosPunto($id_punto, $fecha);
+        $ocupadosFormateados = array_map(function($r) {
+            return date('H:i', strtotime($r['hora']));
+        }, $ocupados);
+
+        // Filtrar horarios libres
+        $libres = array_values(array_diff($horarios, $ocupadosFormateados));
+
+        header('Content-Type: application/json');
+        echo json_encode($libres);
+        exit;
     }
 
 

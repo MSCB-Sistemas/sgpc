@@ -39,7 +39,7 @@
     <p class="medium" style="margin-bottom: 0pt;">
         Recorrido: <?= htmlspecialchars($datos['calles_recorrido']) ?>
         <?php if ($datos['tipo'] === 'linea'): ?>
-            - horario derecho de dársena: {hora_ocupa_darsena}
+            - horario derecho de dársena: <?php if(!empty($datos['paradas'])){echo $datos['paradas'][0]['horario'];}?>
         <?php endif; ?>
     </p>
     <?php if (!empty($datos['paradas'])): ?>

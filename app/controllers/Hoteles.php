@@ -50,8 +50,8 @@ class Hoteles extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] );
-            $direccion = trim($_POST["direccion"] );   
+            $nombre = trim($_POST["nombre"] ?? '');
+            $direccion = trim($_POST["direccion"] ?? '');   
             // Validaciones simples
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
@@ -114,8 +114,8 @@ class Hoteles extends Control
     public function update($id)
     {
          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] );
-            $direccion = trim($_POST['direccion'] );
+            $nombre = trim($_POST["nombre"] ?? '');
+            $direccion = trim($_POST['direccion'] ??'');
 
 
             $errores = [];

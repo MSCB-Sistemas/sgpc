@@ -108,15 +108,24 @@ class ReservasPuntosModel {
             inner join puntos_detencion pd on rp.id_punto_detencion = pd.id_punto_detencion 
             inner join calles c on pd.id_calle = c.id_calle 
             left outer join hoteles h ON rp.id_hotel = h.id_hotel
-            where rp.id_permiso = :id_permiso;"
+            where rp.id_permiso = :id_permiso
+            order by 4 asc;"
         );
         $stmt->execute(['id_permiso' => $id_permiso]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getReservasPuntosByHotel($id_hotel) : array {
-        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_hotel = :id_hotel");
-        $stmt->execute(['id_hotel' => $id_hotel]);
+    public function getHorariosPunto($id_punto, $fecha): array {
+        $stmt = $this->db->prepare("
+            SELECT TIME(fecha_horario) as hora
+            FROM reservas_puntos
+            WHERE id_punto_detencion = :id_punto
+            AND DATE(fecha_horario) = :fecha;"
+        );
+        $stmt->execute([
+            'id_punto' => $id_punto,
+            'fecha' => $fecha
+        ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

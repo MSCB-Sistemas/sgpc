@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="<?= URL . '/public/img/favicon.png' ?>" sizes="32x32">
+  <link rel="shortcut icon" href="<?= URL . '/public/img/favicon.png' ?>" type="image/x-icon">
 
   <!-- Título dinámico desde PHP -->
   <title><?php if(!empty($datos['title'])){echo $datos['title'];} else {echo 'Sin título';} ?></title>
@@ -14,8 +16,6 @@
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="<?= URL . '/public/css/sign-in.css' ?>">
   <link rel="stylesheet" href="<?= URL . '/public/css/sidebars.css' ?>">
-
-  <script src="<?= URL . '/public/js/color-modes.js' ?>"></script>
 
   <!-- jQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

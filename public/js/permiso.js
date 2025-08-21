@@ -54,6 +54,14 @@ document.addEventListener("DOMContentLoaded", function() {
   const tablaCalles = document.querySelector("#tablaCalles tbody");
   const tablaPuntos = document.querySelector("#tablaPuntos tbody");
   const formPermiso = document.getElementById("permisoForm");
+
+  document.getElementById("fecha_reserva").addEventListener("change", function() {
+    // Limpiar horarios y datos
+    document.querySelectorAll(".punto-horario").forEach(sel => {
+        sel.innerHTML = `<option value="">Seleccione...</option>`;
+    });
+    puntosData = {}; // limpiar asignaciones
+  });
   
   formPermiso.addEventListener("submit", function(event) {
         event.preventDefault(); // Evita el envío inmediato
@@ -119,6 +127,13 @@ document.addEventListener("DOMContentLoaded", function() {
     td.classList.toggle("table-active");
 
     const idCalle = td.dataset.id;
+    
+
+    const fecha = document.getElementById("fecha_reserva").value;
+    if (!fecha) {
+        alert("Seleccione fecha primero");
+        return;
+    }
 
     try {
       const res = await fetch(`${_URL}/calle/puntos/${idCalle}`);
@@ -126,9 +141,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
       tablaPuntos.innerHTML = "";
 
-      puntos.forEach(p => {
+      puntos.forEach(async p => {
         // recuperar datos previos si existen
-        console.log("Punto:", p);
         const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "" };
 
         // armar select hoteles
@@ -140,17 +154,42 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         hotelSelect += `</select>`;
 
-        // armar input horario (solo agregamos value si existe)
-        const horarioValue = prev.horario ? `value="${prev.horario}"` : "";
-        const horarioInput = `<input type="time" step="900" class="form-control form-control-sm punto-horario" 
-                              data-id="${p.id_punto_detencion}" ${horarioValue}>`;
+        // armar select horario (solo agregamos value si existe)
+        let selectHorario = document.createElement("select");
+        selectHorario.className = "form-select form-select-sm punto-horario";
+        selectHorario.dataset.id = p.id_punto_detencion;
+        try {
+          const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
+          const horarios = await resHorarios.json();
+
+          if (horarios.length === 0) {
+              selectHorario.innerHTML = `<option value="">No hay horarios disponibles</option>`;
+              return;
+          }
+
+          selectHorario.innerHTML = `<option value="">Seleccione...</option>`;
+          horarios.forEach(h => {
+              const opt = document.createElement("option");
+              if (prev.horario && prev.horario == h) {
+                opt.selected = true;
+              }
+              opt.value = h;
+              opt.textContent = h;
+              selectHorario.appendChild(opt);
+          });
+        } catch (err) {
+            console.error("Error cargando horarios:", err);
+        }
+
+        const tdHorario = document.createElement("td");
+        tdHorario.appendChild(selectHorario);
 
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${p.nombre}</td>
           <td>${hotelSelect}</td>
-          <td>${horarioInput}</td>
         `;
+        tr.appendChild(tdHorario);
         tablaPuntos.appendChild(tr);
       });
 
