@@ -19,60 +19,8 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
     $datos['movimientos'] = [];
 }
 ?>
-
-<style>
-    th a {
-        color: white;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    th a:hover {
-        color: #ddd;
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 1rem;
-        list-style: none;
-        padding: 0;
-    }
-    .pagination li {
-        margin: 0 0.25rem;
-    }
-    .pagination a {
-        color: white;
-        text-decoration: none;
-        padding: 0.4rem 0.75rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        transition: background 0.3s ease;
-    }
-    .pagination a:hover {
-        background: #444;
-    }
-    .pagination a.pagina-link {
-    color: #333;
-    background: white;
-    text-decoration: none;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    transition: background 0.3s ease;
-    }
-
-    .pagination a.pagina-link:hover {
-        background: #e9ecef;
-    }
-
-    .pagination a.pagina-activa {
-        background-color: #030c14ff;
-        color: white;
-        border-color: #061422ff;
-        font-weight: bold;
-    }
-
-</style>
-
+    <link rel="stylesheet" href="<?= URL . '/public/css/estadisticas.css' ?>">
+    
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
             <button class="nav-link active" id="tablas-tab" data-bs-toggle="tab" data-bs-target="#tablas" type="button" role="tab">Datos</button>
