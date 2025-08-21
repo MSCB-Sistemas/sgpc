@@ -74,7 +74,13 @@
                 <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
                     <option value="">Seleccione...</option>
                     <?php foreach ($datos['tipos'] as $n): ?>
-                        <option value="<?= $n['id_tipo_usuario'] ?>">
+                        <?php
+                            $selected = '';
+                            if (isset($datos['values']['id_tipo_usuario']) && $datos['values']['id_tipo_usuario'] == $n['id_tipo_usuario']) {
+                                $selected = 'selected';
+                            }
+                        ?>
+                        <option value="<?= $n['id_tipo_usuario'] ?>"<?= $selected ?>>
                             <?= htmlspecialchars($n['tipo_usuario']) ?>
                         </option>
                     <?php endforeach ?>

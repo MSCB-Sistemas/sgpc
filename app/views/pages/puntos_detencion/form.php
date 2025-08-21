@@ -29,7 +29,13 @@
             <select class="form-select" id="calle" name="calle" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($datos['calles'] as $n): ?>
-                    <option value="<?= $n['id_calle'] ?>">
+                    <?php
+                        $selected = '';
+                        if (isset($datos['values']['calle']) && $datos['values']['calle'] == $n['id_calle']) {
+                            $selected = 'selected';
+                        }
+                    ?>
+                    <option value="<?= $n['id_calle'] ?>" <?= $selected ?>>
                         <?= htmlspecialchars($n['nombre']) ?>
                     </option>
                 <?php endforeach ?>
