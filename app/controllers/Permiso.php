@@ -16,71 +16,103 @@ class Permiso extends Control
     }
 
     // Mostrar lista de permisos
-    public function index()
+    public function index($fecha_desde = null, $fecha_hasta = null)
     {
-        $permisos = $this->model->getAllPermisos();
+    // Si no hay parámetros → cargar última semana
+        if (!$fecha_desde && !$fecha_hasta) {
+            $fecha_hasta = date('Y-m-d');
+            $fecha_desde = date('Y-m-d', strtotime('-1 week'));
+        }
+
+        if ($fecha_desde === '0') {
+            $fecha_desde = null; // Caso "0" para omitir fecha desde
+        }
+
+        if ($_SESSION['usuario_tipo'] == '1') {
+            $permisos = $this->model->getAllPermisos(false, $fecha_desde, $fecha_hasta);
+        } else {
+            $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta);
+        }
+        foreach ($permisos as &$permiso) {
+            $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
+            $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
+            $permiso['Recorrido'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
+            $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
+            $paradasArray = [];
+            foreach ($paradas as $parada) {
+                $paradaString = $parada['horario'].': '.$parada['calle'].' - '.$parada['parada'];
+                if (!empty($parada['hotel'])){
+                    $paradaString .= ' (Hotel: '.$parada['hotel'].')';
+                }
+                $paradasArray[] = $paradaString;
+            }
+            $permiso['Paradas'] = $paradasArray ? implode('<br>', $paradasArray) : 'Sin paradas';
+        }
+
+        unset($permiso);
         $datos = [
             'title' => 'Listado de Permisos',
-            'urlCrear' => null, // Cambiado a null para no mostrar botón de crear''
+            'urlCrear' => null, // Cambiado a null para no mostrar botón de crear.
             'columnas' => [
+                'Nro. Permiso',
                 'Tipo',
                 'Fecha Reserva',
                 'Fecha Emisión',
                 'Chofer',
-                'Usuario',
-                'Servicio',
                 'Dominio',
-                'Empresa',
-                'Pasajeros',
-                'Origen/Destino',
-                'Observación',
-                'Arribo/Salida'
+                'Empresa'
             ],
             'columnas_claves' => [
-                'tipo',
-                'fecha_reserva',
-                'fecha_emision',
-                'chofer',
-                'usuario',
-                'servicio_interno',
-                'servicio_dominio',
-                'empresa_nombre',
-                'pasajeros',
-                'lugar',
-                'observacion',
-                'arribo_salida'
+                'Permiso Nro.',
+                'Tipo',
+                'Fecha reserva',
+                'Fecha emision',
+                'Chofer',
+                'Dominio',
+                'Empresa'
             ],
-            'data' => $permisos, 
-            'acciones' => $_SESSION['usuario_tipo'] == '1' ? function($fila) {
-                $id = $fila['id_permiso'];
+            'data' => $permisos,
+            'fecha_desde' => $fecha_desde,
+            'fecha_hasta' => $fecha_hasta,
+            'acciones' => function($fila) {
+                $id = $fila['Permiso Nro.'];
                 $url = URL . '/permiso';
-                return '
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a>
-                    <a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a>
-                ';
-            } : null,
+                $botones = '';
+                if ($fila['activo']==1){
+                    if ($_SESSION['usuario_tipo'] == '1'){
+                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
+                    }
+                    $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
+                }
+                            
+                $botones .= '<a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>';
+                return $botones;                            
+            }
         ];
 
-        $this->load_view('partials/tablaAbm', $datos);
+        $this->load_view('partials/tablaAbmPermiso', $datos);
     }
 
-    // Mostrar detalles de un permiso específico
-    public function show($id)
-    {
-        $permiso = $this->model->getPermiso($id);
-        if (!$permiso) {
-            $this->load_view('permisos/index', [
-                'error' => 'Permiso no encontrado.',
-                'permisos' => $this->model->getAllPermisos()
-            ]);
-            return;
-        }
-        $this->load_view('permisos/show', ['permiso' => $permiso]);
-    }
+   
 
     // Mostrar formulario para crear permiso
-    public function nuevo($errores = [], $mensajes = [])
+    public function nuevo()
     {
+        $errores = [];
+        $mensajes = [];
+        $imprimir = [];
+        if (!empty( $_SESSION['errores'])){
+            $errores = [$_SESSION['errores']];
+        }
+        if (!empty( $_SESSION['mensajes'])){
+            $mensajes = $_SESSION['mensajes'];
+        }
+        if (!empty( $_SESSION['imprimir_permiso'])){
+            $imprimir = $_SESSION['imprimir_permiso'];
+        }
+        
+        unset($_SESSION['errores'], $_SESSION['mensajes'], $_SESSION['imprimir_permiso']);
+
         $servicios = $this->load_model('ServicioModel')->getAllServicios();
         $recorridos = $this->load_model('RecorridoModel')->getAllRecorridos();
         $choferes = $this->load_model('ChoferesModel')->getAllChoferes();
@@ -103,7 +135,8 @@ class Permiso extends Control
             'hoteles'=> $hoteles,
             'lugares' => $lugares,
             'errores' => $errores,
-            'mensajes' => $mensajes
+            'mensajes' => $mensajes,
+            'imprimir' => $imprimir
         ]);
     }
     
@@ -111,21 +144,20 @@ class Permiso extends Control
     // Procesar creación
     public function store()
     {
-        $id_chofer = $_POST['id_chofer'] ?? null;
-        $id_usuario = $_SESSION['usuario_id']  ?? null;
-        $id_servicio = $_POST['id_servicio'] ?? null;
-        $id_lugar = $_POST['id_lugar'] ?? null;
-        $tipo = $_POST['tipo_permiso'] ?? '';
-        $fecha_reserva = $_POST['fecha_reserva'] ?? '';
+        $id_chofer = $_POST['id_chofer'];
+        $id_usuario = $_SESSION['usuario_id'];
+        $id_servicio = $_POST['id_servicio'];
+        $id_lugar = $_POST['id_lugar'];
+        $tipo = $_POST['tipo_permiso'];
+        $fecha_reserva = $_POST['fecha_reserva'];
         $fecha_emision = date('Y-m-d H:i:s');
-        $arribo_salida = $_POST['arribo_salida'] ?? '';
-        $id_recorrido = $_POST['id_recorrido'] ?? null;
-        $observacion = $_POST['observacion'] ?? null;
-        $puntos_detencion = $_POST['puntos_detencion'] ?? '';
+        $arribo_salida = $_POST['arribo_salida'];
+        $id_recorrido = $_POST['id_recorrido'];
+        $observacion = $_POST['observacion'];
+        $puntos_detencion = $_POST['puntos_detencion'];
         $puntos_detencion = json_decode($puntos_detencion, true);
-        $pasajeros = $_POST['pasajeros'] ?? 0;
+        $pasajeros = $_POST['pasajeros'];
         $errores = [];
-        $mensajes = [];
 
         $modelRecorridosPermisos = $this->load_model('RecorridosPermisosModel');
         $modelReservasPuntos = $this->load_model('ReservasPuntosModel');
@@ -162,9 +194,16 @@ class Permiso extends Control
         foreach ($puntos_detencion as $id_punto_detencion => $punto) {
             if (!empty($punto['horario'])) {
                 $fecha_horario = $fecha_reserva . ' ' . $punto['horario'] . ':00';
+
+                if (isset($punto['hotel'])) {
+                    $hotel = $punto['hotel'];
+                } else {
+                    $hotel = null;
+                }
+
                 $id_reserva = $modelReservasPuntos->insertReservaPunto(
                    $fecha_horario,
-                   isset($punto['hotel']) ? $punto['hotel'] : null,
+                   $hotel,
                    $idPermiso,
                    $id_punto_detencion
                 );
@@ -174,16 +213,22 @@ class Permiso extends Control
             }
         }
         if (empty($errores)) {
-            $mensajes[] = "Permiso {$idPermiso} creado correctamente.";
             if (!empty($_POST['imprimir'])) {
                 // Generar el PDF
-                 echo "<script>
-                        window.open('/sgpc/permiso/imprimir/{$idPermiso}', '_blank');
-                    </script>";
+                $_SESSION['imprimir_permiso'] = $idPermiso;
             }
         }
 
-        $this->nuevo($errores, $mensajes);
+        // Después de procesar el guardado
+        if (empty($errores)) {
+            $_SESSION['mensajes'] = ["Permiso {$idPermiso} creado correctamente."];
+        } else {
+            $_SESSION['errores'] = $errores;
+        }
+
+        // Redirigir al formulario
+        header('Location: /sgpc/permiso/nuevo');
+        exit;
     }
 
     public function imprimir($idPermiso) {

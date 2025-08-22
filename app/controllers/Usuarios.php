@@ -27,13 +27,18 @@ class Usuarios extends Control
         'acciones' => function($fila) {
             $id = $fila['id_usuario'];
             $url = URL . '/usuarios';
-            return '
-                <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
-                <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
-                <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
-            ';
-        
+            if ($fila['activo']) {
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
+                    <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
+                ';
+            } else {
+                return '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
+                ';
+            }
         }
         ];
     $this->load_view('partials/tablaAbm', $datos);
@@ -68,12 +73,12 @@ class Usuarios extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario = trim($_POST["usuario"] ?? '');
-            $nombre = trim($_POST["nombre"] ?? '');
-            $apellido = trim($_POST["apellido"] ?? '');
-            $cargo = trim($_POST["cargo"] ?? '');
-            $sector = trim($_POST["sector"] ?? '');
-            $tipoUsuario = $_POST["tipo_usuario"] ?? '';
+            $usuario = trim($_POST["usuario"] );
+            $nombre = trim($_POST["nombre"] );
+            $apellido = trim($_POST["apellido"] );
+            $cargo = trim($_POST["cargo"] );
+            $sector = trim($_POST["sector"]  );
+            $tipoUsuario = $_POST["tipo_usuario"] ;
 
             $errores = [];
             if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
@@ -128,13 +133,13 @@ class Usuarios extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario = trim($_POST["usuario"] ?? '');
-            $nombre = trim($_POST["nombre"] ?? '');
-            $apellido = trim($_POST["apellido"] ?? '');
-            $cargo = trim($_POST["cargo"] ?? '');
-            $sector = trim($_POST["sector"] ?? '');
-            $contrasenia = trim($_POST["password"] ?? '');
-            $tipoUsuario = $_POST["tipo_usuario"] ?? '';
+            $usuario = trim($_POST["usuario"]);
+            $nombre = trim($_POST["nombre"]);
+            $apellido = trim($_POST["apellido"] );
+            $cargo = trim($_POST["cargo"] );
+            $sector = trim($_POST["sector"] );
+            $contrasenia = trim($_POST["password"] );
+            $tipoUsuario = $_POST["tipo_usuario"];
 
             // Validaciones simples
             $errores = [];
@@ -196,7 +201,7 @@ class Usuarios extends Control
     public function savePass($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $password = trim($_POST["password"] ?? '');
+            $password = trim($_POST["password"] );
 
             $errores = [];
             if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";

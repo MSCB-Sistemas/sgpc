@@ -74,11 +74,11 @@ class NacionalidadModel
     public function updateNacionalidad($id, $nuevaNacionalidad): bool
     {
         $stmt = $this->db->prepare("UPDATE nacionalidades SET nacionalidad = :nuevaNacionalidad WHERE id_nacionalidad = :id");
-        $stmt->execute([
+        
+        return $stmt->execute([
             'id' => $id,
             'nuevaNacionalidad' => $nuevaNacionalidad
         ]);
-        return $stmt->rowCount() > 0;
     }
 
     /**

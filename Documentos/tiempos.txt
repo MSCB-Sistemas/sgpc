@@ -4,4 +4,4 @@ abm recorridos
 
 form principal permisos
     complejidad: alta
-    tiempo: 1h +
+    tiempo: 14h +

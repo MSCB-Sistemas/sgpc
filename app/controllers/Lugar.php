@@ -13,7 +13,7 @@ class Lugar extends Control
     }
 
     // Mostrar todos los lugares en una vista.
-    public function index()
+    public function index($errores = [])
     {
         $lugares = $this->model->getAllLugares();
         $datos = [
@@ -30,6 +30,7 @@ class Lugar extends Control
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este lugar?\');">Eliminar</a>
                 ';
             }
+            ,'errores' => $errores
         ];    
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -49,27 +50,40 @@ class Lugar extends Control
     public function save()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
+            $nombre = trim($_POST["nombre"]);
 
             // Validaciones simples
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-
             if (!empty($errores)) {
+                    $this->load_view('lugares/form', [
+                        'title' => 'Crear nuevo Lugar',
+                        'action' => URL . '/lugar/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                    ]);
+                    return;
+                }
+            try {
+                if ($this->model->insertLugar( $nombre)) {
+                    header("Location: " . URL . "/lugar");
+                    exit;
+                } else {
+                    die("Error al guardar calle");
+                }
+                
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El lugar '{$_POST['nombre']}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar lugar: " . $e->getMessage();
+                }
                 $this->load_view('lugares/form', [
                     'title' => 'Crear nuevo Lugar',
                     'action' => URL . '/lugar/save',
                     'values' => $_POST,
                     'errores' => $errores,
-                ]);
-                return;
-            }
-
-            if ($this->model->insertLugar( $nombre)) {
-                header("Location: " . URL . "/lugar");
-                exit;
-            } else {
-                die("Error al guardar calle");
+                ]); 
             }
         }
     }
@@ -97,7 +111,7 @@ class Lugar extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
+            $nombre = trim($_POST["nombre"]);
 
 
             $errores = [];
@@ -115,12 +129,25 @@ class Lugar extends Control
                 ]);
                 return;
             }
-
-            if ($this->model->updateLugar($id,  $nombre)) {
-                header("Location: " . URL . "/lugar");
-                exit;
-            } else {
-                die("Error al actualizar lugar");
+            try {
+                if ($this->model->updateLugar($id,  $nombre)) {
+                    header("Location: " . URL . "/lugar");
+                    exit;
+                } else {
+                    die("Error al actualizar lugar");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El lugar '{$_POST['nombre']}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar lugar: " . $e->getMessage();
+                }
+                $this->load_view('lugares/form', [
+                    'title' => 'Crear nuevo Lugar',
+                    'action' => URL . '/lugar/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]); 
             }
         }
     }
@@ -128,14 +155,19 @@ class Lugar extends Control
     // Eliminar un lugar.
     public function delete($id)
     {
-        $eliminado = $this->model->deleteLugar($id);
-        if (!$eliminado) {
-            die("No se puede eliminar el lugar.");
+        $permiso = $this->model->getPermisosByLugarId($id);
+        if (empty($permiso)) {
+            $eliminado = $this->model->deleteLugar($id);
+            if (!$eliminado) {
+                $this->index(["No se pudo eliminar el Lugar."]);
+            }
+
+            header("Location: " . URL . "/lugar");
+            exit;
         }
-        header("Location: " . URL . "/lugar");
-        exit;
-        
-        
+        $nombres_permisos = $permiso ? array_column($permiso, 'id_permiso') : [];
+        $string_permisos = implode(', ', $nombres_permisos);
+        $this->index(["No se puede eliminar el lugar, esta asignado a los siguientes permisos: ". $string_permisos]);
     }
     
     public function saveAjax()

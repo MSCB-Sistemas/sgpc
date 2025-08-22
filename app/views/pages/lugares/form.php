@@ -14,8 +14,15 @@
     <form action="<?= $datos['action'] ?>" method="POST">
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre</label>
+            <?php 
+                if (isset($datos['values']['nombre'])) { 
+                    $valorNombre = htmlspecialchars($datos['values']['nombre']);
+                } else {
+                    $valorNombre = '';
+                }
+            ?>
             <input type="text" class="form-control" id="nombre" name="nombre" 
-                   value="<?= htmlspecialchars($datos['values']['nombre'] ?? '') ?>" required>
+                   value="<?= $valorNombre ?>" required>
         </div>
         <button type="submit" class="btn btn-success">Guardar</button>
         <a href="<?= URL ?>/lugar" class="btn btn-secondary">Cancelar</a>

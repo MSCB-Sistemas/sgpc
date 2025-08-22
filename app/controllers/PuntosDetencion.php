@@ -15,7 +15,7 @@ class PuntosDetencion extends Control
     }
 
     // Mostrar todos los puntos de detención
-    public function index()
+    public function index($errores = null)
     {
         $puntos = $this->model->getAllPuntosDetencion();
         $datos = [
@@ -31,7 +31,8 @@ class PuntosDetencion extends Control
                     <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este punto?\');">Eliminar</a>
                 ';
-            }
+            },
+            'errores' => $errores
         ];
 
         $this->load_view('partials/tablaAbm', $datos);
@@ -54,10 +55,10 @@ class PuntosDetencion extends Control
     // Procesar la creación
     public function save()
     {
+        $calles = $this->calleModel->getAllCalles();
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
-            $calle = $_POST["calle"] ?? '';
-            echo "Nombre: $nombre, Calle: $calle"; // Debugging line
+            $nombre = trim($_POST["nombre"]);
+            $calle = $_POST["calle"];
 
             $errores = [];
             if(empty($nombre)) { $errores[] = 'El nombre del punto es obligatorio.'; }
@@ -75,12 +76,27 @@ class PuntosDetencion extends Control
 
                 return;
             }
-
-            if ($this->model->insertPuntoDetencion($nombre, $calle)) {
-                header("Location: " . URL . "/puntosDetencion/index");
-                exit;
-            } else {
-                die("Error al insertar el punto de detención.");
+            try {
+                if ($this->model->insertPuntoDetencion($nombre, $calle)) {
+                    header("Location: " . URL . "/puntosDetencion/index");
+                    exit;
+                } else {
+                    die("Error al insertar el punto de detención.");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El punto de detencion '{$nombre}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el punto de detencion: " . $e->getMessage();
+                }
+                
+                $this->load_view('puntos_detencion/form', [
+                    'title' => 'Crear nuevo punto de detención',
+                    'action' => URL . '/puntosDetencion/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'calles' => $calles
+                ]);
             }
         }
     }
@@ -112,8 +128,8 @@ class PuntosDetencion extends Control
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"] ?? '');
-            $calle = $_POST["calle"] ?? '';
+            $nombre = trim($_POST["nombre"]);
+            $calle = $_POST["calle"];
 
             $errores = [];
             if (empty($nombre)) { $errores[] = 'El nombre del punto es obligatorio.'; }
@@ -136,12 +152,27 @@ class PuntosDetencion extends Control
 
                 return;
             }
-
-            if ($this->model->updatePuntoDetencion($id, $nombre, $calle)) {
-                header("Location: " . URL . "/puntosDetencion");
-                exit;
-            } else {
-                die("Error al actualizar el punto de detención.");
+            try {
+                if ($this->model->updatePuntoDetencion($id, $nombre, $calle)) {
+                    header("Location: " . URL . "/puntosDetencion");
+                    exit;
+                } else {
+                    die("Error al actualizar el punto de detención.");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El punto de detencion '{$nombre}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el punto de detencion: " . $e->getMessage();
+                }
+                $calles = $this->calleModel->getAllCalles();
+                $this->load_view('puntos_detencion/form', [
+                    'title' => 'Crear nuevo punto de detención',
+                    'action' => URL . '/puntosDetencion/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                    'calles' => $calles
+                ]);
             }
         }
     }
@@ -149,13 +180,20 @@ class PuntosDetencion extends Control
     // Eliminar un punto
     public function delete($id)
     {
-        $eliminado = $this->model->deletePuntoDetencion($id);
+        $reservas = $this->model->getReservaByPunto($id);
+        if (empty($reservas)) {
+            $eliminado = $this->model->deletePuntoDetencion($id);
+            if (!$eliminado) {
+                $this->index(["No se pudo eliminar el punto de detención."]);
+            }
 
-        if (!$eliminado) {
-            die("No se pudo eliminar el punto de detención.");
+            header("Location: " . URL . "/puntosDetencion");
+            exit;
         }
 
-        header("Location: " . URL . "/puntosDetencion");
-        exit;
+        $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
+        $string_reservas = implode(', ', $nombres_reservas);
+        $this->index(["No se puede eliminar el punto de detencion, esta reservado por los siguientes permisos: ". $string_reservas]);
+
     }
 }

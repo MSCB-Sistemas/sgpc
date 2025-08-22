@@ -13,7 +13,7 @@ class Hoteles extends Control
     }
 
     // Listar todos los hoteles.
-    public function index()
+    public function index($errores = [])
     {
         $hoteles = $this->model->getAllHoteles();
         $datos = [
@@ -30,6 +30,7 @@ class Hoteles extends Control
                     <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
                 ';
             }
+            ,'errores' => $errores
         ];
         $this->load_view('partials/tablaAbm', $datos);
     }
@@ -65,14 +66,27 @@ class Hoteles extends Control
                 ]);
                 return;
             }
-
-            if ($this->model->insertHotel($nombre, $direccion)) {
-                header("Location: " . URL . "/hoteles");
-                exit;
-            } else {
-                die("Error al guardar hotel");
+            try{
+                if ($this->model->insertHotel($nombre, $direccion)) {
+                    header("Location: " . URL . "/hoteles");
+                    exit;
+                } else {
+                    die("Error al guardar hotel");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El hotel '{$nombre}' en '{$direccion}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el Hotel: " . $e->getMessage();
+                }
+                $this->load_view('hoteles/form', [
+                    'title' => 'Crear nuevo hotel',
+                    'action' => URL . '/hoteles/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]);
             }
-        }
+        }   
     }
 
     // Mostrar formulario para editar hotel.
@@ -122,12 +136,25 @@ class Hoteles extends Control
                 ]);
                 return;
             }
-
-            if ($this->model->updateHotel($id, $nombre, $direccion)) { 
-                header("Location: " . URL . "/hoteles/index");
-                exit;
-            } else {
-                die("Error al actualizar el hotel");
+            try {
+                if ($this->model->updateHotel($id, $nombre, $direccion)) { 
+                    header("Location: " . URL . "/hoteles/index");
+                    exit;
+                } else {
+                    die("Error al actualizar el hotel");
+                }
+            } catch (Exception $e) {
+                if ($e->getCode() == 23000) {
+                    $errores[] = "El hotel '{$nombre}' en '{$direccion}' ya existe en el sistema.";
+                } else {
+                    $errores[] = "Error al guardar el Hotel: " . $e->getMessage();
+                }
+                $this->load_view('hoteles/form', [
+                    'title' => 'Crear nuevo hotel',
+                    'action' => URL . '/hoteles/save',
+                    'values' => $_POST,
+                    'errores' => $errores,
+                ]);
             }
         }
     }
@@ -135,11 +162,19 @@ class Hoteles extends Control
     // Eliminar hotel.
     public function delete($id)
     {
-        $eliminado = $this->model->deleteHotel($id);
-        if (!$eliminado) {
-            die("No se puede eliminar el hotel.");
+        $reservasModel = $this->load_model("ReservasPuntosModel");
+        $reservas = $reservasModel->getReservasPuntosByHotel($id);
+        if (empty($reservas)) {
+            $eliminado = $this->model->deleteHotel($id);
+            if (!$eliminado) {
+                $this->index(["No se pudo eliminar el Hotel."]);
+            }
+
+            header("Location: " . URL . "/hoteles");
+            exit;
         }
-        header("Location: " . URL . "/hoteles");
-        exit;
+        $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
+        $string_reservas = implode(', ', $nombres_reservas);
+        $this->index(["No se puede eliminar el hotel, esta asignado a los siguientes permisos: ". $string_reservas]);
     }
 }

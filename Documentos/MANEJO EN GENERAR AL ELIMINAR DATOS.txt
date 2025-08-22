@@ -1,0 +1,35 @@
+MANEJO EN GENERAR AL ELIMINAR DATOS ASIGNADOS A OTRAS TABLAS POR CLAVES FORANEAS
+--✅calles
+--✅choferes
+--⛄puntos de detención
+--🐎recorridos
+--🦖servicios
+--🤑empresas
+--🤠hoteles
+--🥱lugares
+--👽activar un usuario activado o desactivar un usuario desactivado (error )
+--🐋editar una calle sin cambios (error), 
+--👌editar chofer sin hacer cambios (error) 
+--😭editar empresa sin hacer cambios (error), 
+--😒editar hotel sin hacer cambios (error)
+--👍editar puntos de dentencion sin hacer cambios (error)
+--😶editar el recorrido sin hacer cambios permitido? 
+--😶‍🌫️editar servicio sin hacer cambios (error)
+--😤editar lugar sin hacer cambios (error) 
+
+--🤐unicidad de lugar al editar y crear
+--🍕unicidad de servicio al editar y crear
+--🍔unicidad de empresa al editar y crear
+--🍳unicidad de choferes al editar y crear
+--🥖unicidad de puntos de detención al editar y crear
+--🧆unicidad de recorridos al editar y crear
+
+--🦪error al eliminar (desactivar un permiso dos veces) mostrar en pantalla permisos desactivados?
+
+--🐄poder eliminar las calles de recorrido?
+
+--⛰️quitar editar o anular la posibilidad de editar un dato asociado a un permiso
+(falta evitar modificar puntos de detencion, calles,lugares, empresas,hoteles)
+------------------------------------------------------------------------------------------
+agregar el campo chofer en vez de empresa en la tabla de estadísticas
+agregar los modelos con las query para los cuadros de resúmenes de estadisticas

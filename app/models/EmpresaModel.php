@@ -62,9 +62,7 @@ class EmpresaModel
         $stmt = $this->db->prepare("UPDATE empresas SET nombre = :nombre 
         WHERE id_empresa = :id_empresa");
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_empresa' => $id_empresa,'nombre' => $nombre_empresa]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        return $stmt->execute(['id_empresa' => $id_empresa,'nombre' => $nombre_empresa]);
     }
 
     /** 

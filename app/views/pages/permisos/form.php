@@ -51,8 +51,7 @@
                 <select class="form-select" id="servicio" name="id_servicio" required>
                     <option value="">Seleccione...</option>
                     <?php foreach ($datos['servicios'] as $s): ?>
-                        <option value="<?= $s['id_servicio'] ?>"
-                            <?= ($datos['values']['id_servicio'] ?? '') == $s['id_servicio'] ? 'selected' : '' ?>>
+                        <option value="<?= $s['id_servicio'] ?>">
                             <?= htmlspecialchars($s['interno'] . ' - ' . $s['dominio']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -68,8 +67,7 @@
                 <select class="form-select" data-live-search="true" id="lugar" name="id_lugar" required>
                     <option value="">Seleccione...</option>
                     <?php foreach ($datos['lugares'] as $l): ?>
-                        <option value="<?= $l['id_lugar'] ?>"
-                            <?= ($datos['values']['id_lugar'] ?? '') == $l['id_lugar'] ? 'selected' : '' ?>>
+                        <option value="<?= $l['id_lugar'] ?>">
                             <?= htmlspecialchars($l['nombre']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -86,8 +84,7 @@
                 <select class="form-select" data-live-search="true" id="chofer" name="id_chofer" required>
                     <option value="">Seleccione...</option>
                     <?php foreach ($datos['choferes'] as $c): ?>
-                        <option value="<?= $c['id_chofer'] ?>"
-                            <?= ($datos['values']['id_chofer'] ?? '') == $c['id_chofer'] ? 'selected' : '' ?>>
+                        <option value="<?= $c['id_chofer'] ?>">
                             <?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -116,8 +113,7 @@
             <select class="form-select" id="recorrido" name="id_recorrido" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($datos['recorridos'] as $r): ?>
-                    <option value="<?= $r['id_recorrido'] ?>"
-                        <?= ($datos['values']['id_recorrido'] ?? '') == $r['id_recorrido'] ? 'selected' : '' ?>>
+                    <option value="<?= $r['id_recorrido'] ?>">
                         <?= htmlspecialchars($r['nombre']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -175,7 +171,12 @@
     <!-- Observación -->
     <div class="mb-3">
         <label for="observacion" class="form-label">Observación</label>
-        <textarea class="form-control" id="observacion" name="observacion" rows="3"><?= htmlspecialchars($datos['values']['observacion'] ?? '') ?></textarea>
+        <textarea class="form-control" id="observacion" name="observacion" rows="3"><?php 
+                if (isset($datos['values']['observacion'])) 
+                { 
+                    $valorObservacion = htmlspecialchars($datos['values']['observacion']);
+                }
+            ?></textarea>
     </div>
 
     <button type="submit" class="btn btn-success">Guardar</button>
@@ -183,6 +184,11 @@
 </form>
 
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>
+<?php if(!empty($datos['imprimir'])): ?>
+<script>
+    window.open('/sgpc/permiso/imprimir/<?= $datos['imprimir'] ?>', '_blank');
+</script>
+<?php endif; ?>
 <script>
     _URL = '<?= URL ?>';
     window._HOTELES = <?= json_encode($datos['hoteles']) ?>;

@@ -17,14 +17,14 @@ class RecorridoModel
     }
 
     /**
-     * Funcion para obtener todos los datos de la tabla recorridos.
+     * Funcion para obtener todos los datos de la tabla recorridos de aquellos que estén activos.
      * PRE: La base de datos debe estar disponible y la tabla 'recorridos' debe existir.
      * @return array Arreglo asociativo con todos los registros de la tabla recorridos.
      * POST: Retorna todos los registros existentes en la tabla recorridos.
      */
     public function getAllRecorridos(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM recorridos");
+        $stmt = $this->db->prepare("SELECT * FROM recorridos where activo = 1");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
@@ -90,6 +90,12 @@ class RecorridoModel
         $stmt->execute(['id_recorrido' => $id_recorrido]);
         return $stmt->rowCount() > 0;
     }
-}
 
-  
+    public function desactivarRecorrido($id_recorrido): bool
+    {
+        $stmt = $this->db->prepare("UPDATE recorridos SET activo = 0 
+        WHERE id_recorrido = :id_recorrido");
+        // Ejecuta la consulta pasando los valores
+        return $stmt->execute(['id_recorrido' => $id_recorrido]);
+    }
+}

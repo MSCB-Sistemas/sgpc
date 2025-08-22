@@ -59,7 +59,8 @@ class UsuariosModel {
     }
 
     public function getUsuarioByNombreUsuario($nombre_usuario) : array|bool {
-        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE usuario = :usuario");
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE usuario = :usuario and activo = 1");
+         // Asegurarse de que el nombre de usuario no sea nulo o vacío
         $stmt->execute(['usuario' => $nombre_usuario]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -79,8 +80,8 @@ class UsuariosModel {
      */
     public function updateUsuario($id_usuario, $usuario, $nombre, $apellido, $cargo, $sector, $id_tipo_usuario) : bool {
         $stmt = $this->db->prepare("UPDATE usuarios SET usuario = :usuario, nombre = :nombre, apellido = :apellido, cargo = :cargo, sector = :sector, id_tipo_usuario = :id_tipo_usuario WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'id_tipo_usuario' => $id_tipo_usuario]);
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_usuario' => $id_usuario, 'usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'id_tipo_usuario' => $id_tipo_usuario]);
     }
 
     /**

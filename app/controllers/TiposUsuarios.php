@@ -45,7 +45,11 @@ class TiposUsuarios extends Control
     // Procesar creación
     public function store()
     {
-        $tipo_usuario = trim($_POST['tipo_usuario'] ?? '');
+        if(isset($_POST['tipo_usuario'])) {
+            $tipo_usuario = trim($_POST['tipo_usuario']);
+        } else {
+            $tipo_usuario = '';
+        }
 
         if ($tipo_usuario === '') {
             $this->load_view('tipos_usuarios/create', [
@@ -82,7 +86,11 @@ class TiposUsuarios extends Control
     // Procesar actualización
     public function update($id)
     {
-        $tipo_usuario = trim($_POST['tipo_usuario'] ?? '');
+        if(isset($_POST['tipo_usuario'])) {
+            $tipo_usuario = trim($_POST['tipo_usuario']);
+        } else {
+            $tipo_usuario = '';
+        }
 
         if ($tipo_usuario === '') {
             $tipoUsuario = $this->model->getTipoUsuario($id);

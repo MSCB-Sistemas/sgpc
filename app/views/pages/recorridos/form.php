@@ -15,8 +15,15 @@
         <!-- Nombre del recorrido -->
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre del recorrido</label>
+            <?php
+                if (isset($datos['values']['nombre'])) {
+                    $valuesNombre = htmlspecialchars($datos['values']['nombre']);
+                } else {
+                    $valuesNombre = '';
+                }
+            ?>
             <input type="text" class="form-control" id="nombre" name="nombre"
-                   value="<?= htmlspecialchars($datos['values']['nombre'] ?? '') ?>" required>
+                   value="<?= $valuesNombre ?>" required>
         </div>
 
         <!-- Selector de calles -->
@@ -98,4 +105,12 @@
             document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
         }
     });
+
+    document.getElementById('tablaCalles').addEventListener('click', function (e) {
+        if (e.target.classList.contains('removeCalle')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    selectCalle.focus();
 </script>

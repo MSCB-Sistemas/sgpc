@@ -97,13 +97,13 @@ class ServicioModel
              SET id_empresa = :id_empresa, interno = :interno, dominio = :dominio 
              WHERE id_servicio = :id"
         );
-        $stmt->execute([
+        
+        return $stmt->execute([
             'id' => $id,
             'id_empresa' => $id_empresa,
             'interno' => $interno,
             'dominio' => $dominio
         ]);
-        return $stmt->rowCount() > 0;
     }
 
     /**
