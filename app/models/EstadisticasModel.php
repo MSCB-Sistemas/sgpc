@@ -318,6 +318,71 @@ class EstadisticasModel
         return (int) $stmt->fetchColumn();
     }
 
+    /**
+     * Funcion para obtener los datos de las estadisticas
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @param mixed $dni
+     * @param mixed $tipo
+     * @param mixed $offset
+     * @param mixed $limite_por_pagina
+     * @param mixed $sql_sort_col
+     * @param mixed $sort_dir
+     * @return array
+     */
+    public function getPermisosFiltradosChofer($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null, $offset = 0, $limite_por_pagina = null, $sql_sort_col, $sort_dir): array
+    {
+        $sql = "
+            SELECT 
+                p.*, 
+                CONCAT(c.apellido,' ',c.nombre) AS chofer_completo,
+                e.nombre AS empresa, l.nombre as lugar
+            FROM permisos p
+            LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
+            LEFT JOIN empresas e ON e.id_empresa = e.id_empresa
+            left join lugares l on p.id_lugar = p.id_lugar
+            WHERE p.activo = 1
+        ";
+
+        $params = [];
+
+        if (!empty($fecha_inicio)) {
+            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
+            $params[':fecha_inicio'] = $fecha_inicio;
+        }
+
+        if (!empty($fecha_fin)) {
+            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
+            $params[':fecha_fin'] = $fecha_fin;
+        }
+
+        if (!empty($dni)) {
+            $sql .= " AND c.dni = :dni";
+            $params[':dni'] = $dni;
+        }
+
+        if (!empty($tipo)) {
+            $sql .= " AND p.tipo = :tipo";
+            $params[':tipo'] = $tipo;
+        }
+
+
+        $sql .= " ORDER BY $sql_sort_col $sort_dir LIMIT :limit OFFSET :offset";
+
+
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->bindValue(':limit', (int)$limite_por_pagina, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
         /**
      * Obtiene la cantidad de permisos por tipo (charter, línea, otros).
      *
@@ -474,4 +539,6 @@ class EstadisticasModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    
 }

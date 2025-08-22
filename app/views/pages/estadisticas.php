@@ -36,7 +36,7 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
         <form method="GET" class="row g-3 mb-4 justify-content-center">
             <div class="col-auto">
                 <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php if(!empty($datos['fecha_inicio'])){echo htmlspecialchars($datos['fecha_inicio']);} ?>">
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php if(!empty($datos['fecha_inicio']) && !is_array($datos['fecha_inicio']) && is_string($datos['fecha_inicio'])){echo htmlspecialchars($datos['fecha_inicio']);} ?>">
             </div>
 
             <div class="col-auto">
@@ -82,33 +82,45 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
     <?php endif; ?>
 
     <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th><?= generarOrdenLink('empresa', 'Empresa', $datos) ?></th>
-                <th><?= generarOrdenLink('fecha', 'Fecha', $datos) ?></th>
-                <th><?= generarOrdenLink('lugar', 'Lugar', $datos) ?></th>
-                <th><?= generarOrdenLink('tipo_movimiento', 'Arribo / Salida', $datos) ?></th>
-                <th><?= generarOrdenLink('cantidad', 'Cantidad de Pax', $datos) ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($datos['movimientos'])): ?>
-                <?php foreach ($datos['movimientos'] as $m): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($m['empresa']) ?></td>
-                        <td><?= htmlspecialchars($m['fecha']) ?></td>
-                        <td><?= htmlspecialchars($m['lugar']) ?></td>
-                        <td><?= htmlspecialchars($m['tipo_movimiento']) ?></td>
-                        <td><?= htmlspecialchars($m['cantidad']) ?></td>
-                    </tr>
-                <?php endforeach; ?>
+    <thead class="table-dark">
+        <tr>
+            <?php if($datos['buscar_por'] === 'chofer'): ?>
+                <th>Chofer</th>
             <?php else: ?>
-                <tr>
-                    <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
-                </tr>
+                <th>Empresa</th>
             <?php endif; ?>
-        </tbody>
-    </table>
+            <th>Fecha</th>
+            <th>Lugar</th>
+            <th>Tipo de Movimiento</th>
+            <th>Cantidad de Pax</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (!empty($datos['movimientos'])): ?>
+            <?php foreach ($datos['movimientos'] as $m): ?>
+                <tr>
+                    <td>
+                        <?= htmlspecialchars($datos['buscar_por'] === 'chofer' ? $m['chofer_completo'] : $m['empresa']) ?>
+                    </td>
+                    <td><?= htmlspecialchars($m['fecha_emision']) ?></td>
+                    <td><?= htmlspecialchars($m['lugar']) ?></td>
+                    <td><?= htmlspecialchars($m['arribo_salida']) ?></td>
+                    <td><?= htmlspecialchars($m['pasajeros']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
+
+
+<!-- Paginado -->
+
+
     <?php if (!empty($datos['total_paginas']) && ($datos['total_paginas']) > 1): ?>
         <ul class="pagination">
             <?php for ($i = 1; $i <= $datos['total_paginas']; $i++): ?>

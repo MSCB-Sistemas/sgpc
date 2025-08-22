@@ -14,6 +14,7 @@ class Estadisticas extends Control
 
     public function index()
     {
+        
 
         // Filtros desde GET
         $fecha_inicio = '';
@@ -52,18 +53,17 @@ class Estadisticas extends Control
             $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
         }
         
+        $sort_col = $_GET['sort_col'] ?? 'fecha_emision';
+        $sort_dir = $_GET['sort_dir'] ?? 'ASC';
 
-        $sort_col = 'fecha';
+        // Columnas válidas para evitar SQL injection
+        $allowed_cols = ['chofer_completo', 'empresa', 'fecha_emision', 'lugar', 'arribo_salida', 'pasajeros'];
+        if (!in_array($sort_col, $allowed_cols)) $sort_col = 'fecha_emision';
+        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
 
-        if (!empty($_GET['sort_col'])){
-            $sort_col = $_GET['sort_col']; // Por defecto ordenar por fecha
-        }
+        // Llamada al modelo
+       
 
-        $sort_dir = 'ASC';
-
-        if (!empty($_GET['sort_dir']) && in_array($sort_dir, ['ASC', 'DESC'])) {
-            $sort_dir = strtoupper($_GET['sort_dir']); // Por defecto ordenar ascendente
-        }
 
         // Paginación
 
@@ -95,17 +95,19 @@ class Estadisticas extends Control
             $total_resultados = $this->model->getCantidadPermisosFiltrados($fecha_inicio, $fecha_fin, $dni, $tipo);
             $total_paginas    = max(1, ceil($total_resultados / $limite_por_pagina));
 
+
             // Obtener movimientos filtrados
-            $movimientos = $this->model->getPermisosFiltrados(
+            $movimientos = $this->model->getPermisosFiltradosChofer(
                 $fecha_inicio,
                 $fecha_fin,
                 $dni,
                 $tipo,
-                $sort_col,
-                $sort_dir,
+                $offset,
                 $limite_por_pagina,
-                $offset
+                $sort_col,
+                $sort_dir
             );
+
 
             $error = null;
         }
@@ -127,8 +129,8 @@ class Estadisticas extends Control
             'total_resultados' => $total_resultados,
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+            
         ];  
-
         $this->load_view('estadisticas', $datos);
     }
 }
