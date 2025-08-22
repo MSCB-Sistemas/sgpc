@@ -29,11 +29,7 @@
     </div>
     </div>
 
-    <div class="mb-3">
-        <input type="text" id="busqueda" class="form-control" placeholder="Buscar...">
-    </div>
-
-    <div class="table-responsive shadow rounded" style="max-height: 300px;">
+    <div class="table-responsive shadow rounded">
         <table class="table table-hover align-middle mb-0" id="tablaABM" style="min-width: 800px;">
             <thead class="table-light">
                 <tr class="sticky">
@@ -58,35 +54,20 @@
                 <?php endforeach ?>
             </tbody>
         </table>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const input = document.getElementById('busqueda');
-                const tabla = document.getElementById('tablaABM').getElementsByTagName('tbody')[0];
-
-                input.addEventListener('keyup', function () {
-                    const filtro = input.value.toLowerCase();
-                    const filas = tabla.getElementsByTagName('tr');
-
-                    Array.from(filas).forEach(fila => {
-                        const celdas = fila.getElementsByTagName('td');
-                        let coincide = false;
-
-                        for (let celda of celdas) {
-                            if (!(celda.firstElementChild && celda.firstElementChild.tagName === "A") && celda.textContent.toLowerCase().includes(filtro)) {
-                                coincide = true;
-                                break;
-                            }
-                        }
-
-                        fila.style.display = coincide ? '' : 'none';
-                    });
-                });
-            });
-        </script>
     </div>
 </div>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#tablaABM').DataTable({
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+        pageLength: 10,       // Número de filas por página
+        lengthMenu: [5, 10, 25, 50, 100], // Opciones para cambiar cantidad
+        order: []             // Sin orden inicial (para que el usuario elija)
+    });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('btnFiltrar');
     const fechaDesde = document.getElementById('fecha_desde');
