@@ -131,6 +131,8 @@ class PuntosDetencion extends Control
             $nombre = trim($_POST["nombre"]);
             $calle = $_POST["calle"];
 
+            $reservas = $this->model->getReservaByPunto($id);
+
             $errores = [];
             if (empty($nombre)) { $errores[] = 'El nombre del punto es obligatorio.'; }
             if (empty($calle)) { $errores[] = 'Debe seleccionar una calle.'; }
@@ -152,27 +154,18 @@ class PuntosDetencion extends Control
 
                 return;
             }
-            try {
+            if(!empty($reservas)){
+                $this->model->desactivarPuntoDetencion($id);
+                $this->model->insertPuntoDetencion($nombre, $calle);
+                header("Location: " . URL . "/puntosDetencion");
+                exit;
+            } else {
                 if ($this->model->updatePuntoDetencion($id, $nombre, $calle)) {
                     header("Location: " . URL . "/puntosDetencion");
                     exit;
                 } else {
                     die("Error al actualizar el punto de detención.");
                 }
-            } catch (Exception $e) {
-                if ($e->getCode() == 23000) {
-                    $errores[] = "El punto de detencion '{$nombre}' ya existe en el sistema.";
-                } else {
-                    $errores[] = "Error al guardar el punto de detencion: " . $e->getMessage();
-                }
-                $calles = $this->calleModel->getAllCalles();
-                $this->load_view('puntos_detencion/form', [
-                    'title' => 'Crear nuevo punto de detención',
-                    'action' => URL . '/puntosDetencion/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                    'calles' => $calles
-                ]);
             }
         }
     }
