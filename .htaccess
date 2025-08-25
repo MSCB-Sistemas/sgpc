@@ -1,7 +1,5 @@
 <IfModule mod_rewrite.c>
 RewriteEngine on
-
-# Evita redirigir si ya estamos en public
-RewriteCond %{REQUEST_URI} !^/sgpc/public/
-RewriteRule ^(.*)$ public/$1 [L]
+RewriteRule ^$ public/ [L]
+RewriteRule (.*) public/$1 [L]
 </IfModule>
