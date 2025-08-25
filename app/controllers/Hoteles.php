@@ -117,6 +117,8 @@ class Hoteles extends Control
             $nombre = trim($_POST["nombre"] ?? '');
             $direccion = trim($_POST['direccion'] ??'');
 
+           $reservas = $this->model->getReservasByHotel($id);
+
 
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
@@ -136,25 +138,19 @@ class Hoteles extends Control
                 ]);
                 return;
             }
-            try {
+            if (!empty($reservas)) {
+                $this->model->desactivarHotel($id);
+                $this->model->insertHotel($nombre, $direccion);
+                header("Location: " . URL . "/hoteles/index");
+                exit;
+            } else {
+
                 if ($this->model->updateHotel($id, $nombre, $direccion)) { 
                     header("Location: " . URL . "/hoteles/index");
                     exit;
                 } else {
                     die("Error al actualizar el hotel");
                 }
-            } catch (Exception $e) {
-                if ($e->getCode() == 23000) {
-                    $errores[] = "El hotel '{$nombre}' en '{$direccion}' ya existe en el sistema.";
-                } else {
-                    $errores[] = "Error al guardar el Hotel: " . $e->getMessage();
-                }
-                $this->load_view('hoteles/form', [
-                    'title' => 'Crear nuevo hotel',
-                    'action' => URL . '/hoteles/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                ]);
             }
         }
     }

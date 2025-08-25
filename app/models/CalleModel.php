@@ -94,6 +94,17 @@ class CalleModel
         $stmt->execute(['id_calle' => $id_calle]);
         return $stmt->rowCount() > 0;
     }
+
+    public function getPermisosByCalle($id_calle): array
+    {
+        $stmt = $this->db->prepare("SELECT p.* 
+        FROM permisos p
+        JOIN recorridos_permisos rp ON rp.id_permiso = p.id_permiso
+        JOIN calles_recorridos cr ON cr.id_recorrido = rp.id_recorrido
+        WHERE cr.id_calle = :id_calle");
+        $stmt->execute(['id_calle' => $id_calle]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
   

@@ -18,6 +18,11 @@ class Calle extends Control
     // Mostrar todas las calles en una vista.
     public function index($errores = [])
     {
+        if (isset($_SESSION['error_calle'])) {
+            $errores[] = $_SESSION['error_calle'];
+            unset($_SESSION['error_calle']); // Borramos el mensaje después de usarlo
+        }
+
         $calles = $this->model->getAllCalles();
         $datos = [
             'title' => 'Listado de Calles',
@@ -112,10 +117,17 @@ class Calle extends Control
     // Mostrar formulario para editar una calle.
     public function edit($id)
     {
-        $calle = $this->model->getCalle($id);  
+        $calle = $this->model->getCalle($id);
+        $permisos = $this->model->getPermisosByCalle($id);
 
         if (!$calle) {
             die("Calle no encontrada");
+        }
+
+        if (!empty($permisos)) {
+            $_SESSION['error_calle'] = "Esta calle no se puede editar porque tiene permisos asociados";
+            header("Location: " . URL . "/calle");
+            exit;
         }
 
         $this->load_view('calle/form', [

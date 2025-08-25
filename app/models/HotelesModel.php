@@ -28,7 +28,7 @@ class HotelesModel {
      * @return array Arreglo asociativo con todos los hoteles.
      */
     public function getAllHoteles(): array {
-        $stmt = $this->db->prepare("SELECT * FROM hoteles");
+        $stmt = $this->db->prepare("SELECT * FROM hoteles where activo = 1");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -82,6 +82,21 @@ class HotelesModel {
         $stmt = $this->db->prepare("DELETE FROM hoteles WHERE id_hotel = :id_hotel");
         $stmt->execute(['id_hotel' => $id_hotel]);
         return $stmt->rowCount() > 0;
+    }
+
+    public function getReservasByHotel($id_hotel): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_hotel = :id_hotel");
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute(['id_hotel' => $id_hotel]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarHotel($id_hotel): bool
+    {
+        $stmt = $this->db->prepare("UPDATE hoteles SET activo = 0 WHERE id_hotel = :id_hotel");
+        // Ejecuta la consulta pasando los valores
+        return $stmt->execute(['id_hotel' => $id_hotel]);
     }
 }
 

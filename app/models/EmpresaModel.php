@@ -24,7 +24,7 @@ class EmpresaModel
     */
     public function getAllEmpresas(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM empresas");
+        $stmt = $this->db->prepare("SELECT * FROM empresas where activo = 1");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
@@ -93,5 +93,22 @@ class EmpresaModel
         // Ejecuta la consulta pasando los valores
         $stmt->execute(['id_empresa' => $id_empresa]);
         return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByEmpresa($id_empresa): array
+    {
+        $stmt = $this->db->prepare("SELECT p.* FROM permisos p
+                                    INNER JOIN servicios s ON p.id_servicio = s.id_servicio
+                                    WHERE s.id_empresa = :id_empresa");
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute(['id_empresa' => $id_empresa]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarEmpresa($id_empresa): bool
+    {
+        $stmt = $this->db->prepare("UPDATE empresas SET activo = 0 WHERE id_empresa = :id_empresa");
+        // Ejecuta la consulta pasando los valores
+        return $stmt->execute(['id_empresa' => $id_empresa]);
     }
 }

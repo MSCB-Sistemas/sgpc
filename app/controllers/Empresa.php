@@ -56,6 +56,7 @@ class Empresa extends Control
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombre = trim($_POST["nombre"]);
+            $permisos = $this->model->getPermisosByEmpresa($id);
 
             $errores = [];
             if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
@@ -73,27 +74,20 @@ class Empresa extends Control
                 ]);
                 return;
             }
-            try {
+
+            if(!empty($permisos)){
+                $this->model->desactivarEmpresa($id);
+                $this->model->insertEmpresa($nombre);
+                header("Location: " . URL . "/empresa");
+                exit;
+            } else {
                 if ($this->model->updateEmpresa($id,$nombre)) {
                     header("Location: " . URL . "/empresa");
                     exit;
                 } else {
                     die("Error al actualizar la empresa");
                 }
-            } catch (Exception $e) {
-                if ($e->getCode() == 23000) {
-                    $errores[] = "La empresa '{$_POST['nombre']}' ya existe en el sistema.";
-                } else {
-                    $errores[] = "Error al guardar la empresa: " . $e->getMessage();
-                }
-                $this->load_view('empresas/form', [
-                    'title' => 'Crear nueva empresa',
-                    'action' => URL . '/empresa/save',
-                    'values' => $_POST,
-                    'errores' => $errores
-                ]);
-                return;
-            }    
+            }
         }
     }
 
