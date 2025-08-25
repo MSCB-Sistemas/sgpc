@@ -117,6 +117,7 @@ class Estadisticas extends Control
             'total_resultados' => $total_resultados,
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+            'puntos_mas_usados' => $this->model->getPuntoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen),
             
         ];  
         $this->load_view('estadisticas', $datos);

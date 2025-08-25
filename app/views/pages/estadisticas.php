@@ -1,9 +1,11 @@
 <?php
 // Variables para filtrar y error
 $buscar_por = $_GET['buscar_por'] ?? '';
-$dni        = trim($_GET['dni'] ?? '');
-$error      = '';
-$filtrar    = isset($_GET['filtrar']); // Detecta si se envió el formulario con el botón "Filtrar"
+$dni = trim($_GET['dni'] ?? '');
+$fecha_inicio = $_GET['fecha_inicio'] ?? '';
+$fecha_fin = $_GET['fecha_fin'] ?? '';
+$error = '';
+$filtrar = isset($_GET['filtrar']); // Detecta si se envió el formulario con el botón "Filtrar"
 
 // Validación: solo si se presionó "Filtrar" y buscar_por es chofer
 if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
@@ -139,7 +141,7 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
 
     <!-- TAB RESUMEN -->
     <div class="tab-pane fade" id="resumen" role="tabpanel">
-        <form id="form-filtro-resumen" class="row g-2 mb-3 justify-content-left">
+        <form id="form-filtro-resumen" method="POST" class="row g-2 mb-3 justify-content-left">
             <div class="col-auto">
                 <label for="fecha_inicio_resumen" class="form-label">Fecha Inicio</label>
                 <input type="date" class="form-control" name="fecha_inicio_resumen" id="fecha_inicio_resumen"
@@ -159,28 +161,28 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
         <div id="contenedor-resumen"></div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const form = document.getElementById('form-filtro-resumen');
-                const contenedor = document.getElementById('contenedor-resumen');
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('form-filtro-resumen');
+            const contenedor = document.getElementById('contenedor-resumen');
 
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault(); // Evita recargar la página
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Evita recargar la página
 
-                    fetch('<?= URL ?>/estadisticas/resumenCardsAjax', {
-                        method: 'POST',
-                        body: new FormData(form)
-                    })
-                    .then(res => res.text())
-                    .then(html => {
-                        contenedor.innerHTML = html; // Reemplaza solo las cards
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        contenedor.innerHTML = "<p class='text-danger'>Error al cargar datos</p>";
-                    });
+                fetch('<?= URL ?>/estadisticas/resumenCardsAjax', {
+                    method: 'POST',
+                    body: new FormData(form)
+                })
+                .then(res => res.text())
+                .then(html => {
+                    contenedor.innerHTML = html; // Reemplaza solo las cards
+                })
+                .catch(err => {
+                    console.error(err);
+                    contenedor.innerHTML = "<p class='text-danger'>Error al cargar datos</p>";
                 });
             });
-            </script>
+        });
+        </script>
 
 
         <!-- Cards métricas -->

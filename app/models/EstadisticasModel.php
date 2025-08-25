@@ -163,8 +163,6 @@ class EstadisticasModel
         if ($resultado) {
             return $resultado;
         }
-
-        return [];
     }
 
 
