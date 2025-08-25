@@ -168,106 +168,7 @@ class EstadisticasModel
     }
 
 
-    /**
-     * Obtiene un listado de permisos filtrados por fecha, DNI, tipo, orden y paginación.
-     *
-     * @param string|null $fecha_inicio Fecha inicial para filtrar los permisos.
-     * @param string|null $fecha_fin Fecha final para filtrar los permisos.
-     * @param string|null $dni DNI del chofer (si se busca por chofer).
-     * @param string|null $tipo Tipo de servicio (línea, charter, etc.).
-     * @param string $sort_col Columna por la que se ordenan los resultados.
-     * @param string $sort_dir Dirección de ordenamiento (ASC o DESC).
-     * @param int|null $limit Límite de resultados por página (para paginación).
-     * @param int|null $offset Desplazamiento de la paginación.
-     * @return array Arreglo asociativo con los permisos encontrados.
-     */
-    public function getPermisosFiltrados(
-        $fecha_inicio = null,
-        $fecha_fin = null,
-        $dni = null,
-        $tipo = null,
-        $sort_col = 'fecha',
-        $sort_dir = 'ASC',
-        $limit = null,
-        $offset = null
-    ): array {
-        // Columnas válidas para ordenar
-        $columnasValidas = ['empresa', 'fecha', 'lugar', 'tipo_movimiento', 'cantidad'];
-        if (!in_array($sort_col, $columnasValidas)) {
-            $sort_col = 'fecha';
-        }
-            if (strtoupper($sort_dir) !== 'DESC') {
-                $sort_dir = 'ASC';
-        } else {
-                $sort_dir = 'DESC';
-        }
-
-
-        // Consulta base con joins necesarios
-        $sql = "
-            SELECT
-                e.nombre AS empresa,
-                p.fecha_emision AS fecha,
-                l.nombre AS lugar,
-                p.arribo_salida AS tipo_movimiento,
-                p.pasajeros AS cantidad
-            FROM permisos p
-            INNER JOIN servicios s ON p.id_servicio = s.id_servicio
-            INNER JOIN empresas e ON s.id_empresa = e.id_empresa
-            INNER JOIN lugares l ON p.id_lugar = l.id_lugar
-            LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
-            WHERE p.activo = 1
-        ";
-
-        // Parametros de filtrado
-        $params = [];
-
-        if (!empty($fecha_inicio)) {
-            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
-            $params[':fecha_inicio'] = $fecha_inicio;
-        }
-
-        if (!empty($fecha_fin)) {
-            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
-            $params[':fecha_fin'] = $fecha_fin;
-        }
-
-        if (!empty($dni)) {
-            $sql .= " AND c.dni = :dni";
-            $params[':dni'] = $dni;
-        }
-
-        if (!empty($tipo)) {
-            $sql .= " AND p.tipo = :tipo";
-            $params[':tipo'] = $tipo;
-        }
-
-        // Ordenamiento
-        $sql .= " ORDER BY $sort_col $sort_dir";
-
-        // Paginación (si se usa)
-        if ($limit !== null && $offset !== null) {
-            $sql .= " LIMIT :limit OFFSET :offset";
-        }
-
-        // Preparar consulta
-        $stmt = $this->db->prepare($sql);
-
-        // Asignar parámetros dinámicamente
-        foreach ($params as $key => &$value) {
-            $stmt->bindParam($key, $value);
-        }
-
-        // Asignar paginación si aplica
-        if ($limit !== null && $offset !== null) {
-            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        }
-
-        // Ejecutar y devolver resultados
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    
 
     /**
      * Retorna la cantidad total de permisos que coinciden con los filtros aplicados.
@@ -326,21 +227,21 @@ class EstadisticasModel
      * @param mixed $tipo
      * @param mixed $offset
      * @param mixed $limite_por_pagina
-     * @param mixed $sql_sort_col
-     * @param mixed $sort_dir
      * @return array
      */
-    public function getPermisosFiltradosChofer($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null, $offset = 0, $limite_por_pagina = null, $sql_sort_col, $sort_dir): array
+    public function getPermisosFiltradosChofer($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null, $offset = 0, $limite_por_pagina = null): array
     {
         $sql = "
             SELECT 
                 p.*, 
                 CONCAT(c.apellido,' ',c.nombre) AS chofer_completo,
-                e.nombre AS empresa, l.nombre as lugar
+                e.nombre AS empresa, 
+                l.nombre AS lugar
             FROM permisos p
             LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
-            LEFT JOIN empresas e ON e.id_empresa = e.id_empresa
-            left join lugares l on p.id_lugar = p.id_lugar
+            LEFT JOIN servicios s ON p.id_servicio = s.id_servicio
+            LEFT JOIN empresas e ON s.id_empresa = e.id_empresa
+            LEFT JOIN lugares l  ON p.id_lugar = l.id_lugar
             WHERE p.activo = 1
         ";
 
@@ -366,9 +267,11 @@ class EstadisticasModel
             $params[':tipo'] = $tipo;
         }
 
-
-        $sql .= " ORDER BY $sql_sort_col $sort_dir LIMIT :limit OFFSET :offset";
-
+        // 🚨 si Bootstrap se encarga del sort, no agregues ORDER BY
+        // 🚨 y podés decidir si querés usar LIMIT/OFFSET (para paginación server-side)
+        if (!empty($limite_por_pagina)) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
 
         $stmt = $this->db->prepare($sql);
 
@@ -376,8 +279,10 @@ class EstadisticasModel
             $stmt->bindValue($key, $value);
         }
 
-        $stmt->bindValue(':limit', (int)$limite_por_pagina, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        if (!empty($limite_por_pagina)) {
+            $stmt->bindValue(':limit', (int)$limite_por_pagina, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
 
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -495,15 +400,20 @@ class EstadisticasModel
      */
     public function getReservasDesdeHoy(): array {
         $stmt = $this->db->prepare("
-            SELECT 
-                pd.nombre AS punto,
-                c.nombre AS calle,
-                rp.fecha_horario
-            FROM reservas_puntos rp
-            JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion
-            JOIN calles c ON pd.id_calle = c.id_calle
-            WHERE rp.fecha_horario >= CURRENT_DATE
-            ORDER BY rp.fecha_horario ASC
+                   SELECT 
+                        pd.nombre AS punto,
+                        c.nombre AS calle,
+                        e.nombre AS empresa,
+                        rp.fecha_horario,
+                        p.tipo AS tipo
+                    FROM reservas_puntos rp
+                    JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion
+                    JOIN calles c ON pd.id_calle = c.id_calle
+                    JOIN permisos p ON rp.id_permiso = p.id_permiso
+                    JOIN servicios s ON p.id_servicio = s.id_servicio
+                    JOIN empresas e ON s.id_empresa = e.id_empresa
+                    WHERE rp.fecha_horario >= CURRENT_DATE
+                    ORDER BY rp.fecha_horario ASC;
         ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -1,16 +1,9 @@
 <?php
-
 // Variables para filtrar y error
-$buscar_por = '';
-$dni = '';
-if (isset($_GET['buscar_por'])) {
-    $buscar_por = $_GET['buscar_por'];
-}
-if (isset($_GET['dni'])) {
-    $dni = trim($_GET['dni']);
-}
-$error = '';
-$filtrar = isset($_GET['filtrar']); // Detecta si se envió el formulario con el botón "Filtrar"
+$buscar_por = $_GET['buscar_por'] ?? '';
+$dni        = trim($_GET['dni'] ?? '');
+$error      = '';
+$filtrar    = isset($_GET['filtrar']); // Detecta si se envió el formulario con el botón "Filtrar"
 
 // Validación: solo si se presionó "Filtrar" y buscar_por es chofer
 if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
@@ -19,227 +12,179 @@ if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
     $datos['movimientos'] = [];
 }
 ?>
-    <link rel="stylesheet" href="<?= URL . '/public/css/estadisticas.css' ?>">
-    
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <button class="nav-link active" id="tablas-tab" data-bs-toggle="tab" data-bs-target="#tablas" type="button" role="tab">Datos</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button" role="tab">Resumen</button>
-        </li>
-    </ul>
+<link rel="stylesheet" href="<?= URL . '/public/css/estadisticas.css' ?>">
 
-    <div class="tab-content mt-4">
-        <div class="tab-pane fade show active" id="tablas" role="tabpanel">
-            <!-- Formulario de filtros -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <button class="nav-link active" id="tablas-tab" data-bs-toggle="tab" data-bs-target="#tablas" type="button" role="tab">Datos</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button" role="tab">Resumen</button>
+    </li>
+</ul>
+
+<div class="tab-content mt-4">
+    <!-- TAB DATOS -->
+    <div class="tab-pane fade show active" id="tablas" role="tabpanel">
+        <!-- Formulario de filtros -->
         <form method="GET" class="row g-3 mb-4 justify-content-center">
             <div class="col-auto">
                 <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php if(!empty($datos['fecha_inicio']) && !is_array($datos['fecha_inicio']) && is_string($datos['fecha_inicio'])){echo htmlspecialchars($datos['fecha_inicio']);} ?>">
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio"
+                    value="<?= !empty($datos['fecha_inicio']) && is_string($datos['fecha_inicio']) ? htmlspecialchars($datos['fecha_inicio']) : '' ?>">
             </div>
 
             <div class="col-auto">
                 <label for="fecha_fin" class="form-label">Fecha Fin</label>
-                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?php if(!empty($datos['fecha_fin'])){echo htmlspecialchars($datos['fecha_fin']);} ?>">
+                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin"
+                    value="<?= !empty($datos['fecha_fin']) ? htmlspecialchars($datos['fecha_fin']) : '' ?>">
             </div>
 
             <div class="col-auto">
                 <label for="buscar_por" class="form-label">Buscar por</label>
                 <select name="buscar_por" id="buscar_por" class="form-select" onchange="this.form.submit()">
                     <option value="">-- Seleccionar --</option>
-                    <option value="chofer" <?php if(!empty($datos['buscar_por']) && $datos['buscar_por'] === 'chofer'){echo 'selected';}?>>Chofer</option>
-                    <option value="tipo" <?php if(!empty($datos['buscar_por']) && $datos['buscar_por'] === 'tipo'){echo 'selected';}?>>Tipo</option>
+                    <option value="chofer" <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'selected' : '' ?>>Chofer</option>
+                    <option value="tipo"   <?= ($datos['buscar_por'] ?? '') === 'tipo'   ? 'selected' : '' ?>>Tipo</option>
                 </select>
             </div>
 
-            <!-- Campo DNI solo visible si buscar_por es chofer -->
-            <div class="col-auto" id="campo_dni" style="display: <?php if(!empty($datos['buscar_por']) && $datos['buscar_por'] === 'chofer'){echo 'block';} else {echo 'none';} ?>;">
+            <!-- Campo DNI solo si buscar_por = chofer -->
+            <div class="col-auto" id="campo_dni"
+                style="display: <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'block' : 'none' ?>;">
                 <label for="dni" class="form-label">DNI del Chofer</label>
-                <input type="text" class="form-control" name="dni" id="dni" value="<?php if(!empty($datos['dni'])){echo htmlspecialchars($datos['dni']);} ?>">
+                <input type="text" class="form-control" name="dni" id="dni"
+                    value="<?= !empty($datos['dni']) ? htmlspecialchars($datos['dni']) : '' ?>">
             </div>
 
             <!-- Campo Tipo visible si buscar_por es chofer o tipo -->
-            <div class="col-auto" id="campo_tipo" style="display: <?php if(!empty($datos['buscar_por']) && in_array($datos['buscar_por'], ['chofer','tipo'])) {echo 'block';} else {echo 'none';} ?>;">
+            <div class="col-auto" id="campo_tipo"
+                style="display: <?= in_array(($datos['buscar_por'] ?? ''), ['chofer','tipo']) ? 'block' : 'none' ?>;">
                 <label for="tipo" class="form-label">Tipo de Servicio</label>
                 <select name="tipo" id="tipo" class="form-select">
                     <option value="">-- Todos --</option>
-                    <option value="linea" <?php if (!empty($datos['tipo']) && $datos['tipo']  === 'linea'){echo 'selected';}?>>Línea</option>
-                    <option value="charter" <?php if (!empty($datos['tipo']) && $datos['tipo']  === 'charter'){echo 'selected';}?>>Charter</option>
-                    <option value="otros" <?php if (!empty($datos['tipo']) && $datos['tipo']  === 'otros'){echo 'selected';}?>>Otros</option>
+                    <option value="linea"   <?= ($datos['tipo'] ?? '') === 'linea'   ? 'selected' : '' ?>>Línea</option>
+                    <option value="charter" <?= ($datos['tipo'] ?? '') === 'charter' ? 'selected' : '' ?>>Charter</option>
+                    <option value="otros"   <?= ($datos['tipo'] ?? '') === 'otros'   ? 'selected' : '' ?>>Otros</option>
                 </select>
             </div>
 
             <div class="col-auto align-self-end">
-                <!-- Boton con name="filtrar" para detectar submit intencional -->
                 <button type="submit" name="filtrar" class="btn btn-primary">Filtrar</button>
             </div>
         </form>
 
-    <!-- Mostrar error solo si hay -->
-    <?php if ($error): ?>
-        <div class="alert alert-warning text-center"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
-
-    <table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <?php if($datos['buscar_por'] === 'chofer'): ?>
-                <th>Chofer</th>
-            <?php else: ?>
-                <th>Empresa</th>
-            <?php endif; ?>
-            <th>Fecha</th>
-            <th>Lugar</th>
-            <th>Tipo de Movimiento</th>
-            <th>Cantidad de Pax</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (!empty($datos['movimientos'])): ?>
-            <?php foreach ($datos['movimientos'] as $m): ?>
-                <tr>
-                    <td>
-                        <?= htmlspecialchars($datos['buscar_por'] === 'chofer' ? $m['chofer_completo'] : $m['empresa']) ?>
-                    </td>
-                    <td><?= htmlspecialchars($m['fecha_emision']) ?></td>
-                    <td><?= htmlspecialchars($m['lugar']) ?></td>
-                    <td><?= htmlspecialchars($m['arribo_salida']) ?></td>
-                    <td><?= htmlspecialchars($m['pasajeros']) ?></td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
-            </tr>
+        <!-- Error -->
+        <?php if ($error): ?>
+            <div class="alert alert-warning text-center"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
-    </tbody>
-</table>
+
+        <!-- Tabla -->
+       <!-- Cargar bootstrap-table -->
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
+        <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+
+        <table 
+            class="table table-bordered table-striped"
+            data-toggle="table"
+            data-search="true"
+            data-pagination="true">
+            
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true">
+                        <?= ($datos['buscar_por'] ?? '') === 'chofer' ? 'Chofer' : 'Empresa' ?>
+                    </th>
+                    <th data-field="fecha" data-sortable="true">Fecha</th>
+                    <th data-field="lugar" data-sortable="true">Lugar</th>
+                    <th data-field="movimiento" data-sortable="true">Tipo de Movimiento</th>
+                    <th data-field="pax" data-sortable="true">Cantidad de Pax</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php if (!empty($datos['movimientos'])): ?>
+                    <?php foreach ($datos['movimientos'] as $m): ?>
+                        <tr>
+                            <td><?= htmlspecialchars(($datos['buscar_por'] ?? '') === 'chofer' ? $m['chofer_completo'] : $m['empresa']) ?></td>
+                            <td><?= htmlspecialchars($m['fecha_emision']) ?></td>
+                            <td><?= htmlspecialchars($m['lugar']) ?></td>
+                            <td><?= htmlspecialchars($m['arribo_salida']) ?></td>
+                            <td><?= htmlspecialchars($m['pasajeros']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
 
 
+        <!-- Paginado -->
+        <?php if (!empty($datos['total_paginas']) && $datos['total_paginas'] > 1): ?>
+            <ul class="pagination">
+                <?php for ($i = 1; $i <= $datos['total_paginas']; $i++): ?>
+                    <li>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['pagina' => $i])) ?>"
+                           class="pagina-link <?= (($datos['pagina_actual'] ?? 1) == $i) ? 'pagina-activa' : '' ?>">
+                           <?= $i ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
 
-<!-- Paginado -->
-
-
-    <?php if (!empty($datos['total_paginas']) && ($datos['total_paginas']) > 1): ?>
-        <ul class="pagination">
-            <?php for ($i = 1; $i <= $datos['total_paginas']; $i++): ?>
-                <li>
-                    <a href="?<?= http_build_query(array_merge($_GET, ['pagina' => $i])) ?>"
-                        class="pagina-link <?php if((!empty($datos['pagina_actual']) && $i == ($datos['pagina_actual'])) || (empty($datos['pagina_actual']) && $i == 1)){echo 'pagina-activa';}?>">
-                            <?= $i ?>
-                    </a>
-
-                </li>
-            <?php endfor; ?>
-        </ul>
-    <?php endif; ?>
-</div>
-
-<?php
-// Función para generar links con ordenamiento (orden asc/desc)
-function generarOrdenLink($columna, $etiqueta, $datos) {
-    $direccion_actual = 'asc';
-    if (!empty($datos['sort_dir'])) {
-        $direccion_actual = strtolower($datos['sort_dir']);
-    }
-
-    $columna_actual = '';
-    if (!empty($datos['sort_col'])) {
-        $columna_actual = strtolower($datos['sort_col']);
-    }
-
-    // Cambia la dirección si la columna es la misma, sino por defecto asc
-    $direccion_siguiente = 'asc';
-    if ($columna_actual === $columna && $direccion_actual === 'asc') {
-        $direccion_siguiente = 'desc';
-    }
-
-    $query_params = $_GET;
-    $query_params['sort_col'] = $columna;
-    $query_params['sort_dir'] = $direccion_siguiente;
-
-    $link = '?' . http_build_query($query_params);
-    return "<a href=\"$link\">$etiqueta</a>";
-}
-?>
-
+    <!-- TAB RESUMEN -->
     <div class="tab-pane fade" id="resumen" role="tabpanel">
-        <!-- Fila de métricas principales -->
-        <div>
-            <form id="form-filtro-resumen" class="row g-2 mb-3 justify-content-left">
-                <div class="col-auto">
-                    <label for="fecha_inicio_resumen" class="form-label">Fecha Inicio</label>
-                    <input type="date"
-                        class="form-control"
-                        name="fecha_inicio_resumen"
-                        id="fecha_inicio_resumen"
-                        value="<?php if(!empty($_GET['fecha_inicio_resumen'])){echo htmlspecialchars($_GET['fecha_inicio_resumen']);} ?>">
-                </div>
+        <form id="form-filtro-resumen" class="row g-2 mb-3 justify-content-left">
+            <div class="col-auto">
+                <label for="fecha_inicio_resumen" class="form-label">Fecha Inicio</label>
+                <input type="date" class="form-control" name="fecha_inicio_resumen" id="fecha_inicio_resumen"
+                    value="<?= htmlspecialchars($_GET['fecha_inicio_resumen'] ?? '') ?>">
+            </div>
+            <div class="col-auto">
+                <label for="fecha_fin_resumen" class="form-label">Fecha Fin</label>
+                <input type="date" class="form-control" name="fecha_fin_resumen" id="fecha_fin_resumen"
+                    value="<?= htmlspecialchars($_GET['fecha_fin_resumen'] ?? '') ?>">
+            </div>
+            <div class="col-auto align-self-end">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+        </form>
 
-                <div class="col-auto">
-                    <label for="fecha_fin_resumen" class="form-label">Fecha Fin</label>
-                    <input type="date"
-                        class="form-control"
-                        name="fecha_fin_resumen"
-                        id="fecha_fin_resumen"
-                        value="<?php if(!empty($_GET['fecha_fin_resumen'])){echo htmlspecialchars($_GET['fecha_fin_resumen']);} ?>">
-                </div>
+        <!-- contenedor AJAX -->
+        <div id="contenedor-resumen"></div>
 
-                <div class="col-auto align-self-end">
-                    <button type="submit" class="btn btn-primary">Filtrar</button>
-                </div>
-            </form>
-        </div>
-        <body> <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('form-filtro-resumen');
-    const contenedor = document.getElementById('contenedor-resumen');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('form-filtro-resumen');
+                const contenedor = document.getElementById('contenedor-resumen');
 
-    // Restaurar el tab activo guardado
-    const lastTab = localStorage.getItem('activeTab');
-    if (lastTab) {
-        const tabElement = document.querySelector(`[data-bs-target="${lastTab}"]`);
-        if (tabElement) {
-            new bootstrap.Tab(tabElement).show();
-        }
-    }
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Evita recargar la página
 
-    // Escuchar cambio de pestaña y guardarlo
-    const tabLinks = document.querySelectorAll('[data-bs-toggle="tab"]');
-    tabLinks.forEach(tab => {
-        tab.addEventListener('shown.bs.tab', function(e) {
-            const activeTab = e.target.getAttribute('data-bs-target');
-            localStorage.setItem('activeTab', activeTab);
-        });
-    });
-
-    // AJAX filtrado
-    if (form && contenedor) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-
-            fetch('resumen_datos.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.text())
-            .then(html => {
-                contenedor.innerHTML = html;
-            })
-            .catch(err => {
-                contenedor.innerHTML = "<p class='text-danger'>Error al cargar datos</p>";
-                console.error(err);
+                    fetch('<?= URL ?>/estadisticas/resumenCardsAjax', {
+                        method: 'POST',
+                        body: new FormData(form)
+                    })
+                    .then(res => res.text())
+                    .then(html => {
+                        contenedor.innerHTML = html; // Reemplaza solo las cards
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        contenedor.innerHTML = "<p class='text-danger'>Error al cargar datos</p>";
+                    });
+                });
             });
-        });
-    }
-});
-</script>
-</body>
+            </script>
 
-    <div class="row mb-4">
+
+        <!-- Cards métricas -->
+        <div class="row mb-4">
             <div class="col-md-6 mb-3">
                 <div class="card text-white" style="background: linear-gradient(135deg,#94BBE9,#EEAECA); height:185px;">
                     <div class="card-body text-center">
@@ -250,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-                <div class="card text-white" style="background: linear-gradient(135deg,#43e97b,#38f9d7); height:185px;">
+                <div class="card text-white" style="background: linear-gradient(135deg,#43e97b,#38f9d7,#81FF47); height:185px;">
                     <div class="card-body text-center">
                         <h3>🏢</h3>
                         <h4>Empresa más activa</h4>
@@ -318,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card text-white" style="background: linear-gradient(to right,#ff758c,#D143D1); height:185px;">
                 <div class="card-body text-center">
                     <h3>📊</h3>
-                    <h5>Tipos de Permisos</h5>
+                    <h5>Promedio de Tipos de Permisos</h5>
                     <?php if (!empty($datos['promedio_por_tipo'])): ?>
                         <ul class="list-unstyled mb-0">
                             <?php foreach ($datos['promedio_por_tipo'] as $tipo): ?>
@@ -331,8 +276,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         </div>
-        
-    </div>
     </div>
 </div>
 </div>

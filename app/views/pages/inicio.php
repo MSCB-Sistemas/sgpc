@@ -13,8 +13,11 @@
                             <?php if (!empty($datos['reservas_desde_hoy'])): ?>
                                 <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
                                     <li class="list-group-item">
-                                        <strong><?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong><br>
-                                        <strong >📍 <?= $r['punto'] ?> | 🛣️ <?= $r['calle'] ?></strong>
+                                        <strong> 🕜 <?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong>
+                                        <br><br>
+                                        <strong style="word-spacing: 15px; text-transform: uppercase;">
+                                        🚌 <?= $r['empresa']?> | 📍<?= $r['punto'] ?> |  🛣️<?= $r['calle'] ?> |  🔹<?= $r['tipo']?>
+                                        </strong>
                                     </li>
                                 <?php endforeach; ?>
                             <?php else: ?>

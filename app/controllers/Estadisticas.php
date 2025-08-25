@@ -53,14 +53,6 @@ class Estadisticas extends Control
             $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
         }
         
-        $sort_col = $_GET['sort_col'] ?? 'fecha_emision';
-        $sort_dir = $_GET['sort_dir'] ?? 'ASC';
-
-        // Columnas válidas para evitar SQL injection
-        $allowed_cols = ['chofer_completo', 'empresa', 'fecha_emision', 'lugar', 'arribo_salida', 'pasajeros'];
-        if (!in_array($sort_col, $allowed_cols)) $sort_col = 'fecha_emision';
-        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
-
         // Llamada al modelo
        
 
@@ -104,8 +96,6 @@ class Estadisticas extends Control
                 $tipo,
                 $offset,
                 $limite_por_pagina,
-                $sort_col,
-                $sort_dir
             );
 
 
@@ -121,8 +111,6 @@ class Estadisticas extends Control
             'dni'           => $dni,
             'tipo'          => $tipo,
             'buscar_por'    => $buscar_por,
-            'sort_col'      => $sort_col,
-            'sort_dir'      => $sort_dir,
             'pagina_actual' => $pagina_actual,
             'total_paginas' => $total_paginas,
             'error'         => $error,
@@ -133,4 +121,20 @@ class Estadisticas extends Control
         ];  
         $this->load_view('estadisticas', $datos);
     }
+
+    public function resumenCardsAjax()
+{
+    // Validar que venga por POST
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $fecha_inicio = $_POST['fecha_inicio_resumen'] ?? '';
+        $fecha_fin    = $_POST['fecha_fin_resumen'] ?? '';
+
+        // Aquí llamas a los modelos y obtenés los datos filtrados
+        $datos = $this->model->getPuntoMasUtilizado($fecha_inicio, $fecha_fin);
+
+        // Cargamos solo la vista parcial de las cards
+        
+    }
+}
+
 }
