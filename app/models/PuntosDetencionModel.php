@@ -35,8 +35,8 @@ class PuntosDetencionModel {
         FROM 
             puntos_detencion pd
         JOIN 
-            calles c ON pd.id_calle = c.id_calle;
-        where pd.activo = 1");
+            calles c ON pd.id_calle = c.id_calle
+        where pd.activo = 1;");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

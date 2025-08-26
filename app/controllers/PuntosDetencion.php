@@ -4,7 +4,7 @@
  */
 class PuntosDetencion extends Control
 {
-    private $model;
+    private PuntosDetencionModel $model;
     private $calleModel;
 
     public function __construct()
