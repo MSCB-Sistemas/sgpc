@@ -30,36 +30,12 @@ class EstadisticasModel
     }
 
     /**
-     * Promedio de permisos emitidos por día
-     */
-    public function getPromedioPermisosPorDia($fecha_inicio = null, $fecha_fin = null): float
-    {
-        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
-
-        $stmt = $this->db->prepare("
-            SELECT AVG(cantidad) AS promedio_diario
-            FROM (
-                SELECT DATE(fecha_emision) AS dia, COUNT(*) AS cantidad
-                FROM permisos
-                WHERE activo = 1 AND DATE(fecha_emision) BETWEEN :inicio AND :fin
-                GROUP BY DATE(fecha_emision)
-            ) AS sub
-        ");
-        $stmt->bindValue(':inicio', $fecha_inicio);
-        $stmt->bindValue(':fin', $fecha_fin);
-        $stmt->execute();
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (empty($resultado['promedio_diario'])) {
-            return 0;
-        }
-        return (float)($resultado['promedio_diario']);
-    }
-
-    /**
      * Empresa con más permisos diarios en promedio
      */
     public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): array
     {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
         $stmt = $this->db->prepare("
             SELECT 
                 e.nombre, 
@@ -136,37 +112,7 @@ class EstadisticasModel
             return $resultado;
         } 
         return [];
-    }
-
-    /**
-     * Punto de detención más utilizado
-     */
-    public function getPuntoMasUtilizado($fecha_inicio = null, $fecha_fin = null): array
-    {
-        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
-
-        $stmt = $this->db->prepare("
-            SELECT pd.nombre, COUNT(*) AS cantidad
-            FROM reservas_puntos rp
-            JOIN puntos_detencion pd ON pd.id_punto_detencion = rp.id_punto_detencion
-            JOIN permisos p ON p.id_permiso = rp.id_permiso
-            WHERE p.activo = 1 AND DATE(p.fecha_reserva) BETWEEN :inicio AND :fin
-            GROUP BY pd.id_punto_detencion
-            ORDER BY cantidad DESC
-            LIMIT 1
-        ");
-        $stmt->bindValue(':inicio', $fecha_inicio);
-        $stmt->bindValue(':fin', $fecha_fin);
-        $stmt->execute();
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($resultado) {
-            return $resultado;
-        }
-    }
-
-
-    
+    }   
 
     /**
      * Retorna la cantidad total de permisos que coinciden con los filtros aplicados.
@@ -180,6 +126,7 @@ class EstadisticasModel
      */
     public function getCantidadPermisosFiltrados($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null): int
     {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         // Consulta base con JOIN a choferes
         $sql = "
             SELECT COUNT(*)
@@ -229,6 +176,7 @@ class EstadisticasModel
      */
     public function getPermisosFiltradosChofer($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null, $offset = 0, $limite_por_pagina = null): array
     {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         $sql = "
             SELECT 
                 p.*, 
@@ -265,8 +213,6 @@ class EstadisticasModel
             $params[':tipo'] = $tipo;
         }
 
-        // 🚨 si Bootstrap se encarga del sort, no agregues ORDER BY
-        // 🚨 y podés decidir si querés usar LIMIT/OFFSET (para paginación server-side)
         if (!empty($limite_por_pagina)) {
             $sql .= " LIMIT :limit OFFSET :offset";
         }
@@ -292,11 +238,7 @@ class EstadisticasModel
      * @return array Arreglo asociativo con la cantidad de permisos por tipo.
      */
     public function getPromediosPermisos($fecha_inicio = null, $fecha_fin = null): array {
-        // Fechas por defecto: último mes
-        if (!$fecha_inicio || !$fecha_fin) {
-            $fecha_fin = date('Y-m-d');
-            $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
-        }
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
 
         $sql = "
             SELECT 
@@ -320,51 +262,13 @@ class EstadisticasModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-
-
-
-    /**
-     * Obtiene la cantidad de permisos agrupados por tipo.
-     *
-     * @return array Arreglo asociativo con la cantidad de permisos por tipo.
-     */
-    public function getCantidadPorTipo($fecha_inicio = null, $fecha_fin = null): array|bool {
-    // Si no se pasa fecha, por defecto el último mes
-        if (!$fecha_inicio || !$fecha_fin) {
-            $fecha_fin = date('Y-m-d');
-            $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
-        }
-
-        $stmt = $this->db->prepare("
-            SELECT tipo, COUNT(*) AS cantidad 
-            FROM permisos 
-            WHERE activo = 1
-            AND DATE(fecha_reserva) BETWEEN :fecha_inicio AND :fecha_fin
-            GROUP BY tipo
-            ORDER BY cantidad DESC
-            LIMIT 1
-        ");
-
-        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
-        $stmt->bindValue(':fecha_fin', $fecha_fin);
-
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC); // solo un registro
-    }
-
-
-
     /**
      * Obtiene los hoteles más utilizados en las reservas de puntos.
      * Se limita a los 5 hoteles más frecuentes.
      * @return array
      */
     public function getHotelesMasUsados($fecha_inicio = null, $fecha_fin = null, $limit = 5): array {
-        // Si no se pasa fecha, por defecto el último mes
-        if (!$fecha_inicio || !$fecha_fin) {
-            $fecha_fin = date('Y-m-d');
-            $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
-        }
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
 
             $limit = (int)$limit;
             $stmt = $this->db->prepare("
@@ -378,16 +282,13 @@ class EstadisticasModel
                 LIMIT $limit
             ");
 
+        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
+        $stmt->bindValue(':fecha_fin', $fecha_fin);
 
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
-    $stmt->bindValue(':fecha_inicio', $fecha_inicio);
-    $stmt->bindValue(':fecha_fin', $fecha_fin);
-
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    }
+        }
 
 
 
@@ -423,31 +324,67 @@ class EstadisticasModel
      * Se limita a los 5 puntos más frecuentes.
      * @return array
      */
-    public function getPuntosMasUsados(string $fecha_inicio = '', string $fecha_fin = ''): array {
+    public function getPuntosMasUsados( $fecha_inicio = null, $fecha_fin = null): array {
 
-    // Si no se pasan fechas, usar un rango por defecto, por ejemplo el último mes
-        if (!$fecha_inicio || !$fecha_fin) {
-            $fecha_fin = date('Y-m-d');
-            $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
-        }
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
 
         $stmt = $this->db->prepare("
-            SELECT pd.nombre AS nombre_punto, COUNT(*) AS cantidad
+            SELECT pd.nombre AS nombre, COUNT(*) AS cantidad
             FROM reservas_puntos rp
             JOIN puntos_detencion pd ON rp.id_punto_detencion = pd.id_punto_detencion
             WHERE rp.fecha_horario BETWEEN :fecha_inicio AND :fecha_fin
             GROUP BY pd.nombre
             ORDER BY cantidad DESC
-            LIMIT 5
+            LIMIT 1
         ");
 
-        $stmt->execute([
-            'fecha_inicio' => $fecha_inicio . ' 00:00:00',
-            'fecha_fin' => $fecha_fin . ' 23:59:59'
-        ]);
+        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
+        $stmt->bindValue(':fecha_fin', $fecha_fin);
 
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    
+    /**
+     * Funcion para obtener el servicio mas usado
+     */
+    public function getServicioMasUsado($fecha_inicio = null, $fecha_fin = null): array {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT tipo, COUNT(*) AS cantidad
+            FROM permisos p
+            WHERE fecha_emision BETWEEN :fecha_inicio AND :fecha_fin
+            GROUP BY tipo
+            ORDER BY cantidad DESC
+            LIMIT 1
+        ");
+
+        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
+        $stmt->bindValue(':fecha_fin', $fecha_fin);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getLugarMasUsado($fecha_inicio = null, $fecha_fin = null, $tipo_movimiento): array {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+        $stmt = $this->db->prepare("
+            SELECT l.nombre, COUNT(*) AS cantidad
+            FROM permisos p
+            JOIN lugares l ON p.id_lugar = l.id_lugar
+            WHERE p.fecha_emision BETWEEN :fecha_inicio AND :fecha_fin
+            AND p.arribo_salida = :tipo_movimiento
+            GROUP BY l.nombre
+            ORDER BY cantidad DESC
+            LIMIT 1
+        ");
+
+        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
+        $stmt->bindValue(':fecha_fin', $fecha_fin);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
 }

@@ -22,8 +22,8 @@ class Estadisticas extends Control
         $buscar_por   = '';
         $dni          = '';
         $tipo         = '';
-        $fecha_inicio_resumen = '2000-01-01';
-        $fecha_fin_resumen    = date('Y-m-d');
+        $fecha_inicio_resumen = '';
+        $fecha_fin_resumen    = '';
 
         if (!empty($_GET['fecha_inicio'])) {
             $fecha_inicio = $_GET['fecha_inicio'];
@@ -115,10 +115,12 @@ class Estadisticas extends Control
             'total_paginas' => $total_paginas,
             'error'         => $error,
             'total_resultados' => $total_resultados,
+            'por_tipo' => $this->model->getServicioMasUsado($fecha_inicio_resumen, $fecha_fin_resumen),
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
-            'puntos_mas_usados' => $this->model->getPuntoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen),
-            
+            'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+            'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen)
+            'arribo_mas_usado' => $this->model->
         ];  
         $this->load_view('estadisticas', $datos);
     }
@@ -127,13 +129,17 @@ class Estadisticas extends Control
 {
     // Validar que venga por POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $fecha_inicio = $_POST['fecha_inicio_resumen'] ?? '';
-        $fecha_fin    = $_POST['fecha_fin_resumen'] ?? '';
+        $fecha_inicio_resumen = $_POST['fecha_inicio_resumen'] ?? '';
+        $fecha_fin_resumen    = $_POST['fecha_fin_resumen'] ?? '';
 
         // Aquí llamas a los modelos y obtenés los datos filtrados
-        $datos = $this->model->getPuntoMasUtilizado($fecha_inicio, $fecha_fin);
-
-        // Cargamos solo la vista parcial de las cards
+        $datos2 = [
+        'title' => 'Estadísticas',
+        'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
+        'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+        'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+        'recorridos_mas_usados' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen)
+        ];
         
     }
 }
