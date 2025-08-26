@@ -23,3 +23,10 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.body-login {
+  background-image: url('../../public/img/login-bg.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}

@@ -1,6 +1,6 @@
 <?php require_once APP . '/views/inc/header.php' ?>
 
-<body id="body" class="bg-light text-dark d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+<body id="body" class="body-login bg-light text-dark d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <main class="w-100" style="max-width: 400px;">
         <div class="rounded-top-4 card-header text-white text-center py-4" style="background-color: #ff6900 !important;">
             <div class="d-flex justify-content-center align-items-center">
@@ -8,6 +8,9 @@
                     style="width: 300px; object-fit: contain;">
                 <div class="ms-3 text-start">
                 </div>
+            </div>
+            <div class="h5"style="font-family: 'Lexend';">
+                Sistema de Gestión de Permisos de Circulación
             </div>
         </div>
         <form id="loginForm" class="rounded-4 shadow p-4 bg-light text-dark" method="POST" action="<?= URL ?>/auth/login">
@@ -31,7 +34,6 @@
                     <div class="alert alert-danger"><?= $error ?></div>
                 <?php endif; ?>
             </div>
-            <p class="mt-5 mb-3 text-center">Sistema de Gestion de Permisos de Circulacion</p>
         </form>
     </main>
 
