@@ -400,6 +400,7 @@ class EstadisticasModel
         $stmt = $this->db->prepare("
                    SELECT 
                         pd.nombre AS punto,
+                        s.dominio AS dominio,
                         c.nombre AS calle,
                         e.nombre AS empresa,
                         rp.fecha_horario,

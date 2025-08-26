@@ -16,7 +16,7 @@
                                         <strong> 🕜 <?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong>
                                         <br><br>
                                         <strong style="word-spacing: 15px; text-transform: uppercase;">
-                                        🚌 <?= $r['empresa']?> | 📍<?= $r['punto'] ?> |  🛣️<?= $r['calle'] ?> |  🔹<?= $r['tipo']?>
+                                        🏙 <?= $r['empresa']?> | 📍<?= $r['punto'] ?> |  🛣️<?= $r['calle'] ?> |  🔹<?= $r['tipo']?> | 🚌 <?= $r['dominio']?>
                                         </strong>
                                     </li>
                                 <?php endforeach; ?>
