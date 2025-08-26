@@ -68,23 +68,23 @@ class ReservasPuntos extends Control
     public function store()
     {
         if (isset($_POST['fecha_horario'])) {
-            $fecha_horario = trim($_POST['fecha_horario'] ?? '');
+            $fecha_horario = trim($_POST['fecha_horario']);
         } else {
             $fecha_horario = '';
         }   
 
         if(isset($_POST['id_hotel'])) {
-            $id_hotel = $_POST['id_hotel'] ?? '';
+            $id_hotel = $_POST['id_hotel'];
         } else {
             $id_hotel = '';
         }
         if(isset($_POST['id_permiso'])) {
-            $id_permiso = $_POST['id_permiso'] ?? '';
+            $id_permiso = $_POST['id_permiso'];
         } else {
             $id_permiso = '';
         }
         if(isset($_POST['id_punto_detencion'])) {
-            $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
+            $id_punto_detencion = $_POST['id_punto_detencion'];
         } else {
             $id_punto_detencion = '';
         }
@@ -130,25 +130,25 @@ class ReservasPuntos extends Control
     public function update($id)
     {
         if(isset($_POST['fecha_horario'])) {
-            $fecha_horario = trim($_POST['fecha_horario'] ?? '');
+            $fecha_horario = trim($_POST['fecha_horario']);
         } else {
             $fecha_horario = '';
         }
 
         if(isset($_POST['id_hotel'])) {
-            $id_hotel = $_POST['id_hotel'] ?? '';
+            $id_hotel = $_POST['id_hotel'];
         } else {
             $id_hotel = '';
         }
 
         if(isset($_POST['id_permiso'])) {
-            $id_permiso = $_POST['id_permiso'] ?? '';
+            $id_permiso = $_POST['id_permiso'];
         } else {
             $id_permiso = '';
         }
      
         if(isset($_POST['id_punto_detencion'])) {
-            $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
+            $id_punto_detencion = $_POST['id_punto_detencion'];
         } else {
             $id_punto_detencion = '';
         }
