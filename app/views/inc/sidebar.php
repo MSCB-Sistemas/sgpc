@@ -6,7 +6,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item ">
-            <a class="nav-link text-white" href="/SGPC" aria-current="page">
+            <a class="nav-link text-white" href="/sgpc" aria-current="page">
                 <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                     <use xlink:href="#home">
                         <symbol id="home" viewBox="0 0 16 16">
