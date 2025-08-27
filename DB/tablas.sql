@@ -205,3 +205,24 @@ CREATE TABLE `remember_tokens` (
   KEY `remember_tokens_FK` (`id_usuario`),
   CONSTRAINT `remember_tokens_FK` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+-- sgpc.derechos definition
+
+CREATE TABLE `derechos` (
+  `id_derecho` int NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  PRIMARY KEY (`id_derecho`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+-- sgpc.tipos_usuarios_derechos definition
+
+CREATE TABLE `tipos_usuarios_derechos` (
+  `id_tipo_usuario_derecho` int NOT NULL AUTO_INCREMENT,
+  `id_tipo_usuario` int NOT NULL,
+  `id_derecho` int NOT NULL,
+  PRIMARY KEY (`id_tipo_usuario_derecho`),
+  KEY `tipos_usuarios_derechos_tipos_usuarios_FK` (`id_tipo_usuario`),
+  KEY `tipos_usuarios_derechos_derechos_FK` (`id_derecho`),
+  CONSTRAINT `tipos_usuarios_derechos_derechos_FK` FOREIGN KEY (`id_derecho`) REFERENCES `derechos` (`id_derecho`),
+  CONSTRAINT `tipos_usuarios_derechos_tipos_usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
