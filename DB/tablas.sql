@@ -3,8 +3,8 @@
 CREATE TABLE `calles` (
   `id_calle` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `activo` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`id_calle`)
+  PRIMARY KEY (`id_calle`),
+  UNIQUE KEY `hoteles_unique` (`nombre`,`direccion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 
