@@ -60,9 +60,11 @@
 
             <div class="collapse ps-3" id="submenuABM">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <? if ($_SESSION['usuario_tipo'] == '1') : ?>
-                        <li><a href="<?= URL ?>/usuarios" class="nav-link text-white">Usuarios</a></li>
-                    <? endif; ?>
+                    <?php if (in_array('god',$_SESSION['usuario_derechos'])){
+                        echo '<li><a href="'.URL.'/usuarios" class="nav-link text-white">Usuarios</a></li>';
+                    }
+                    ?>
+                    
                     <li><a href="<?= URL ?>/calle" class="nav-link text-white">Calles</a></li>
                     <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
                     <li><a href="<?= URL ?>/empresa" class="nav-link text-white">Empresas</a></li>

@@ -17,31 +17,36 @@ class Usuarios extends Control
     // Mostrar lista de usuarios activos
     public function index()
     {
-        $usuarios = $this->model->getAllUsuarios();
-        $datos = [
-        'title' => 'Listado de Usuarios',
-        'urlCrear' => URL . '/usuarios/create',
-        'columnas' => ['Usuario', 'Nombre', 'Apellido', 'Cargo', 'Sector', 'Tipo', 'Activo'],
-        'columnas_claves' => ['usuario', 'nombre', 'apellido', 'cargo', 'sector', 'tipo_usuario', 'activo'],
-        'data' => $usuarios,
-        'acciones' => function($fila) {
-            $id = $fila['id_usuario'];
-            $url = URL . '/usuarios';
-            if ($fila['activo']) {
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
-                    <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
-                ';
-            } else {
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
-                ';
+        if (in_array('god',$_SESSION['usuario_derechos'])){
+            $usuarios = $this->model->getAllUsuarios();
+            $datos = [
+            'title' => 'Listado de Usuarios',
+            'urlCrear' => URL . '/usuarios/create',
+            'columnas' => ['Usuario', 'Nombre', 'Apellido', 'Cargo', 'Sector', 'Tipo', 'Activo'],
+            'columnas_claves' => ['usuario', 'nombre', 'apellido', 'cargo', 'sector', 'tipo_usuario', 'activo'],
+            'data' => $usuarios,
+            'acciones' => function($fila) {
+                $id = $fila['id_usuario'];
+                $url = URL . '/usuarios';
+                if ($fila['activo']) {
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
+                        <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
+                    ';
+                } else {
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
+                    ';
+                }
             }
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-        ];
-    $this->load_view('partials/tablaAbm', $datos);
     }
     
     public function edit($id)
