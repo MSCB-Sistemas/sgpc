@@ -18,29 +18,34 @@ class Calle extends Control
     // Mostrar todas las calles en una vista.
     public function index($errores = [])
     {
-        if (isset($_SESSION['error_calle'])) {
-            $errores[] = $_SESSION['error_calle'];
-            unset($_SESSION['error_calle']); // Borramos el mensaje después de usarlo
-        }
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+            if (isset($_SESSION['error_calle'])) {
+                $errores[] = $_SESSION['error_calle'];
+                unset($_SESSION['error_calle']); // Borramos el mensaje después de usarlo
+            }
 
-        $calles = $this->model->getAllCalles();
-        $datos = [
-            'title' => 'Listado de Calles',
-            'urlCrear' => URL . '/calle/create',
-            'columnas' => ['Nombre'],
-            'columnas_claves' => ['nombre'],
-            'data' => $calles,
-            'acciones' => function($fila) {
-                $id = $fila['id_calle'];
-                $url = URL . '/calle';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>
-                ';
-            },
-            'errores' => $errores
-        ];    
-        $this->load_view('partials/tablaAbm', $datos);
+            $calles = $this->model->getAllCalles();
+            $datos = [
+                'title' => 'Listado de Calles',
+                'urlCrear' => URL . '/calle/create',
+                'columnas' => ['Nombre'],
+                'columnas_claves' => ['nombre'],
+                'data' => $calles,
+                'acciones' => function($fila) {
+                    $id = $fila['id_calle'];
+                    $url = URL . '/calle';
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>
+                    ';
+                },
+                'errores' => $errores
+            ];    
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Mostrar una calle específica.

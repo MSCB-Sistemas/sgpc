@@ -15,24 +15,29 @@ class Hoteles extends Control
     // Listar todos los hoteles.
     public function index($errores = [])
     {
-        $hoteles = $this->model->getAllHoteles();
-        $datos = [
-            'title' => 'Listado de Hoteles',
-            'urlCrear' => URL . '/hoteles/create',
-            'columnas' => ['Nombre de Hotel','Direccion'],
-            'columnas_claves' => ['nombre', 'direccion'],
-            'data' => $hoteles,
-            'acciones' => function($fila) {
-                $id = $fila['id_hotel'];
-                $url = URL . '/hoteles';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
-                ';
-            }
-            ,'errores' => $errores
-        ];
-        $this->load_view('partials/tablaAbm', $datos);
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+            $hoteles = $this->model->getAllHoteles();
+            $datos = [
+                'title' => 'Listado de Hoteles',
+                'urlCrear' => URL . '/hoteles/create',
+                'columnas' => ['Nombre de Hotel','Direccion'],
+                'columnas_claves' => ['nombre', 'direccion'],
+                'data' => $hoteles,
+                'acciones' => function($fila) {
+                    $id = $fila['id_hotel'];
+                    $url = URL . '/hoteles';
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
+                    ';
+                }
+                ,'errores' => $errores
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Mostrar formulario para crear hotel.

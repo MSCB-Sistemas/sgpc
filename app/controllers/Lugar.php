@@ -15,24 +15,29 @@ class Lugar extends Control
     // Mostrar todos los lugares en una vista.
     public function index($errores = [])
     {
-        $lugares = $this->model->getAllLugares();
-        $datos = [
-            'title' => 'Listado de Lugares',
-            'urlCrear' => URL . '/lugar/create',
-            'columnas' => ['Nombre'],
-            'columnas_claves' => ['nombre'],
-            'data' => $lugares,
-            'acciones' => function($fila) {
-                $id = $fila['id_lugar'];
-                $url = URL . '/lugar';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este lugar?\');">Eliminar</a>
-                ';
-            }
-            ,'errores' => $errores
-        ];    
-        $this->load_view('partials/tablaAbm', $datos);
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+            $lugares = $this->model->getAllLugares();
+            $datos = [
+                'title' => 'Listado de Lugares',
+                'urlCrear' => URL . '/lugar/create',
+                'columnas' => ['Nombre'],
+                'columnas_claves' => ['nombre'],
+                'data' => $lugares,
+                'acciones' => function($fila) {
+                    $id = $fila['id_lugar'];
+                    $url = URL . '/lugar';
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este lugar?\');">Eliminar</a>
+                    ';
+                }
+                ,'errores' => $errores
+            ];    
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Mostrar formulario para crear un nuevo.

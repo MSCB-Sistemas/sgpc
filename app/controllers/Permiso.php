@@ -18,79 +18,83 @@ class Permiso extends Control
     // Mostrar lista de permisos
     public function index($fecha_desde = null, $fecha_hasta = null)
     {
-    // Si no hay parámetros → cargar última semana
-        if (!$fecha_desde && !$fecha_hasta) {
-            $fecha_hasta = date('Y-m-d');
-            $fecha_desde = date('Y-m-d', strtotime('-1 week'));
-        }
-
-        if ($fecha_desde === '0') {
-            $fecha_desde = null; // Caso "0" para omitir fecha desde
-        }
-
-        if ($_SESSION['usuario_tipo'] == '1') {
-            $permisos = $this->model->getAllPermisos(false, $fecha_desde, $fecha_hasta);
-        } else {
-            $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta);
-        }
-        foreach ($permisos as &$permiso) {
-            $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
-            $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
-            $permiso['Recorrido'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
-            $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
-            $paradasArray = [];
-            foreach ($paradas as $parada) {
-                $paradaString = $parada['horario'].': '.$parada['calle'].' - '.$parada['parada'];
-                if (!empty($parada['hotel'])){
-                    $paradaString .= ' (Hotel: '.$parada['hotel'].')';
-                }
-                $paradasArray[] = $paradaString;
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+            if (!$fecha_desde && !$fecha_hasta) {
+                $fecha_hasta = date('Y-m-d');
+                $fecha_desde = date('Y-m-d', strtotime('-1 week'));
             }
-            $permiso['Paradas'] = $paradasArray ? implode('<br>', $paradasArray) : 'Sin paradas';
-        }
 
-        unset($permiso);
-        $datos = [
-            'title' => 'Listado de Permisos',
-            'urlCrear' => null, // Cambiado a null para no mostrar botón de crear.
-            'columnas' => [
-                'Nro. Permiso',
-                'Tipo',
-                'Fecha Reserva',
-                'Fecha Emisión',
-                'Chofer',
-                'Dominio',
-                'Empresa'
-            ],
-            'columnas_claves' => [
-                'Permiso Nro.',
-                'Tipo',
-                'Fecha reserva',
-                'Fecha emision',
-                'Chofer',
-                'Dominio',
-                'Empresa'
-            ],
-            'data' => $permisos,
-            'fecha_desde' => $fecha_desde,
-            'fecha_hasta' => $fecha_hasta,
-            'acciones' => function($fila) {
-                $id = $fila['Permiso Nro.'];
-                $url = URL . '/permiso';
-                $botones = '';
-                if ($fila['activo']==1){
-                    if ($_SESSION['usuario_tipo'] == '1'){
-                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
+            if ($fecha_desde === '0') {
+                $fecha_desde = null; // Caso "0" para omitir fecha desde
+            }
+
+            if ($_SESSION['usuario_tipo'] == '1') {
+                $permisos = $this->model->getAllPermisos(false, $fecha_desde, $fecha_hasta);
+            } else {
+                $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta);
+            }
+            foreach ($permisos as &$permiso) {
+                $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
+                $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
+                $permiso['Recorrido'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
+                $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
+                $paradasArray = [];
+                foreach ($paradas as $parada) {
+                    $paradaString = $parada['horario'].': '.$parada['calle'].' - '.$parada['parada'];
+                    if (!empty($parada['hotel'])){
+                        $paradaString .= ' (Hotel: '.$parada['hotel'].')';
                     }
-                    $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
+                    $paradasArray[] = $paradaString;
                 }
-                            
-                $botones .= '<a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>';
-                return $botones;                            
+                $permiso['Paradas'] = $paradasArray ? implode('<br>', $paradasArray) : 'Sin paradas';
             }
-        ];
 
-        $this->load_view('partials/tablaAbmPermiso', $datos);
+            unset($permiso);
+            $datos = [
+                'title' => 'Listado de Permisos',
+                'urlCrear' => null, // Cambiado a null para no mostrar botón de crear.
+                'columnas' => [
+                    'Nro. Permiso',
+                    'Tipo',
+                    'Fecha Reserva',
+                    'Fecha Emisión',
+                    'Chofer',
+                    'Dominio',
+                    'Empresa'
+                ],
+                'columnas_claves' => [
+                    'Permiso Nro.',
+                    'Tipo',
+                    'Fecha reserva',
+                    'Fecha emision',
+                    'Chofer',
+                    'Dominio',
+                    'Empresa'
+                ],
+                'data' => $permisos,
+                'fecha_desde' => $fecha_desde,
+                'fecha_hasta' => $fecha_hasta,
+                'acciones' => function($fila) {
+                    $id = $fila['Permiso Nro.'];
+                    $url = URL . '/permiso';
+                    $botones = '';
+                    if ($fila['activo']==1){
+                        if ($_SESSION['usuario_tipo'] == '1'){
+                            $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
+                        }
+                        $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
+                    }
+                                
+                    $botones .= '<a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>';
+                    return $botones;                            
+                }
+            ];
+
+            $this->load_view('partials/tablaAbmPermiso', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
    

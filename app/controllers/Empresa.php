@@ -15,24 +15,29 @@ class Empresa extends Control
     // Mostrar listado de empresas
     public function index($errores = [])
     {
-        $empresas = $this->model->getAllEmpresas();
-        $datos = [
-            'title' => 'Listado de Empresas',
-            'urlCrear' => URL . '/empresa/create',
-            'columnas' => ['Nombre de Empresa'],
-            'columnas_claves' => ['nombre'],
-            'data' => $empresas,
-            'acciones' => function($fila) {
-                $id = $fila['id_empresa'];
-                $url = URL . '/empresa';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>
-                ';
-            },
-            'errores' => $errores
-        ];
-        $this->load_view('partials/tablaAbm', $datos);
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+            $empresas = $this->model->getAllEmpresas();
+            $datos = [
+                'title' => 'Listado de Empresas',
+                'urlCrear' => URL . '/empresa/create',
+                'columnas' => ['Nombre de Empresa'],
+                'columnas_claves' => ['nombre'],
+                'data' => $empresas,
+                'acciones' => function($fila) {
+                    $id = $fila['id_empresa'];
+                    $url = URL . '/empresa';
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>
+                    ';
+                },
+                'errores' => $errores
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
     public function edit($id)
     {

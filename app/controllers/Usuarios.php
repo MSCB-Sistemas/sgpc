@@ -17,7 +17,7 @@ class Usuarios extends Control
     // Mostrar lista de usuarios activos
     public function index()
     {
-        if (in_array('god',$_SESSION['usuario_derechos'])){
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])){
             $usuarios = $this->model->getAllUsuarios();
             $datos = [
             'title' => 'Listado de Usuarios',
