@@ -13,7 +13,7 @@
                 Sistema de Gestión de Permisos de Circulación
             </div>
         </div>
-        <form id="loginForm" class="rounded-4 shadow p-4 bg-light text-dark" method="POST" action="<?= URL ?>/auth/login">
+        <form id="loginForm" class="rounded-bottom-4 shadow p-4 bg-light text-dark" method="POST" action="<?= URL ?>/auth/login">
             <div class="form-floating mb-3">
                 <input type="text" name="user" class="form-control" id="floatingInput" placeholder="name@example.com">
                 <label for="floatingInput">Usuario</label>
