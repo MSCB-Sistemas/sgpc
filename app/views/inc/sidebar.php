@@ -54,28 +54,31 @@
                     </symbol>
                 </use>
             </svg>
+            
+            <?php if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+               echo '     
                 ABM
                 <span class="position-absolute end-0 me-3" id="abm-arrow">&#x25BC;</span> <!-- flecha hacia abajo -->
             </a>
 
             <div class="collapse ps-3" id="submenuABM">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <?php if (in_array('god',$_SESSION['usuario_derechos'])){
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">';
+                    if (in_array('editar usuarios',$_SESSION['usuario_derechos'])){
                         echo '<li><a href="'.URL.'/usuarios" class="nav-link text-white">Usuarios</a></li>';
                     }
-                    ?>
-                    
-                    <li><a href="<?= URL ?>/calle" class="nav-link text-white">Calles</a></li>
-                    <li><a href="<?= URL ?>/chofer" class="nav-link text-white">Choferes</a></li>
-                    <li><a href="<?= URL ?>/empresa" class="nav-link text-white">Empresas</a></li>
-                    <li><a href="<?= URL ?>/hoteles" class="nav-link text-white">Hoteles</a></li>
-                    <li><a href="<?= URL ?>/permiso" class="nav-link text-white">Permisos</a></li>
-                    <li><a href="<?= URL ?>/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
-                    <li><a href="<?= URL ?>/recorrido" class="nav-link text-white">Recorridos</a></li>
-                    <li><a href="<?= URL ?>/servicio" class="nav-link text-white">Servicios</a></li>
-                    <li><a href="<?= URL ?>/lugar" class="nav-link text-white">Lugares</a></li>
+                echo '
+                    <li><a href="'.URL.'/calle" class="nav-link text-white">Calles</a></li>
+                    <li><a href="'.URL.'/chofer" class="nav-link text-white">Choferes</a></li>
+                    <li><a href="'.URL.'/empresa" class="nav-link text-white">Empresas</a></li>
+                    <li><a href="'.URL.'/hoteles" class="nav-link text-white">Hoteles</a></li>
+                    <li><a href="'.URL.'/permiso" class="nav-link text-white">Permisos</a></li>
+                    <li><a href="'.URL.'/puntosDetencion" class="nav-link text-white">Puntos de detencion</a></li>
+                    <li><a href="'.URL.'/recorrido" class="nav-link text-white">Recorridos</a></li>
+                    <li><a href="'.URL.'/servicio" class="nav-link text-white">Servicios</a></li>
+                    <li><a href="'.URL.'/lugar" class="nav-link text-white">Lugares</a></li>
                 </ul>
-            </div>
+            </div>';
+                }?>
         </li>
     </ul>
     <div class="dropup mt-auto text-center">
