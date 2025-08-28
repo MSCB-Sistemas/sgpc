@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -54,9 +55,19 @@ class HotelesModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updateHotel($id_hotel, $nombre_hotel, $direccion) : bool {
-        $stmt = $this->db->prepare("UPDATE hoteles SET nombre = :nombre, direccion = :direccion WHERE id_hotel = :id_hotel");
+
+        $query = ("UPDATE hoteles SET nombre = :nombre, direccion = :direccion WHERE id_hotel = :id_hotel");
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_hotel' => $id_hotel, 'nombre' => $nombre_hotel, 'direccion' => $direccion];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         
-        return $stmt->execute(['id_hotel' => $id_hotel, 'nombre' => $nombre_hotel, 'direccion' => $direccion]);
+        return $stmt->execute($params);
     }
 
     /**
