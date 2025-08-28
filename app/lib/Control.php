@@ -120,6 +120,10 @@ class Control
             exit;
         }
     }
+
+    protected function tienePermiso($permiso){
+        return (in_array($permiso,$_SESSION['usuario_derechos']));
+    }
 }
 
 ?>

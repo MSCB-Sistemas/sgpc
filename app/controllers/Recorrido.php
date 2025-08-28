@@ -19,32 +19,37 @@ class Recorrido extends Control
     // Mostrar todos los recorridos
     public function index($errores = [])
     {
-        $recorridos = $this->model->getAllRecorridos();
-        foreach ($recorridos as &$recorrido) {
-            $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
-            $nombres = $calles ? array_column($calles, 'nombre') : [];
-            $recorrido['calles'] = $nombres ? implode(', ', $nombres) : 'Sin calles';
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+            $recorridos = $this->model->getAllRecorridos();
+            foreach ($recorridos as &$recorrido) {
+                $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
+                $nombres = $calles ? array_column($calles, 'nombre') : [];
+                $recorrido['calles'] = $nombres ? implode(', ', $nombres) : 'Sin calles';
+            }
+
+            unSet($recorrido);
+
+            $datos = [
+                'title' => 'Listado de Recorridos',
+                'urlCrear' => URL . '/recorrido/create',
+                'columnas' => ['ID', 'Nombre', 'Calles'],
+                'columnas_claves' => ['id_recorrido','nombre','calles'],
+                'data' => $recorridos,
+                'acciones' => function($fila) {
+                    $id = $fila['id_recorrido'];
+                    $url = URL . '/recorrido';
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
+                    ';
+                },
+                'errores' => $errores
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-
-        unSet($recorrido);
-
-        $datos = [
-            'title' => 'Listado de Recorridos',
-            'urlCrear' => URL . '/recorrido/create',
-            'columnas' => ['ID', 'Nombre', 'Calles'],
-            'columnas_claves' => ['id_recorrido','nombre','calles'],
-            'data' => $recorridos,
-            'acciones' => function($fila) {
-                $id = $fila['id_recorrido'];
-                $url = URL . '/recorrido';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
-                ';
-            },
-            'errores' => $errores
-        ];
-        $this->load_view('partials/tablaAbm', $datos);
     }
 
     // Mostrar formulario de creación

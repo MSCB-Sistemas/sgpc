@@ -17,25 +17,30 @@ class PuntosDetencion extends Control
     // Mostrar todos los puntos de detención
     public function index($errores = null)
     {
-        $puntos = $this->model->getAllPuntosDetencion();
-        $datos = [
-            'title' => 'Listado de Puntos de Detencion',
-            'urlCrear' => URL . '/puntosDetencion/create',
-            'columnas' => ['Punto', 'Calle'],  
-            'columnas_claves' => ['nombre_punto', 'nombre_calle'], 
-            'data' => $puntos,
-            'acciones' => function($fila) {
-                $id = $fila['id_punto_detencion'];
-                $url = URL . '/puntosDetencion';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este punto?\');">Eliminar</a>
-                ';
-            },
-            'errores' => $errores
-        ];
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+            $puntos = $this->model->getAllPuntosDetencion();
+            $datos = [
+                'title' => 'Listado de Puntos de Detencion',
+                'urlCrear' => URL . '/puntosDetencion/create',
+                'columnas' => ['Punto', 'Calle'],  
+                'columnas_claves' => ['nombre_punto', 'nombre_calle'], 
+                'data' => $puntos,
+                'acciones' => function($fila) {
+                    $id = $fila['id_punto_detencion'];
+                    $url = URL . '/puntosDetencion';
+                    return '
+                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este punto?\');">Eliminar</a>
+                    ';
+                },
+                'errores' => $errores
+            ];
 
-        $this->load_view('partials/tablaAbm', $datos);
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Formulario para crear un nuevo punto

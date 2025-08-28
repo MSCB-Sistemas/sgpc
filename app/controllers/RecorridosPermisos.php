@@ -16,21 +16,25 @@ class RecorridosPermisos extends Control
     // Mostrar todos los recorridos_permisos
     public function index()
     {
-        $recorridosPermisos = $this->model->getAllRecorridosPermisos();
-        $datos = [
-            'title' => 'Recorridos por Permiso',
-            'urlCrear' => URL . '/recorridosPermisos/create',
-            'columnas' => ['Permiso', 'Recorrido'],
-            'columnas_claves' => ['id_permiso', 'recorrido'],
-            'data' => $recorridosPermisos,
-            'acciones' => function($fila) {
-                $id = $fila['id_recorrido_permiso'];
-                $url = URL . '/recorridosPermisos';
-                return;
-            }
-        ];
-        $this->load_view('partials/tablaAbm', $datos);
-
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+            $recorridosPermisos = $this->model->getAllRecorridosPermisos();
+            $datos = [
+                'title' => 'Recorridos por Permiso',
+                'urlCrear' => URL . '/recorridosPermisos/create',
+                'columnas' => ['Permiso', 'Recorrido'],
+                'columnas_claves' => ['id_permiso', 'recorrido'],
+                'data' => $recorridosPermisos,
+                'acciones' => function($fila) {
+                    $id = $fila['id_recorrido_permiso'];
+                    $url = URL . '/recorridosPermisos';
+                    return;
+                }
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Mostrar detalles de un recorrido_permiso específico
