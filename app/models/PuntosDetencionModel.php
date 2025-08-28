@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -62,9 +63,17 @@ class PuntosDetencionModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updatePuntoDetencion($id_punto_detencion, $nombre, $id_calle) : bool {
-        $stmt = $this->db->prepare("UPDATE puntos_detencion SET nombre = :nombre, id_calle = :id_calle WHERE id_punto_detencion = :id_punto_detencion");
+        $query = "UPDATE puntos_detencion SET nombre = :nombre, id_calle = :id_calle WHERE id_punto_detencion = :id_punto_detencion";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle];
         
-        return $stmt->execute(['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle]);
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        
+        return $stmt->execute($params);
     }
 
     /**
