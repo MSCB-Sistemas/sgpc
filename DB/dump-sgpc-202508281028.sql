@@ -110,7 +110,7 @@ CREATE TABLE `derechos` (
   `id_derecho` int NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
   PRIMARY KEY (`id_derecho`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,7 +119,7 @@ CREATE TABLE `derechos` (
 
 LOCK TABLES `derechos` WRITE;
 /*!40000 ALTER TABLE `derechos` DISABLE KEYS */;
-INSERT INTO `derechos` VALUES (1,'editar abm'),(2,'editar usuarios'),(3,'god'),(4,'eliminar usuarios'),(5,'ver estadisticas'),(6,'cargar permiso'),(7,'eliminar permiso'),(8,'borrar abm'),(9,'cargar abm'),(10,'ver abm');
+INSERT INTO `derechos` VALUES (1,'editar abm'),(2,'editar usuarios'),(3,'god'),(4,'eliminar usuarios'),(5,'ver estadisticas'),(6,'cargar permiso'),(7,'eliminar permiso'),(8,'borrar abm'),(9,'cargar abm'),(10,'ver abm'),(11,'crear usuarios');
 /*!40000 ALTER TABLE `derechos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,7 +372,7 @@ CREATE TABLE `remember_tokens` (
 
 LOCK TABLES `remember_tokens` WRITE;
 /*!40000 ALTER TABLE `remember_tokens` DISABLE KEYS */;
-INSERT INTO `remember_tokens` VALUES (31,1,'2db7c2ae57fb0fbfda5d47446493a119550e423b9d71b31136720698c8df402a','2025-09-04 15:53:59','2025-08-05 12:53:59'),(32,1,'d2fd78a8b738679002df190baaaa6c75ecf742c2b851b5c327d123f8632aeafd','2025-09-04 15:54:18','2025-08-05 12:54:18'),(33,1,'prueba','2025-09-04 15:53:59','2025-08-05 12:53:59'),(35,1,'7b3bb1f43edc34b730ef85cfd9dd3f737233297b5878d08622faea42f47aa766','2025-09-05 14:26:59','2025-08-06 11:26:59'),(39,1,'388c1a5480d328ea9171b4513301700d0c86b9bbd788ffe9d6c8845df08dfcc5','2025-09-20 15:32:42','2025-08-21 12:32:42'),(40,5,'412e8dbd866b02c5c00675920cb2bc2f0307ba8b07f0f46d72e434a5ad68ef1e','2025-09-26 17:01:33','2025-08-27 14:01:33'),(42,5,'37d570efca44b404e630468d9eb545df4a4c7f28e6f986fc27ef2020b567637e','2025-09-26 17:04:07','2025-08-27 14:04:07');
+INSERT INTO `remember_tokens` VALUES (31,1,'2db7c2ae57fb0fbfda5d47446493a119550e423b9d71b31136720698c8df402a','2025-09-04 15:53:59','2025-08-05 12:53:59'),(32,1,'d2fd78a8b738679002df190baaaa6c75ecf742c2b851b5c327d123f8632aeafd','2025-09-04 15:54:18','2025-08-05 12:54:18'),(33,1,'prueba','2025-09-04 15:53:59','2025-08-05 12:53:59'),(35,1,'7b3bb1f43edc34b730ef85cfd9dd3f737233297b5878d08622faea42f47aa766','2025-09-05 14:26:59','2025-08-06 11:26:59'),(39,1,'388c1a5480d328ea9171b4513301700d0c86b9bbd788ffe9d6c8845df08dfcc5','2025-09-20 15:32:42','2025-08-21 12:32:42');
 /*!40000 ALTER TABLE `remember_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -478,7 +478,7 @@ CREATE TABLE `tipos_usuarios_derechos` (
   KEY `tipos_usuarios_derechos_derechos_FK` (`id_derecho`),
   CONSTRAINT `tipos_usuarios_derechos_derechos_FK` FOREIGN KEY (`id_derecho`) REFERENCES `derechos` (`id_derecho`),
   CONSTRAINT `tipos_usuarios_derechos_tipos_usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -487,7 +487,7 @@ CREATE TABLE `tipos_usuarios_derechos` (
 
 LOCK TABLES `tipos_usuarios_derechos` WRITE;
 /*!40000 ALTER TABLE `tipos_usuarios_derechos` DISABLE KEYS */;
-INSERT INTO `tipos_usuarios_derechos` VALUES (1,1,3),(2,2,1),(3,2,2),(4,2,4),(5,2,5),(6,2,6),(7,2,7),(8,2,8),(9,2,9),(10,3,5),(11,3,10),(12,3,6),(13,3,9),(14,4,5),(16,1,1),(17,1,2),(18,1,4),(19,1,5),(20,1,6),(21,1,3),(22,1,8),(23,1,9),(24,1,10),(25,2,10);
+INSERT INTO `tipos_usuarios_derechos` VALUES (1,1,3),(2,2,1),(3,2,2),(4,2,4),(5,2,5),(6,2,6),(7,2,7),(8,2,8),(9,2,9),(10,3,5),(11,3,10),(12,3,6),(13,3,9),(14,4,5),(16,1,1),(17,1,2),(18,1,4),(19,1,5),(20,1,6),(21,1,3),(22,1,8),(23,1,9),(24,1,10),(25,2,10),(26,1,7),(27,1,11),(28,2,11);
 /*!40000 ALTER TABLE `tipos_usuarios_derechos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -511,7 +511,7 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`id_usuario`),
   KEY `usuarios_FK` (`id_tipo_usuario`),
   CONSTRAINT `usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -520,7 +520,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'jonas','jonas','porro','admin','administracion','$2y$12$nyBLCPBCXiYrb1.0iFqyW.XNlVnvaGs4/duTYLP4pSceVjF.KkuqK',1,1),(2,'asdasdasd','galo2','orellana2','doctor','municipal','$2y$12$MWLzK7tAYKZikjV/JKJgKe5z0kRUoIsBsrcXL4ZWp93hDxcAvzH9u',1,1),(3,'aaca','galo2','orellana2','doctor','municipal','$2y$12$VOVYgyqLZ0C1RmCcr16hHOHPJUh99S9i2wSWDqnADUpcohIT985Wy',1,1),(4,'galo 10','galo','calderon','doctor','chapatin','$2y$12$RcirYd7Rwlk6alRpK5hZ9e9SsD4rZdHySOIxN.qkcwjk5eaI0rVRm',1,1),(5,'1231','galo','calderon','doctor','chapatin','$2y$12$9lQL9z6q8FsQ.zZlyTtBF.FPvy1WHQPpnmdpmlcovA2UbkOxUUSpm',2,1);
+INSERT INTO `usuarios` VALUES (1,'admin','admin','admin','admin','administracion','$2y$12$nyBLCPBCXiYrb1.0iFqyW.XNlVnvaGs4/duTYLP4pSceVjF.KkuqK',1,1),(6,'operario','operario','a','a','a','$2y$12$LOuYBbjJ.p6eV6jrVXpgUudAx3fw8LYV.t1lS/NXzUDczCYQV9k0u',3,1),(7,'invitado','Invitado','A','B','B','$2y$12$xjLfdttcELU1r/W1Cl8Hs.FW31.QJT2hbS6IYQRbexT34rpPEmqRa',4,1),(8,'director','director','A','A','A','$2y$12$nyBLCPBCXiYrb1.0iFqyW.XNlVnvaGs4/duTYLP4pSceVjF.KkuqK',2,1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -537,4 +537,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-27 12:01:22
+-- Dump completed on 2025-08-28 10:28:25
