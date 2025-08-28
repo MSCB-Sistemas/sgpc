@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h1 class="mb-4 text-center">👋 Bienvenido al Sistema SGPC</h1>
+    <h1 class="mb-4 text-center"style="font-family: 'Lexend';">Bienvenido al Sistema SGPC</h1>
     
     <input type="text" id="buscarReservas" class="form-control mb-3" placeholder="🔍 Buscar reservas...">
 
