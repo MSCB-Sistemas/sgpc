@@ -57,7 +57,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalServicio">+</button>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalServicio">+</button>
         </div>
 
         <!-- Lugar -->
@@ -73,7 +73,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
         </div>
     </div>
     <div class="row mb-3">
@@ -90,7 +90,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
         </div>
 
     <!-- Fecha -->
@@ -121,7 +121,7 @@
 
         </div>
             <div class="col-sm-2 d-flex align-items-end mb-2">
-                <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
+                <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
             </div>
             <!-- Accordion de Recorrido -->
             <div class="accordion mb-3 d-none" id="accordionRecorrido">
@@ -178,9 +178,12 @@
                 }
             ?></textarea>
     </div>
-
-    <button type="submit" class="btn btn-success">Guardar</button>
-    <a href="<?= URL ?>/permiso" class="btn btn-secondary">Cancelar</a>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> Guardar</button>
+        <a href="<?= URL ?>/calle" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancelar</a>
+    </div>
 </form>
 
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>

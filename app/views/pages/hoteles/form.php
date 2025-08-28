@@ -35,8 +35,11 @@
             <label for="direccion" class="form-label">Direccion</label>
             <input type="text" class="form-control" id="direccion" name="direccion" value="<?= $direccion ?>" required>
         </div>
-
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="<?= URL ?>/hoteles" class="btn btn-secondary">Cancelar</a>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar</button>
+            <a href="<?= URL ?>/calle" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar</a>
+        </div>
     </form>
 </div>

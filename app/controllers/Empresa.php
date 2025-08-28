@@ -28,10 +28,10 @@ class Empresa extends Control
                     $url = URL . '/empresa';
                     $botones = '';
                     if ($this->tienePermiso('editar abm')){
-                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>';
+                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>';
                     }
                     if ($this->tienePermiso('borrar abm')){
-                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>';
+                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>';
                     }
                 },
                 'errores' => $errores
