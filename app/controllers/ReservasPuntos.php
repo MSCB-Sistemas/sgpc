@@ -20,16 +20,27 @@ class ReservasPuntos extends Control
             $datos = [
                 'title' => 'Listado de Puntos Reservados',
                 'urlCrear' => URL . '/reservaspuntos/create',
-                'columnas' => ['Fecha', 'Hotel','Punto de Detencion'.'Permiso'],
+                'columnas' => ['Fecha', 'Hotel', 'Punto de Detencion', 'Permiso'],
                 'columnas_claves' => ['fecha_horario','hotel','punto_detencion','id_permiso'],
                 'data' => $reservas,
                 'acciones' => function($fila) {
                     $id = $fila['id_reserva_punto'];
                     $url = URL . '/reservaspuntos';
-                    return '
-                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
-                    ';
+                    $botones = '';
+
+                    if ($this->tienePermiso('editar abm')) {
+                        $botones .= '
+                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                        ';
+                    }
+
+                    if ($this->tienePermiso('borrar abm')) {
+                        $botones .= '
+                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
+                        ';
+                    }
+
+                    return $botones;
                 }
             ];    
             $this->load_view('partials/tablaAbm', $datos);
@@ -37,22 +48,6 @@ class ReservasPuntos extends Control
             header("Location: " . URL);
             exit;
         }
-    }
-
-    // Mostrar una reserva específica
-    public function show($id)
-    {
-        $reserva = $this->model->getReservaPunto($id);
-
-        if (!$reserva) {
-            $this->load_view('reservas_puntos/index', [
-                'error' => 'Reserva no encontrada.',
-                'reservas' => $this->model->getAllReservasPuntos()
-            ]);
-            return;
-        }
-
-        $this->load_view('reservas_puntos/show', ['reserva' => $reserva]);
     }
 
     // Formulario de creación

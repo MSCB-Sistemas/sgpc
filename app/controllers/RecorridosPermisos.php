@@ -37,24 +37,6 @@ class RecorridosPermisos extends Control
         }
     }
 
-    // Mostrar detalles de un recorrido_permiso específico
-    public function show($id)
-    {
-        $recorridoPermiso = $this->model->getRecorridoPermiso($id);
-
-        if (!$recorridoPermiso) {
-            $this->load_view('recorridos_permisos/index', [
-                'error' => 'Recorrido-Permiso no encontrado.',
-                'recorridos_permisos' => $this->model->getAllRecorridosPermisos()
-            ]);
-            return;
-        }
-
-        $this->load_view('recorridos_permisos/show', [
-            'recorrido_permiso' => $recorridoPermiso
-        ]);
-    }
-
     // Formulario para crear un nuevo recorrido_permiso
     public function create()
     {
