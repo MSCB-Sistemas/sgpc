@@ -15,7 +15,7 @@ class Hoteles extends Control
     // Listar todos los hoteles.
     public function index($errores = [])
     {
-        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+        if ($this->tienePermiso("ver abm")){
             $hoteles = $this->model->getAllHoteles();
             $datos = [
                 'title' => 'Listado de Hoteles',
@@ -26,10 +26,13 @@ class Hoteles extends Control
                 'acciones' => function($fila) {
                     $id = $fila['id_hotel'];
                     $url = URL . '/hoteles';
-                    return '
-                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta Hotel?\');">Eliminar</a>
-                    ';
+                    $botones = '';
+                    if ($this->tienePermiso('editar abm')){
+                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>';
+                    }
+                    if ($this->tienePermiso('borrar abm')){
+                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este Hotel?\');">Eliminar</a>';
+                    }
                 }
                 ,'errores' => $errores
             ];
@@ -43,149 +46,174 @@ class Hoteles extends Control
     // Mostrar formulario para crear hotel.
     public function create()
     {
-        $this->load_view('hoteles/form', [
-            'title' => 'Crear nuevo hotel',
-            'action' => URL . '/hoteles/save',
-            'values' => [],
-            'errores' => [],
-        ]);
+        if ($this->tienePermiso("cargar abm")) {
+            $this->load_view('hoteles/form', [
+                'title' => 'Crear nuevo hotel',
+                'action' => URL . '/hoteles/save',
+                'values' => [],
+                'errores' => [],
+            ]);
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Procesar creación de hotel.
     public function save()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (!empty($_POST['nombre'])){
-                $nombre = trim($_POST['nombre']);
-            }
-            if (!empty($_POST['direccion'])){
-                $direccion = trim($_POST['direccion']);
-            }
-
-            // Validaciones simples
-            $errores = [];
-            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-            if (empty($direccion)) $errores[] = "La dirección es obligatoria.";
-
-            if (!empty($errores)) {
-                $this->load_view('hoteles/form', [
-                    'title' => 'Crear nuevo hotel',
-                    'action' => URL . '/hoteles/guardar',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                ]);
-                return;
-            }
-            try{
-                if ($this->model->insertHotel($nombre, $direccion)) {
-                    header("Location: " . URL . "/hoteles");
-                    exit;
-                } else {
-                    die("Error al guardar hotel");
+        if ($this->tienePermiso("cargar abm")) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if (!empty($_POST['nombre'])){
+                    $nombre = trim($_POST['nombre']);
                 }
-            } catch (Exception $e) {
-                if ($e->getCode() == 23000) {
-                    $errores[] = "El hotel '{$nombre}' en '{$direccion}' ya existe en el sistema.";
-                } else {
-                    $errores[] = "Error al guardar el Hotel: " . $e->getMessage();
+                if (!empty($_POST['direccion'])){
+                    $direccion = trim($_POST['direccion']);
                 }
-                $this->load_view('hoteles/form', [
-                    'title' => 'Crear nuevo hotel',
-                    'action' => URL . '/hoteles/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                ]);
-            }
-        }   
+
+                // Validaciones simples
+                $errores = [];
+                if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+                if (empty($direccion)) $errores[] = "La dirección es obligatoria.";
+
+                if (!empty($errores)) {
+                    $this->load_view('hoteles/form', [
+                        'title' => 'Crear nuevo hotel',
+                        'action' => URL . '/hoteles/guardar',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                    ]);
+                    return;
+                }
+                try{
+                    if ($this->model->insertHotel($nombre, $direccion)) {
+                        header("Location: " . URL . "/hoteles");
+                        exit;
+                    } else {
+                        die("Error al guardar hotel");
+                    }
+                } catch (Exception $e) {
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "El hotel '{$nombre}' en '{$direccion}' ya existe en el sistema.";
+                    } else {
+                        $errores[] = "Error al guardar el Hotel: " . $e->getMessage();
+                    }
+                    $this->load_view('hoteles/form', [
+                        'title' => 'Crear nuevo hotel',
+                        'action' => URL . '/hoteles/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                    ]);
+                }
+            }   
+        } else {
+            header("Location: " . URL);
+            exit;
+        }
     }
 
     // Mostrar formulario para editar hotel.
     public function edit($id)
     {
-        $hotel = $this->model->getHotel($id);  
+        if ($this->tienePermiso("editar abm")) {
+            $hotel = $this->model->getHotel($id);  
 
-        if (!$hotel) {
-            die("Hotel no encontrado");
+            if (!$hotel) {
+                die("Hotel no encontrado");
+            }
+
+            $this->load_view('hoteles/form', [
+                'title' => 'Editar hotel',
+                'action' => URL . '/hoteles/update/' . $id,
+                'values' => [
+                    'nombre' => $hotel['nombre'],
+                    'direccion' => $hotel['direccion']  
+                ],
+                'errores' => [],
+
+            ]);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-
-        $this->load_view('hoteles/form', [
-            'title' => 'Editar hotel',
-            'action' => URL . '/hoteles/update/' . $id,
-            'values' => [
-                'nombre' => $hotel['nombre'],
-                'direccion' => $hotel['direccion']  
-            ],
-            'errores' => [],
-
-        ]);
     }
 
     // Procesar actualización de hotel.
     public function update($id)
     {
-         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if (!empty($_POST['nombre'])){
-                $nombre = trim($_POST['nombre']);
-            }
-            if (!empty($_POST['direccion'])){
-                $direccion = trim($_POST['direccion']);
-            }
-            
+        if ($this->tienePermiso("editar abm")) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if (!empty($_POST['nombre'])){
+                    $nombre = trim($_POST['nombre']);
+                }
+                if (!empty($_POST['direccion'])){
+                    $direccion = trim($_POST['direccion']);
+                }
+                
 
-           $reservas = $this->model->getReservasByHotel($id);
+            $reservas = $this->model->getReservasByHotel($id);
 
 
-            $errores = [];
-            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-            if (empty($direccion)) $errores[] = "La dirección es obligatoria.";
+                $errores = [];
+                if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+                if (empty($direccion)) $errores[] = "La dirección es obligatoria.";
 
-            if (!empty($errores)) {
-                $hotel = [
-                    'id_hotel' => $id,
-                    'nombre' => $nombre,
-                    'direccion'=> $direccion 
-                ];
-                $this->load_view('hoteles/form', [
-                    'title' => 'Editar hotel',
-                    'action' => URL . '/hoteles/update/' . $id,
-                    'values' => $hotel,
-                    'errores' => $errores,
-                ]);
-                return;
-            }
-            if (!empty($reservas)) {
-                $this->model->desactivarHotel($id);
-                $this->model->insertHotel($nombre, $direccion);
-                header("Location: " . URL . "/hoteles/index");
-                exit;
-            } else {
-
-                if ($this->model->updateHotel($id, $nombre, $direccion)) { 
+                if (!empty($errores)) {
+                    $hotel = [
+                        'id_hotel' => $id,
+                        'nombre' => $nombre,
+                        'direccion'=> $direccion 
+                    ];
+                    $this->load_view('hoteles/form', [
+                        'title' => 'Editar hotel',
+                        'action' => URL . '/hoteles/update/' . $id,
+                        'values' => $hotel,
+                        'errores' => $errores,
+                    ]);
+                    return;
+                }
+                if (!empty($reservas)) {
+                    $this->model->desactivarHotel($id);
+                    $this->model->insertHotel($nombre, $direccion);
                     header("Location: " . URL . "/hoteles/index");
                     exit;
                 } else {
-                    die("Error al actualizar el hotel");
+
+                    if ($this->model->updateHotel($id, $nombre, $direccion)) { 
+                        header("Location: " . URL . "/hoteles/index");
+                        exit;
+                    } else {
+                        die("Error al actualizar el hotel");
+                    }
                 }
             }
+        } else {
+            header("Location: " . URL);
+            exit;
         }
     }
 
     // Eliminar hotel.
     public function delete($id)
     {
-        $reservasModel = $this->load_model("ReservasPuntosModel");
-        $reservas = $reservasModel->getReservasPuntosByHotel($id);
-        if (empty($reservas)) {
-            $eliminado = $this->model->deleteHotel($id);
-            if (!$eliminado) {
-                $this->index(["No se pudo eliminar el Hotel."]);
-            }
+        if ($this->tienePermiso("borrar abm")) {
+            $reservasModel = $this->load_model("ReservasPuntosModel");
+            $reservas = $reservasModel->getReservasPuntosByHotel($id);
+            if (empty($reservas)) {
+                $eliminado = $this->model->deleteHotel($id);
+                if (!$eliminado) {
+                    $this->index(["No se pudo eliminar el Hotel."]);
+                }
 
-            header("Location: " . URL . "/hoteles");
+                header("Location: " . URL . "/hoteles");
+                exit;
+            }
+            $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
+            $string_reservas = implode(', ', $nombres_reservas);
+            $this->index(["No se puede eliminar el hotel, esta asignado a los siguientes permisos: ". $string_reservas]);
+        } else {
+            header("Location: " . URL);
             exit;
         }
-        $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
-        $string_reservas = implode(', ', $nombres_reservas);
-        $this->index(["No se puede eliminar el hotel, esta asignado a los siguientes permisos: ". $string_reservas]);
     }
 }

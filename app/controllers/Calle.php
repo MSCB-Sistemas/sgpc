@@ -52,177 +52,182 @@ class Calle extends Control
         }
     }
 
-    // Mostrar una calle específica.
-    public function show($id)
-    {
-        $calle = $this->model->getCalle($id);
-
-        if (!$calle) {
-            $calles = $this->model->getAllCalles();
-            $this->load_view('calle/index', [
-                'error' => 'Calle no encontrada.',
-                'calles' => $calles
-            ]);
-            return;
-        }
-
-        $this->load_view('calle/show', ['calle' => $calle]);
-    }
-
     // Mostrar formulario para crear una calle nueva.
     public function create()
     {
-        $this->load_view('calle/form', [
-            'title' => 'Crear nueva calle',
-            'action' => URL . '/calle/save',
-            'values' => [],
-            'errores' => [],
-        ]);
+        if ($this->tienePermiso("cargar abm")) {
+            $this->load_view('calle/form', [
+                'title' => 'Crear nueva calle',
+                'action' => URL . '/calle/save',
+                'values' => [],
+                'errores' => [],
+            ]);
+        } else {
+            header("Location: " . URL);
+        }
     }
 
     // Procesar el formulario para guardar calle nueva.
     public function save()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"]);
+        if ($this->tienePermiso("cargar abm")) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $nombre = trim($_POST["nombre"]);
 
-            // Validaciones simples
-            $errores = [];
-            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-            if (!empty($errores)) {
+                // Validaciones simples
+                $errores = [];
+                if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+                if (!empty($errores)) {
+                        $this->load_view('calle/form', [
+                            'title' => 'Crear nueva calle',
+                            'action' => URL . '/calle/save',
+                            'values' => $_POST,
+                            'errores' => $errores,
+                        ]);
+                        return;
+                    }
+                try{
+                    
+                    if ($this->model->insertCalle( $nombre)) {
+                        header("Location: " . URL . "/calle");
+                        exit;
+                    } else {
+                        die("Error al guardar calle");
+                    }
+                } catch (Exception $e) {
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "La calle '{$_POST['nombre']}' ya existe en el sistema.";
+                    } else {
+                        $errores[] = "Error al guardar calle: " . $e->getMessage();
+                    }
                     $this->load_view('calle/form', [
                         'title' => 'Crear nueva calle',
                         'action' => URL . '/calle/save',
                         'values' => $_POST,
                         'errores' => $errores,
                     ]);
-                    return;
-                }
-            try{
-                
-                if ($this->model->insertCalle( $nombre)) {
-                    header("Location: " . URL . "/calle");
-                    exit;
-                } else {
-                    die("Error al guardar calle");
-                }
-            } catch (Exception $e) {
-                if ($e->getCode() == 23000) {
-                    $errores[] = "La calle '{$_POST['nombre']}' ya existe en el sistema.";
-                } else {
-                    $errores[] = "Error al guardar calle: " . $e->getMessage();
-                }
-                $this->load_view('calle/form', [
-                    'title' => 'Crear nueva calle',
-                    'action' => URL . '/calle/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                ]);
 
+                }
             }
+        } else {
+            header("Location: " . URL);
         }
     }
 
     // Mostrar formulario para editar una calle.
     public function edit($id)
     {
-        $calle = $this->model->getCalle($id);
-        $permisos = $this->model->getPermisosByCalle($id);
+        if ($this->tienePermiso("editar abm")) {
+            $calle = $this->model->getCalle($id);
+            $permisos = $this->model->getPermisosByCalle($id);
 
-        if (!$calle) {
-            die("Calle no encontrada");
+            if (!$calle) {
+                die("Calle no encontrada");
+            }
+
+            if (!empty($permisos)) {
+                $_SESSION['error_calle'] = "Esta calle no se puede editar porque tiene permisos asociados";
+                header("Location: " . URL . "/calle");
+                exit;
+            }
+
+            $this->load_view('calle/form', [
+                'title' => 'Editar calle',
+                'action' => URL . '/calle/update/' . $id,
+                'values' => [
+                    'nombre' => $calle['nombre']
+                ],
+                'errores' => [],
+            ]);
+        
+        } else {
+            header("Location: " . URL);
         }
-
-        if (!empty($permisos)) {
-            $_SESSION['error_calle'] = "Esta calle no se puede editar porque tiene permisos asociados";
-            header("Location: " . URL . "/calle");
-            exit;
-        }
-
-        $this->load_view('calle/form', [
-            'title' => 'Editar calle',
-            'action' => URL . '/calle/update/' . $id,
-            'values' => [
-                'nombre' => $calle['nombre']
-            ],
-            'errores' => [],
-        ]);
     }
 
     // Procesar la actualización de calle.
     public function update($id)
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST["nombre"]);
+        if ($this->tienePermiso("editar abm")) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $nombre = trim($_POST["nombre"]);
 
 
-            $errores = [];
-            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+                $errores = [];
+                if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
 
-            if (!empty($errores)) {
-                $calle = [
-                    'nombre' => $nombre
-                ];
-                $this->load_view('calle/form', [
-                    'title' => 'Editar calle',
-                    'action' => URL . '/calle/update/' . $id,
-                    'values' => $calle,
-                    'errores' => $errores,
-                ]);
-                return;
-            }
-            try {
-                if ($this->model->updateCalle($id,  nombre_calle: $nombre)) {
-                    header("Location: " . URL . "/calle");
-                    exit;
-                } else {
-                    die("Error al actualizar calle");
+                if (!empty($errores)) {
+                    $calle = [
+                        'nombre' => $nombre
+                    ];
+                    $this->load_view('calle/form', [
+                        'title' => 'Editar calle',
+                        'action' => URL . '/calle/update/' . $id,
+                        'values' => $calle,
+                        'errores' => $errores,
+                    ]);
+                    return;
                 }
-            } catch (Exception $e) {
-                if ($e->getCode() == 23000) {
-                    $errores[] = "La calle '{$_POST['nombre']}' ya existe en el sistema.";
-                } else {
-                    $errores[] = "Error al guardar calle: " . $e->getMessage();
-                }
-                $this->load_view('calle/form', [
-                    'title' => 'Crear nueva calle',
-                    'action' => URL . '/calle/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                ]);
+                try {
+                    if ($this->model->updateCalle($id,  nombre_calle: $nombre)) {
+                        header("Location: " . URL . "/calle");
+                        exit;
+                    } else {
+                        die("Error al actualizar calle");
+                    }
+                } catch (Exception $e) {
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "La calle '{$_POST['nombre']}' ya existe en el sistema.";
+                    } else {
+                        $errores[] = "Error al guardar calle: " . $e->getMessage();
+                    }
+                    $this->load_view('calle/form', [
+                        'title' => 'Crear nueva calle',
+                        'action' => URL . '/calle/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                    ]);
 
+                }
             }
+        
+        } else {
+            header("Location: " . URL);
         }
     }
 
     // Eliminar una calle.
     public function delete($id)
     {
-        $puntos = $this->pDModel->getPuntosByCalle($id);
-        $recorridos =$this->load_model('CalleRecorridoModel')->getRecorridosByCalle($id);
-        $errores = [];
-        if (empty($puntos) && empty($recorridos)) {
-            $eliminado = $this->model->deleteCalle($id);
-            if (!$eliminado) {
-                $this->index(errores: ["No se puede eliminar la calle."]);
+        if ($this->tienePermiso("borrar abm")) {
+            $puntos = $this->pDModel->getPuntosByCalle($id);
+            $recorridos =$this->load_model('CalleRecorridoModel')->getRecorridosByCalle($id);
+            $errores = [];
+            if (empty($puntos) && empty($recorridos)) {
+                $eliminado = $this->model->deleteCalle($id);
+                if (!$eliminado) {
+                    $this->index(errores: ["No se puede eliminar la calle."]);
+                }
+                header("Location: " . URL . "/calle");
+                exit;
             }
-            header("Location: " . URL . "/calle");
-            exit;
-        }
 
-        if (!empty($puntos)) {
-            $nombres_puntos = $puntos ? array_column($puntos, 'nombre') : [];
-            $string_puntos = implode(', ', $nombres_puntos);
-            $errores[] = "No se puede eliminar la calle, tiene los siguientes puntos de detención asociados: ". $string_puntos;
-        } 
-        
-        if (!empty($recorridos)){
-            $nombres_recorridos = $recorridos ? array_column($recorridos, 'nombre') : [];
-            $string_recorridos = implode(', ', $nombres_recorridos);
-            $errores[] = "No se puede eliminar la calle, tiene los siguientes recorridos asociados: ". $string_recorridos;
-        }
+            if (!empty($puntos)) {
+                $nombres_puntos = $puntos ? array_column($puntos, 'nombre') : [];
+                $string_puntos = implode(', ', $nombres_puntos);
+                $errores[] = "No se puede eliminar la calle, tiene los siguientes puntos de detención asociados: ". $string_puntos;
+            } 
+            
+            if (!empty($recorridos)){
+                $nombres_recorridos = $recorridos ? array_column($recorridos, 'nombre') : [];
+                $string_recorridos = implode(', ', $nombres_recorridos);
+                $errores[] = "No se puede eliminar la calle, tiene los siguientes recorridos asociados: ". $string_recorridos;
+            }
 
-        $this->index($errores);
+            $this->index($errores);
+        } else {
+            header("Location: " . URL);
+        }
     }
 
     public function puntos($id)

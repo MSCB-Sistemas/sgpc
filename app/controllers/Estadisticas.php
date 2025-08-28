@@ -14,7 +14,7 @@ class Estadisticas extends Control
 
     public function index()
     {
-        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+        if (in_array('ver estadisticas',$_SESSION['usuario_derechos'])) {
             $fecha_inicio = '';
             $fecha_fin    = '';
             $buscar_por   = '';
