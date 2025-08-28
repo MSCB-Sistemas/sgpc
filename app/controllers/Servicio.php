@@ -17,7 +17,7 @@ class Servicio extends Control
     // Mostrar todos los servicios
     public function index($errores = [])
     {
-        if (in_array('ver abm', $_SESSION['usuario_derechos'])) {
+        if ($this->tienePermiso('ver abm')) {
             $servicios = $this->model->getAllServicios();
             $datos = [
                 'title' => 'Listado de Servicios',
@@ -28,10 +28,21 @@ class Servicio extends Control
                 'acciones' => function ($fila) {
                     $id = $fila['id_servicio'];
                     $url = URL . '/servicio';
-                    return '
-                        <a href="' . $url . '/edit/' . $id . '" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <a href="' . $url . '/delete/' . $id . '" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
-                    ';
+                    $botones = '';
+
+                    if ($this->tienePermiso('editar abm') && $this->tienePermiso('borrar abm')) {
+                        $botones .= '
+                            <a href="' . $url . '/edit/' . $id . '" class="btn btn-sm btn-outline-primary">Editar</a>
+                        ';
+                    }
+
+                    if ($this->tienePermiso('borrar abm')) {
+                        $botones .= '
+                            <a href="' . $url . '/delete/' . $id . '" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
+                        ';
+                    }
+
+                    return $botones;
                 },
                 'errores' => $errores
             ];
@@ -42,214 +53,201 @@ class Servicio extends Control
         }
     }
 
-    // Mostrar detalles de un servicio
-    public function show($id)
-    {
-        $servicio = $this->model->getServicio($id);
-
-        if (!$servicio) {
-            $this->load_view('servicios/index', [
-                'error' => 'Servicio no encontrado.',
-                'servicios' => $this->model->getAllServicios()
-            ]);
-            return;
-        }
-
-        $this->load_view('servicios/show', ['servicio' => $servicio]);
-    }
-
-    // Formulario para crear un nuevo servicio
     public function create()
     {
-        $empresas = $this->empresaModel->getAllEmpresas();
-        $this->load_view('servicios/form', [
-            'title' => 'Crear nuevo servicio',
-            'action' => URL . '/servicio/save',
-            'values' => [],
-            'errores' => [],
-            'empresas' => $empresas
-        ]);
+        if ($this->tienePermiso('cargar abm')) {
+            $empresas = $this->empresaModel->getAllEmpresas();
+            $this->load_view('servicios/form', [
+                'title' => 'Crear nuevo servicio',
+                'action' => URL . '/servicio/save',
+                'values' => [],
+                'errores' => [],
+                'empresas' => $empresas
+            ]);
+        }
     }
 
     // Procesar el formulario de creación
     public function save()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $empresa = isset($_POST["empresa"]) ? trim($_POST['empresa']) : '';
-            $interno = isset($_POST['interno']) ? trim($_POST['interno']) : '';
-            $dominio = isset($_POST['dominio']) ? trim($_POST['dominio']) : '';
+        if ($this->tienePermiso('cargar abm')) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $empresa = isset($_POST["empresa"]) ? trim($_POST['empresa']) : '';
+                $interno = isset($_POST['interno']) ? trim($_POST['interno']) : '';
+                $dominio = isset($_POST['dominio']) ? trim($_POST['dominio']) : '';
 
-            $errores = [];
-            if ($empresa === '') $errores[] = 'La empresa es obligatoria';
-            if ($interno === '') $errores[] = 'El interno es obligatorio.';
-            if ($dominio === '') $errores[] = 'El dominio es obligatorio';
+                $errores = [];
+                if ($empresa === '') $errores[] = 'La empresa es obligatoria';
+                if ($interno === '') $errores[] = 'El interno es obligatorio.';
+                if ($dominio === '') $errores[] = 'El dominio es obligatorio';
 
-            // Validación antes de intentar insertar
-            if (!empty($errores)) {
-                $empresas = $this->empresaModel->getAllEmpresas();
-                $this->load_view('servicios/form', [
-                    'title' => 'Crear nuevo servicio',
-                    'action' => URL . '/servicio/guardar',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                    'empresas' => $empresas
-                ]);
-                return;
-            }
-
-            try {
-                $this->model->insertServicio($empresa, $interno, $dominio);
-                // redirect para bloquear reenvío de POST
-                header("Location: " . URL . "/servicio/index");
-                exit;
-            } catch (\PDOException $e) {
-                $empresaData = $this->empresaModel->getEmpresa($empresa);
-                $empresaNombre = $empresaData['nombre'];
-
-                if ($e->getCode() == 23000) {
-                    $errores[] = "El servicio ($empresaNombre, $interno, $dominio) ya existe.";
-                } else {
-                    $errores[] = "Error al guardar el servicio: " . $e->getMessage();
+                if (!empty($errores)) {
+                    $empresas = $this->empresaModel->getAllEmpresas();
+                    $this->load_view('servicios/form', [
+                        'title' => 'Crear nuevo servicio',
+                        'action' => URL . '/servicio/guardar',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                        'empresas' => $empresas
+                    ]);
+                    return;
                 }
-                $empresas = $this->empresaModel->getAllEmpresas();
-                $this->load_view('servicios/form', [
-                    'title' => 'Crear nuevo servicio',
-                    'action' => URL . '/servicio/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                    'empresas' => $empresas
-                ]);
+
+                try {
+                    $this->model->insertServicio($empresa, $interno, $dominio);
+                    header("Location: " . URL . "/servicio/index");
+                    exit;
+                } catch (\PDOException $e) {
+                    $empresaData = $this->empresaModel->getEmpresa($empresa);
+                    $empresaNombre = $empresaData['nombre'];
+
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "El servicio ($empresaNombre, $interno, $dominio) ya existe.";
+                    } else {
+                        $errores[] = "Error al guardar el servicio: " . $e->getMessage();
+                    }
+                    $empresas = $this->empresaModel->getAllEmpresas();
+                    $this->load_view('servicios/form', [
+                        'title' => 'Crear nuevo servicio',
+                        'action' => URL . '/servicio/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                        'empresas' => $empresas
+                    ]);
+                }
             }
         }
     }
 
-
-
-    // Formulario para editar un servicio
     public function edit($id)
     {
-        $servicio = $this->model->getServicio($id);
-        $empresas = $this->empresaModel->getAllEmpresas();
-        
-        $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
+        if ($this->tienePermiso('editar abm')) {
+            $servicio = $this->model->getServicio($id);
+            $empresas = $this->empresaModel->getAllEmpresas();
+            
+            $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
 
-        if (!$servicio) {
-            die("Servicio no encontrado.");
+            if (!$servicio) {
+                die("Servicio no encontrado.");
+            }
+
+            if (!empty($permisos)){
+                $errores[] = 'Error: No se puede editar un servicio con permisos asignados.';
+                $this->index($errores);
+            }
+
+            $this->load_view('servicios/form', [
+                'title' => 'Editar servicio',
+                'action' => URL . '/servicio/update/' . $id,
+                'values' => [
+                    'empresa' => $servicio['id_empresa'],
+                    'interno' => $servicio['interno'],
+                    'dominio' => $servicio['dominio'],
+                ],
+                'errores' => [],
+                'empresas' => $empresas
+            ]);
         }
-
-        if (!empty($permisos)){
-            $errores[] = 'Error: No se puede editar un servicio con permisos asignados.';
-            $this->index($errores);
-        }
-
-        $this->load_view('servicios/form', [
-            'title' => 'Editar servicio',
-            'action' => URL . '/servicio/update/' . $id,
-            'values' => [
-                'empresa' => $servicio['id_empresa'],
-                'interno' => $servicio['interno'],
-                'dominio' => $servicio['dominio'],
-            ],
-            'errores' => [],
-            'empresas' => $empresas
-        ]);
     }
 
     // Procesar actualización
     public function update($id)
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            if(isset($_POST['empresa'])) {
-                $empresa = trim($_POST['empresa'] );
-            } else {
-                $empresa = '';
-            }
-            
-            if(isset($_POST['interno'])) {
-                $interno = trim($_POST['interno'] );
-            } else {
-                $interno = '';
-            }
-
-            if(isset($_POST['dominio'])) {
-                $dominio = trim($_POST['dominio'] );
-            } else {
-                $dominio = '';
-            }
-
-            $errores = [];
-            if ($empresa === '') {
-                $errores[] = 'La empresa es obligatoria';
-                }
-            if ($interno === '') {
-                 $errores[] = 'El interno es obligatorio.'; 
-                }
-            if ($dominio === '') { 
-                $errores[] = 'El dominio es obligatorio'; }
-
-            if (!empty($errores)) {
-                $servicio = [
-                    'id_servicio' => $id,
-                    'empresa' => $empresa,
-                    'interno' => $interno,
-                    'dominio' => $dominio
-                ];
-                $empresas = $this->empresaModel->getAllEmpresas();
-                $this->load_view('servicios/form', [
-                    'title' => 'Editar Servicio',
-                    'action' => URL . '/servicio/update/' . $id,
-                    'values' => $servicio,
-                    'errores' => $errores,
-                    'empresas' => $empresas
-                ]);
-                return;
-            }
-            try {
-                if ($this->model->updateServicio($id, $empresa, $interno, $dominio)) {
-                    header("Location: " . URL . "/servicio/index");
-                    exit;
+        if ($this->tienePermiso('editar abm')) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if(isset($_POST['empresa'])) {
+                    $empresa = trim($_POST['empresa'] );
                 } else {
-                    die("Error al actualizar el servicio.");
+                    $empresa = '';
                 }
-            } catch (\PDOException $e) {
-                $empresaData = $this->empresaModel->getEmpresa($empresa);
-                $empresaNombre = $empresaData['nombre'];
-
-                if ($e->getCode() == 23000) {
-                    $errores[] = "El servicio ($empresaNombre, $interno, $dominio) ya existe.";
+                
+                if(isset($_POST['interno'])) {
+                    $interno = trim($_POST['interno'] );
                 } else {
-                    $errores[] = "Error al guardar el servicio: " . $e->getMessage();
+                    $interno = '';
                 }
-                $empresas = $this->empresaModel->getAllEmpresas();
-                $this->load_view('servicios/form', [
-                    'title' => 'Crear nuevo servicio',
-                    'action' => URL . '/servicio/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                    'empresas' => $empresas
-                ]);
+
+                if(isset($_POST['dominio'])) {
+                    $dominio = trim($_POST['dominio'] );
+                } else {
+                    $dominio = '';
+                }
+
+                $errores = [];
+                if ($empresa === '') {
+                    $errores[] = 'La empresa es obligatoria';
+                    }
+                if ($interno === '') {
+                    $errores[] = 'El interno es obligatorio.'; 
+                    }
+                if ($dominio === '') { 
+                    $errores[] = 'El dominio es obligatorio'; }
+
+                if (!empty($errores)) {
+                    $servicio = [
+                        'id_servicio' => $id,
+                        'empresa' => $empresa,
+                        'interno' => $interno,
+                        'dominio' => $dominio
+                    ];
+                    $empresas = $this->empresaModel->getAllEmpresas();
+                    $this->load_view('servicios/form', [
+                        'title' => 'Editar Servicio',
+                        'action' => URL . '/servicio/update/' . $id,
+                        'values' => $servicio,
+                        'errores' => $errores,
+                        'empresas' => $empresas
+                    ]);
+                    return;
+                }
+                try {
+                    if ($this->model->updateServicio($id, $empresa, $interno, $dominio)) {
+                        header("Location: " . URL . "/servicio/index");
+                        exit;
+                    } else {
+                        die("Error al actualizar el servicio.");
+                    }
+                } catch (\PDOException $e) {
+                    $empresaData = $this->empresaModel->getEmpresa($empresa);
+                    $empresaNombre = $empresaData['nombre'];
+
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "El servicio ($empresaNombre, $interno, $dominio) ya existe.";
+                    } else {
+                        $errores[] = "Error al guardar el servicio: " . $e->getMessage();
+                    }
+                    $empresas = $this->empresaModel->getAllEmpresas();
+                    $this->load_view('servicios/form', [
+                        'title' => 'Crear nuevo servicio',
+                        'action' => URL . '/servicio/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                        'empresas' => $empresas
+                    ]);
+                }
             }
         }
     }
 
-    // Eliminar un servicio
     public function delete($id)
     {
-        $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
+        if ($this->tienePermiso('borrar abm')) {
+            $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
 
-        if (empty($permisos)) {
-            $eliminado = $this->model->deleteServicio($id);
+            if (empty($permisos)) {
+                $eliminado = $this->model->deleteServicio($id);
 
-            if (!$eliminado) {
-                $this->index(["Error al eliminar el servicio"]);
+                if (!$eliminado) {
+                    $this->index(["Error al eliminar el servicio"]);
+                }
+                header("Location: " . URL . "/servicio");
+                exit;
             }
-            header("Location: " . URL . "/servicio");
-            exit;
+            
+            $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
+            $string_permisos = implode(', ', $ids_permisos);
+            $this->index(["No se puede eliminar el servicio, tiene los siguientes permisos asignados: ". $string_permisos]);
         }
-        
-        $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
-        $string_permisos = implode(', ', $ids_permisos);
-        $this->index(["No se puede eliminar el servicio, tiene los siguientes permisos asignados: ". $string_permisos]);
     }
     
     public function saveAjax()
