@@ -79,14 +79,14 @@ class Permiso extends Control
                     $botones = '';
                     if ($fila['activo']==1){
                         if ($this->tienePermiso("eliminar permiso")){
-                            $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
+                            $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
                         }
                         if ($this->tienePermiso("cargar permiso")){
-                            $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-outline-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
+                            $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
                         }
                     }
                                 
-                    $botones .= '<a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>';
+                    $botones .= '<a class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalPermiso" data-permiso="'.$id.'">Ver datos</a>';
                     return $botones;                            
                 }
             ];

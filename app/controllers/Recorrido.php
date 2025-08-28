@@ -42,13 +42,13 @@ class Recorrido extends Control
 
                     if ($this->tienePermiso('editar abm')) {
                         $botones .= '
-                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
                         ';
                     }
 
                     if ($this->tienePermiso('borrar abm')) {
                         $botones .= '
-                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
+                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
                         ';
                     }
 
