@@ -226,3 +226,16 @@ CREATE TABLE `tipos_usuarios_derechos` (
   CONSTRAINT `tipos_usuarios_derechos_derechos_FK` FOREIGN KEY (`id_derecho`) REFERENCES `derechos` (`id_derecho`),
   CONSTRAINT `tipos_usuarios_derechos_tipos_usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+-- sgpc.auditoria definition
+
+CREATE TABLE `auditoria` (
+  `id_auditoria` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
+  `fecha_creacion` datetime NOT NULL,
+  `query` varchar(1000) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  `parametros` varchar(1000) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  PRIMARY KEY (`id_auditoria`),
+  KEY `auditoria_FK` (`id_usuario`),
+  CONSTRAINT `auditoria_FK` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
