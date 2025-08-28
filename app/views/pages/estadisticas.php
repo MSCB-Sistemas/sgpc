@@ -321,22 +321,26 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
     <!-- TAB RESUMEN -->
                     
     <div class="tab-pane fade" id="resumen" role="tabpanel">
+        <?php
+        $valor_fecha_inicio_resumen = $_POST['fecha_inicio_resumen'] ?? '';
+        $valor_fecha_fin_resumen = $_POST['fecha_fin_resumen'] ?? '';
+        ?>
         <form id="form-filtro-resumen" method="POST" class="row g-2 mb-3 justify-content-left">
             <div class="col-auto">
                 <label for="fecha_inicio_resumen" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio_resumen" id="fecha_inicio_resumen">
+                <input type="date" class="form-control" name="fecha_inicio_resumen" id="fecha_inicio_resumen" value="<?= htmlspecialchars($valor_fecha_inicio_resumen) ?>">
             </div>
 
             <div class="col-auto">
                 <label for="fecha_fin_resumen" class="form-label">Fecha Fin</label>
-                <input type="date" class="form-control" name="fecha_fin_resumen" id="fecha_fin_resumen">
+               <input type="date" class="form-control" name="fecha_fin_resumen" id="fecha_fin_resumen" value="<?= htmlspecialchars($valor_fecha_fin_resumen) ?>">
             </div>
 
             <div class="col-auto align-self-end">
                 <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </form>
-    </div>
+    
 
     <body>
         <!-- contenedor AJAX -->
@@ -347,7 +351,7 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
                 const contenedor = document.getElementById('contenedor-resumen');
 
                 form.addEventListener('submit', function (e) {
-                    e.preventDefault(); // 🔒 Evita recargar la página
+                    e.preventDefault(); // Evita recargar la página
 
                     const formData = new FormData(form);
 

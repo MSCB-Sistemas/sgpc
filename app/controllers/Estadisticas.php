@@ -120,28 +120,27 @@ class Estadisticas extends Control
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
             'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
             'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen)
-            'arribo_mas_usado' => $this->model->
+            ,
         ];  
         $this->load_view('estadisticas', $datos);
     }
 
-    public function resumenCardsAjax()
-{
-    // Validar que venga por POST
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $fecha_inicio_resumen = $_POST['fecha_inicio_resumen'] ?? '';
-        $fecha_fin_resumen    = $_POST['fecha_fin_resumen'] ?? '';
+    public function resumenCardsAjax() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $valor_fecha_inicio_resumen = $_POST['fecha_inicio_resumen'];
+            $valor_fecha_fin_resumen    = $_POST['fecha_fin_resumen'];
 
-        // Aquí llamas a los modelos y obtenés los datos filtrados
-        $datos2 = [
-        'title' => 'Estadísticas',
-        'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
-        'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
-        'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
-        'recorridos_mas_usados' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen)
-        ];
-        
+            $datos = [
+                'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen), 
+                'hoteles_usados' => $this->model->getHotelesMasUsados($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen),
+                'punto_mas_usado' => $this->model->getPuntosMasUsados($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen),
+                'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen)
+            ];
+
+            
+            $this->load_view('resumen', $datos, false); // el tercer parámetro en false para que no cargue el layout
+        }
     }
-}
+
 
 }
