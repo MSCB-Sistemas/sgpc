@@ -18,7 +18,7 @@ class Calle extends Control
     // Mostrar todas las calles en una vista.
     public function index($errores = [])
     {
-        if (in_array('ver abm',$_SESSION['usuario_derechos'])) {
+        if ($this->tienePermiso('ver abm')) {
             if (isset($_SESSION['error_calle'])) {
                 $errores[] = $_SESSION['error_calle'];
                 unset($_SESSION['error_calle']); // Borramos el mensaje después de usarlo
@@ -34,10 +34,14 @@ class Calle extends Control
                 'acciones' => function($fila) {
                     $id = $fila['id_calle'];
                     $url = URL . '/calle';
-                    return '
-                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>
-                    ';
+                    $botones = '';
+                    if ($this->tienePermiso('editar abm')){
+                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>';
+                    }
+                    if ($this->tienePermiso('borrar abm')){
+                        $botones .='<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>';
+                    }
+                    return $botones;
                 },
                 'errores' => $errores
             ];    
