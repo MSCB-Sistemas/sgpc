@@ -66,7 +66,7 @@ class Recorrido extends Control
     // Mostrar formulario de creación
     public function create()
     {
-        if ($this->tienePermiso('crear abm')) {
+        if ($this->tienePermiso('cargar abm')) {
             $calles = $this->calleModel->getAllCalles();
             $datos = [
                 'title' => 'Crear Recorrido',
@@ -83,7 +83,7 @@ class Recorrido extends Control
     // Procesar creación a
     public function save()
     {
-        if ($this->tienePermiso('crear abm')) {
+        if ($this->tienePermiso('cargar abm')) {
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 $nombre = trim($_POST['nombre']);

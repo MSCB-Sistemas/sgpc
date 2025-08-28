@@ -57,7 +57,7 @@ class PuntosDetencion extends Control
     // Formulario para crear un nuevo punto
     public function create()
     {
-        if ($this->tienePermiso('crear abm')) {
+        if ($this->tienePermiso('cargar abm')) {
             $calles = $this->calleModel->getAllCalles();
             $datos = [
                 'title' => 'Crear nuevo punto de detención',
@@ -73,7 +73,7 @@ class PuntosDetencion extends Control
     // Procesar la creación
     public function save()
     {
-        if ($this->tienePermiso('crear abm')) {
+        if ($this->tienePermiso('cargar abm')) {
             $calles = $this->calleModel->getAllCalles();
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $nombre = trim($_POST["nombre"]);
