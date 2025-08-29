@@ -17,212 +17,246 @@ class Usuarios extends Control
     // Mostrar lista de usuarios activos
     public function index()
     {
-        $usuarios = $this->model->getAllUsuarios();
-        $datos = [
-        'title' => 'Listado de Usuarios',
-        'urlCrear' => URL . '/usuarios/create',
-        'columnas' => ['Usuario', 'Nombre', 'Apellido', 'Cargo', 'Sector', 'Tipo', 'Activo'],
-        'columnas_claves' => ['usuario', 'nombre', 'apellido', 'cargo', 'sector', 'tipo_usuario', 'activo'],
-        'data' => $usuarios,
-        'acciones' => function($fila) {
-            $id = $fila['id_usuario'];
-            $url = URL . '/usuarios';
-            if ($fila['activo']) {
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>
-                    <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-outline-warning">Cambiar clave</a>
-                ';
-            } else {
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-outline-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
-                ';
+        if (in_array('editar usuarios',$_SESSION['usuario_derechos'])){
+            $usuarios = $this->model->getAllUsuarios();
+            $datos = [
+            'title' => 'Listado de Usuarios',
+            'urlCrear' => URL . '/usuarios/create',
+            'columnas' => ['Usuario', 'Nombre', 'Apellido', 'Cargo', 'Sector', 'Tipo', 'Activo'],
+            'columnas_claves' => ['usuario', 'nombre', 'apellido', 'cargo', 'sector', 'tipo_usuario', 'activo'],
+            'data' => $usuarios,
+            'acciones' => function($fila) {
+                $id = $fila['id_usuario'];
+                $url = URL . '/usuarios';
+                $botones = '';
+
+                if ($fila['activo']) {
+                    if ($this->tienePermiso('editar usuarios')) {
+                        $botones .= '
+                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
+                            <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-warning">Cambiar clave</a>';
+
+                            if ($this->tienePermiso('eliminar usuarios') && $fila['tipo_usuario'] != 'admin') {
+                            $botones .= '
+                                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
+                            } else if ($fila['tipo_usuario'] == 'admin' && $this->tienePermiso('god')) {
+                                $botones .= '
+                                <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
+                            }
+                    }
+                } else {
+                    if ($this->tienePermiso('editar usuarios')) {
+                        $botones .= '
+                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
+                            <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
+                        ';
+                    }
+                }
+
+                return $botones;
             }
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-        ];
-    $this->load_view('partials/tablaAbm', $datos);
     }
     
     public function edit($id)
     {
-        $usuario = $this->model->getUsuario(id_usuario: $id);  
-        $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
+        if ($this->tienePermiso('editar usuarios')) {
+            $usuario = $this->model->getUsuario(id_usuario: $id);  
+            $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
 
-        if (!$usuario) {
-            die("Usuario no encontrado");
+            if (!$usuario) {
+                die("Usuario no encontrado");
+            }
+
+            $this->load_view('usuarios/form', [
+                'title' => 'Editar usuario',
+                'action' => URL . '/usuarios/update/' . $id,
+                'values' => [
+                    'usuario' => $usuario['usuario'],
+                    'nombre' => $usuario['nombre'],
+                    'apellido' => $usuario['apellido'],
+                    'cargo' => $usuario['cargo'],
+                    'sector' => $usuario['sector'],
+                    'id_tipo_usuario' => $usuario['id_tipo_usuario']
+                ],
+                'errores' => [],
+                'tipos' => $tipos,
+                'update' => true
+            ]);
         }
-
-        $this->load_view('usuarios/form', [
-            'title' => 'Editar usuario',
-            'action' => URL . '/usuarios/update/' . $id,
-            'values' => [
-                'usuario' => $usuario['usuario'],
-                'nombre' => $usuario['nombre'],
-                'apellido' => $usuario['apellido'],
-                'cargo' => $usuario['cargo'],
-                'sector' => $usuario['sector'],
-                'id_tipo_usuario' => $usuario['id_tipo_usuario']
-            ],
-            'errores' => [],
-            'tipos' => $tipos,
-            'update' => true
-        ]);
     }
 
     public function update($id)
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario = trim($_POST["usuario"] );
-            $nombre = trim($_POST["nombre"] );
-            $apellido = trim($_POST["apellido"] );
-            $cargo = trim($_POST["cargo"] );
-            $sector = trim($_POST["sector"]  );
-            $tipoUsuario = $_POST["tipo_usuario"] ;
+        if ($this->tienePermiso('editar usuarios')) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $usuario = trim($_POST["usuario"] );
+                $nombre = trim($_POST["nombre"] );
+                $apellido = trim($_POST["apellido"] );
+                $cargo = trim($_POST["cargo"] );
+                $sector = trim($_POST["sector"]  );
+                $tipoUsuario = $_POST["tipo_usuario"] ;
 
-            $errores = [];
-            if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
-            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-            if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
-            if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
+                $errores = [];
+                if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
+                if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+                if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
+                if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
 
-            if (!empty($errores)) {
-                $usuario = [
-                    'id_usuario' => $id,
-                    'usuario' => $usuario,
-                    'nombre' => $nombre,
-                    'apellido' => $apellido,
-                    'cargo' => $cargo,
-                    'sector' => $sector,
-                    'id_tipo_usuario'=> $tipoUsuario
-                ];
-                $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
-                $this->load_view('usuarios/form', [
-                    'title' => 'Editar usuario',
-                    'action' => URL . '/usuarios/update/' . $id,
-                    'values' => $usuario,
-                    'errores' => $errores,
-                    'tipos' => $tipos,
-                    'update' => true
-                ]);
-                return;
-            }
+                if (!empty($errores)) {
+                    $usuario = [
+                        'id_usuario' => $id,
+                        'usuario' => $usuario,
+                        'nombre' => $nombre,
+                        'apellido' => $apellido,
+                        'cargo' => $cargo,
+                        'sector' => $sector,
+                        'id_tipo_usuario'=> $tipoUsuario
+                    ];
+                    $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
+                    $this->load_view('usuarios/form', [
+                        'title' => 'Editar usuario',
+                        'action' => URL . '/usuarios/update/' . $id,
+                        'values' => $usuario,
+                        'errores' => $errores,
+                        'tipos' => $tipos,
+                        'update' => true
+                    ]);
+                    return;
+                }
 
-            if ($this->model->updateUsuario($id, $usuario, $nombre, $apellido, $cargo, $sector, $tipoUsuario)) {
-                header("Location: " . URL . "/usuarios");
-                exit;
-            } else {
-                die("Error al actualizar el usuario");
+                if ($this->model->updateUsuario($id, $usuario, $nombre, $apellido, $cargo, $sector, $tipoUsuario)) {
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                } else {
+                    die("Error al actualizar el usuario");
+                }
             }
         }
     }
 
     public function create()
     {
-        $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
-        $this->load_view('usuarios/form', [
-            'title' => 'Crear nuevo usuario',
-            'action' => URL . '/usuarios/save',
-            'values' => [],
-            'errores' => [],
-            'tipos' => $tipos,
-            'update' => false
-        ]);
+        if ($this->tienePermiso('crear usuarios')) {
+            $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
+            $this->load_view('usuarios/form', [
+                'title' => 'Crear nuevo usuario',
+                'action' => URL . '/usuarios/save',
+                'values' => [],
+                'errores' => [],
+                'tipos' => $tipos,
+                'update' => false
+            ]);
+        }
     }
     
     public function save()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario = trim($_POST["usuario"]);
-            $nombre = trim($_POST["nombre"]);
-            $apellido = trim($_POST["apellido"] );
-            $cargo = trim($_POST["cargo"] );
-            $sector = trim($_POST["sector"] );
-            $contrasenia = trim($_POST["password"] );
-            $tipoUsuario = $_POST["tipo_usuario"];
+        if ($this->tienePermiso('crear usuarios')) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $usuario = trim($_POST["usuario"]);
+                $nombre = trim($_POST["nombre"]);
+                $apellido = trim($_POST["apellido"] );
+                $cargo = trim($_POST["cargo"] );
+                $sector = trim($_POST["sector"] );
+                $contrasenia = trim($_POST["password"] );
+                $tipoUsuario = $_POST["tipo_usuario"];
 
-            // Validaciones simples
-            $errores = [];
-            if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
-            if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-            if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
-            if (empty($contrasenia)) $errores[] = "El nombre es obligatorio.";
-            if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
+                // Validaciones simples
+                $errores = [];
+                if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
+                if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
+                if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
+                if (empty($contrasenia)) $errores[] = "El nombre es obligatorio.";
+                if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
 
-            if (!empty($errores)) {
-                $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
-                $this->load_view('usuarios/form', [
-                    'title' => 'Crear nuevo usuario',
-                    'action' => URL . '/usuarios/save',
-                    'values' => $_POST,
-                    'errores' => $errores,
-                    'tipos' => $tipos,
-                    'update' => false
-                ]);
-                return;
-            }
-            $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
+                if (!empty($errores)) {
+                    $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
+                    $this->load_view('usuarios/form', [
+                        'title' => 'Crear nuevo usuario',
+                        'action' => URL . '/usuarios/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                        'tipos' => $tipos,
+                        'update' => false
+                    ]);
+                    return;
+                }
+                $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
 
-            if ($this->model->insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario)) {
-                header("Location: " . URL . "/usuarios");
-                exit;
-            } else {
-                die("Error al guardar el usuario");
+                if ($this->model->insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario)) {
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                } else {
+                    die("Error al guardar el usuario");
+                }
             }
         }
     }
 
     public function delete($id){
-        if($this->model->deleteUsuario($id)) {
-            header(header: "Location: " . URL . "/usuarios");
-            exit;
-        } else {
-            die("No se puedo eliminar al usuario.");
+        if ($this->tienePermiso('eliminar usuarios')) {
+            if($this->model->deleteUsuario($id)) {
+                header(header: "Location: " . URL . "/usuarios");
+                exit;
+            } else {
+                die("No se puedo eliminar al usuario.");
+            }
         }
     }
 
     public function activate($id){
-        if($this->model->activateUsuario($id)) {
-            header(header: "Location: " . URL . "/usuarios");
-            exit;
-        } else {
-            die("No se puedo activar al usuario.");
+        if ($this->tienePermiso("editar usuarios")) {
+            if($this->model->activateUsuario($id)) {
+                header(header: "Location: " . URL . "/usuarios");
+                exit;
+            } else {
+                die("No se puedo activar al usuario.");
+            }
         }
     }
     
     public function changePass($id){
-        $this->load_view('usuarios/formPass', [
-            'title' => 'Cambiar clave',
-            'action' => URL . '/usuarios/savePass/' . $id,
-            'errores' => []
-        ]);
+        if ($this->tienePermiso("editar usuarios")) {
+            $this->load_view('usuarios/formPass', [
+                'title' => 'Cambiar clave',
+                'action' => URL . '/usuarios/savePass/' . $id,
+                'errores' => []
+            ]);
+        }
     }
 
     public function savePass($id)
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $password = trim($_POST["password"] );
+        if ($this->tienePermiso("editar usuarios")) {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $password = trim($_POST["password"] );
 
-            $errores = [];
-            if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";
+                $errores = [];
+                if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";
 
-            if (!empty($errores)) {
-                $this->load_view('usuarios/formPass', [
-                    'title' => 'Cambiar clave',
-                    'action' => URL . '/usuarios/savePass/' . $id,
-                    'errores' => $errores,
-                ]);
-                return;
-            }
+                if (!empty($errores)) {
+                    $this->load_view('usuarios/formPass', [
+                        'title' => 'Cambiar clave',
+                        'action' => URL . '/usuarios/savePass/' . $id,
+                        'errores' => $errores,
+                    ]);
+                    return;
+                }
 
-            $password = password_hash($password, PASSWORD_DEFAULT);
-            if ($this->model->updatePassword($id, $password)) {
-                header("Location: " . URL . "/usuarios");
-                exit;
-            } else {
-                die("Error al cambiar la clave");
+                $password = password_hash($password, PASSWORD_DEFAULT);
+                if ($this->model->updatePassword($id, $password)) {
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                } else {
+                    die("Error al cambiar la clave");
+                }
             }
         }
     }
-
 }

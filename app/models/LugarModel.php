@@ -23,7 +23,7 @@ class LugarModel
     */
     public function getAllLugares(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM lugares");
+        $stmt = $this->db->prepare("SELECT * FROM lugares where activo = 1");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
@@ -98,6 +98,22 @@ class LugarModel
     public function getPermisosByLugarId($id_lugar): array 
     {
         $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_lugar = :id_lugar");
+        $stmt->execute(['id_lugar' => $id_lugar]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarLugar($id_lugar): bool
+    {
+        $stmt = $this->db->prepare("UPDATE lugares SET activo = 0 WHERE id_lugar = :id_lugar");
+        // Ejecuta la consulta pasando los valores
+        return $stmt->execute(['id_lugar' => $id_lugar]);
+    }
+
+    public function getPermisosByLugar($id_lugar): array
+    {
+        $stmt = $this->db->prepare("SELECT p.* FROM permisos p
+                                    WHERE p.id_lugar = :id_lugar");
+        // Ejecuta la consulta pasando los valores
         $stmt->execute(['id_lugar' => $id_lugar]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

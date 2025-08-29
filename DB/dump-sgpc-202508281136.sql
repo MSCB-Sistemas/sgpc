@@ -16,6 +16,34 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `auditoria`
+--
+
+DROP TABLE IF EXISTS `auditoria`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `auditoria` (
+  `id_auditoria` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
+  `fecha_creacion` datetime NOT NULL,
+  `query` varchar(1000) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  `parametros` varchar(1000) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  PRIMARY KEY (`id_auditoria`),
+  KEY `auditoria_usuarios_FK` (`id_usuario`),
+  CONSTRAINT `auditoria_usuarios_FK` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `auditoria`
+--
+
+LOCK TABLES `auditoria` WRITE;
+/*!40000 ALTER TABLE `auditoria` DISABLE KEYS */;
+/*!40000 ALTER TABLE `auditoria` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `calles`
 --
 
@@ -95,8 +123,32 @@ CREATE TABLE `choferes` (
 
 LOCK TABLES `choferes` WRITE;
 /*!40000 ALTER TABLE `choferes` DISABLE KEYS */;
-INSERT INTO `choferes` VALUES (1,'23322332','Juan','Pérez',3),(4,'111888979','María','Herrera',2),(5,'43904897','Carlos','Martínez',8),(7,'232132132','Ana','Morales',2),(9,'23322332','Luis','Castillo',1),(12,'23322332','Diego','Díaz',5);
+INSERT INTO `choferes` VALUES (1,'233223323','Juan','Pérez',1),(4,'111888979','María','Herrera',1),(5,'43904897','Carlos','Martínez',1),(7,'232132132','Ana','Morales',1),(9,'23322332','Luis','Castillo',1),(12,'233223321','Diego','Díaz',1);
 /*!40000 ALTER TABLE `choferes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `derechos`
+--
+
+DROP TABLE IF EXISTS `derechos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `derechos` (
+  `id_derecho` int NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(100) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  PRIMARY KEY (`id_derecho`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `derechos`
+--
+
+LOCK TABLES `derechos` WRITE;
+/*!40000 ALTER TABLE `derechos` DISABLE KEYS */;
+INSERT INTO `derechos` VALUES (1,'editar abm'),(2,'editar usuarios'),(3,'god'),(4,'eliminar usuarios'),(5,'ver estadisticas'),(6,'cargar permiso'),(7,'eliminar permiso'),(8,'borrar abm'),(9,'cargar abm'),(10,'ver abm'),(11,'crear usuarios');
+/*!40000 ALTER TABLE `derechos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -109,8 +161,8 @@ DROP TABLE IF EXISTS `empresas`;
 CREATE TABLE `empresas` (
   `id_empresa` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
-  PRIMARY KEY (`id_empresa`),
-  UNIQUE KEY `empresas_unique` (`nombre`)
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id_empresa`)
 ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -120,7 +172,7 @@ CREATE TABLE `empresas` (
 
 LOCK TABLES `empresas` WRITE;
 /*!40000 ALTER TABLE `empresas` DISABLE KEYS */;
-INSERT INTO `empresas` VALUES (62,'Andesmar'),(8,'Crucero del Norte'),(9,'Chevallier'),(10,'Flecha Bus'),(1,'Via Bariloche');
+INSERT INTO `empresas` VALUES (1,'Via Bariloche',1),(8,'Crucero del Norte',1),(9,'Chevallier',1),(10,'Flecha Bus',1),(62,'Andesmar',1);
 /*!40000 ALTER TABLE `empresas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -135,8 +187,8 @@ CREATE TABLE `hoteles` (
   `id_hotel` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `direccion` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
-  PRIMARY KEY (`id_hotel`),
-  UNIQUE KEY `hoteles_unique` (`nombre`,`direccion`)
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id_hotel`)
 ) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -146,7 +198,7 @@ CREATE TABLE `hoteles` (
 
 LOCK TABLES `hoteles` WRITE;
 /*!40000 ALTER TABLE `hoteles` DISABLE KEYS */;
-INSERT INTO `hoteles` VALUES (1,'Alma del Lago Suites & Spa','Bustillo 1151'),(2,'Design Suites Bariloche','Bustillo km 2.5'),(4,'Llao Llao','Bustillo km 25'),(45,'Nido del Cóndor Hotel & Spa','Bustillo km 6.9'),(44,'Villa Huinid','Bustillo 2600');
+INSERT INTO `hoteles` VALUES (1,'Alma del Lago Suites & Spa','Bustillo 1151',1),(2,'Design Suites Bariloche','Bustillo km 2.5',1),(4,'Llao Llao','Bustillo km 25',1),(44,'Villa Huinid','Bustillo 2600',1),(45,'Nido del Cóndor Hotel & Spa','Bustillo km 6.9',1);
 /*!40000 ALTER TABLE `hoteles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -160,8 +212,8 @@ DROP TABLE IF EXISTS `lugares`;
 CREATE TABLE `lugares` (
   `id_lugar` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
-  PRIMARY KEY (`id_lugar`),
-  UNIQUE KEY `lugares_unique` (`nombre`)
+  `activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id_lugar`)
 ) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -171,7 +223,7 @@ CREATE TABLE `lugares` (
 
 LOCK TABLES `lugares` WRITE;
 /*!40000 ALTER TABLE `lugares` DISABLE KEYS */;
-INSERT INTO `lugares` VALUES (2,'El Bolsón'),(41,'El Hoyo'),(51,'Esquel'),(1,'Junin de los Andes'),(50,'Lago Puelo');
+INSERT INTO `lugares` VALUES (1,'Junin de los Andes',1),(2,'El Bolsón',1),(41,'El Hoyo',1),(50,'Lago Puelo',1),(51,'Esquel',1);
 /*!40000 ALTER TABLE `lugares` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -186,7 +238,7 @@ CREATE TABLE `nacionalidades` (
   `id_nacionalidad` int NOT NULL AUTO_INCREMENT,
   `nacionalidad` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   PRIMARY KEY (`id_nacionalidad`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=191 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,7 +247,7 @@ CREATE TABLE `nacionalidades` (
 
 LOCK TABLES `nacionalidades` WRITE;
 /*!40000 ALTER TABLE `nacionalidades` DISABLE KEYS */;
-INSERT INTO `nacionalidades` VALUES (1,'Argentina'),(2,'Peruano/a'),(3,'Uruguayo/a'),(4,'Brasilero/a'),(5,'Chileno/a'),(6,'Paraguayo/a'),(7,'Colombiano/a'),(8,'Boliviano/a'),(9,'Ecuatoriano/a');
+INSERT INTO `nacionalidades` VALUES (1,'Argentina'),(10,'Brasil'),(11,'Chile'),(12,'Afganistán'),(13,'Albania'),(14,'Alemania'),(15,'Andorra'),(16,'Angola'),(17,'Antigua y Barbuda'),(18,'Arabia Saudita'),(19,'Argelia'),(20,'Armenia'),(21,'Australia'),(22,'Austria'),(23,'Bahamas'),(24,'Baréin'),(25,'Bangladés'),(26,'Barbados'),(27,'Bélgica'),(28,'Belice'),(29,'Benín'),(30,'Bielorrusia'),(31,'Birmania'),(32,'Bolivia'),(33,'Bosnia y Herzegovina'),(34,'Botsuana'),(35,'Bulgaria'),(36,'Burkina Faso'),(37,'Burundi'),(38,'Cabo Verde'),(39,'Camboya'),(40,'Camerún'),(41,'Canadá'),(42,'Catar'),(43,'Chad'),(44,'China'),(45,'Chipre'),(46,'Colombia'),(47,'Comoras'),(48,'Congo'),(49,'Costa Rica'),(50,'Croacia'),(51,'Cuba'),(52,'Dinamarca'),(53,'Dominica'),(54,'Ecuador'),(55,'Egipto'),(56,'El Salvador'),(57,'Emiratos Árabes Unidos'),(58,'Eslovaquia'),(59,'Eslovenia'),(60,'España'),(61,'Estados Unidos'),(62,'Estonia'),(63,'Etiopía'),(64,'Filipinas'),(65,'Finlandia'),(66,'Francia'),(67,'Gabón'),(68,'Gambia'),(69,'Georgia'),(70,'Ghana'),(71,'Granada'),(72,'Grecia'),(73,'Guatemala'),(74,'Guinea'),(75,'Guinea-Bisáu'),(76,'Guinea Ecuatorial'),(77,'Guyana'),(78,'Haití'),(79,'Honduras'),(80,'Hungría'),(81,'India'),(82,'Indonesia'),(83,'Irak'),(84,'Irán'),(85,'Irlanda'),(86,'Islandia'),(87,'Israel'),(88,'Italia'),(89,'Jamaica'),(90,'Japón'),(91,'Jordania'),(92,'Kazajistán'),(93,'Kenia'),(94,'Kirguistán'),(95,'Kiribati'),(96,'Kuwait'),(97,'Laos'),(98,'Letonia'),(99,'Líbano'),(100,'Liberia'),(101,'Libia'),(102,'Liechtenstein'),(103,'Lituania'),(104,'Luxemburgo'),(105,'Macedonia del Norte'),(106,'Madagascar'),(107,'Malasia'),(108,'Malaui'),(109,'Maldivas'),(110,'Malí'),(111,'Malta'),(112,'Marruecos'),(113,'Mauricio'),(114,'Mauritania'),(115,'México'),(116,'Micronesia'),(117,'Moldavia'),(118,'Mónaco'),(119,'Mongolia'),(120,'Montenegro'),(121,'Mozambique'),(122,'Namibia'),(123,'Nauru'),(124,'Nepal'),(125,'Nicaragua'),(126,'Níger'),(127,'Nigeria'),(128,'Noruega'),(129,'Nueva Zelanda'),(130,'Omán'),(131,'Pakistán'),(132,'Palaos'),(133,'Palestina'),(134,'Panamá'),(135,'Papúa Nueva Guinea'),(136,'Paraguay'),(137,'Perú'),(138,'Polonia'),(139,'Portugal'),(140,'Reino Unido'),(141,'República Centroafricana'),(142,'República Checa'),(143,'República del Congo'),(144,'República Democrática del Congo'),(145,'República Dominicana'),(146,'Ruanda'),(147,'Rumanía'),(148,'Rusia'),(149,'San Cristóbal y Nieves'),(150,'San Marino'),(151,'San Vicente y las Granadinas'),(152,'Santa Lucía'),(153,'Santo Tomé y Príncipe'),(154,'Senegal'),(155,'Serbia'),(156,'Seychelles'),(157,'Sierra Leona'),(158,'Singapur'),(159,'Siria'),(160,'Somalia'),(161,'Sri Lanka'),(162,'Sudáfrica'),(163,'Sudán'),(164,'Sudán del Sur'),(165,'Suecia'),(166,'Suiza'),(167,'Surinam'),(168,'Tailandia'),(169,'Tanzania'),(170,'Tayikistán'),(171,'Timor Oriental'),(172,'Togo'),(173,'Tonga'),(174,'Trinidad y Tobago'),(175,'Túnez'),(176,'Turkmenistán'),(177,'Turquía'),(178,'Tuvalu'),(179,'Ucrania'),(180,'Uganda'),(181,'Uruguay'),(182,'Uzbekistán'),(183,'Vanuatu'),(184,'Vaticano'),(185,'Venezuela'),(186,'Vietnam'),(187,'Yemen'),(188,'Yibuti'),(189,'Zambia'),(190,'Zimbabue');
 /*!40000 ALTER TABLE `nacionalidades` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,8 +304,8 @@ CREATE TABLE `puntos_detencion` (
   `id_punto_detencion` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `id_calle` int NOT NULL,
+  `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id_punto_detencion`),
-  UNIQUE KEY `puntos_detencion_unique` (`nombre`,`id_calle`),
   KEY `puntos_detencion_FK` (`id_calle`),
   CONSTRAINT `puntos_detencion_FK` FOREIGN KEY (`id_calle`) REFERENCES `calles` (`id_calle`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -265,7 +317,7 @@ CREATE TABLE `puntos_detencion` (
 
 LOCK TABLES `puntos_detencion` WRITE;
 /*!40000 ALTER TABLE `puntos_detencion` DISABLE KEYS */;
-INSERT INTO `puntos_detencion` VALUES (3,'Correo',5),(1,'Garita 123',1),(2,'Garita 54',1),(9,'Maxikiosco Buggy',29),(10,'Shopping',54),(11,'Viajes Condor',54);
+INSERT INTO `puntos_detencion` VALUES (1,'Garita 123',1,1),(2,'Garita 54',1,1),(3,'Correo',5,1),(9,'Maxikiosco Buggy',29,1),(10,'Shopping',54,1),(11,'Viajes Condor',54,1);
 /*!40000 ALTER TABLE `puntos_detencion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,7 +391,7 @@ CREATE TABLE `remember_tokens` (
   PRIMARY KEY (`id`),
   KEY `remember_tokens_FK` (`id_usuario`),
   CONSTRAINT `remember_tokens_FK` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -425,7 +477,7 @@ CREATE TABLE `tipos_usuarios` (
   `id_tipo_usuario` int NOT NULL AUTO_INCREMENT,
   `tipo_usuario` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   PRIMARY KEY (`id_tipo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -434,8 +486,37 @@ CREATE TABLE `tipos_usuarios` (
 
 LOCK TABLES `tipos_usuarios` WRITE;
 /*!40000 ALTER TABLE `tipos_usuarios` DISABLE KEYS */;
-INSERT INTO `tipos_usuarios` VALUES (1,'admin'),(2,'chambiador');
+INSERT INTO `tipos_usuarios` VALUES (1,'admin'),(2,'director'),(3,'operario'),(4,'invitado');
 /*!40000 ALTER TABLE `tipos_usuarios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tipos_usuarios_derechos`
+--
+
+DROP TABLE IF EXISTS `tipos_usuarios_derechos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tipos_usuarios_derechos` (
+  `id_tipo_usuario_derecho` int NOT NULL AUTO_INCREMENT,
+  `id_tipo_usuario` int NOT NULL,
+  `id_derecho` int NOT NULL,
+  PRIMARY KEY (`id_tipo_usuario_derecho`),
+  KEY `tipos_usuarios_derechos_tipos_usuarios_FK` (`id_tipo_usuario`),
+  KEY `tipos_usuarios_derechos_derechos_FK` (`id_derecho`),
+  CONSTRAINT `tipos_usuarios_derechos_derechos_FK` FOREIGN KEY (`id_derecho`) REFERENCES `derechos` (`id_derecho`),
+  CONSTRAINT `tipos_usuarios_derechos_tipos_usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipos_usuarios_derechos`
+--
+
+LOCK TABLES `tipos_usuarios_derechos` WRITE;
+/*!40000 ALTER TABLE `tipos_usuarios_derechos` DISABLE KEYS */;
+INSERT INTO `tipos_usuarios_derechos` VALUES (1,1,3),(2,2,1),(3,2,2),(4,2,4),(5,2,5),(6,2,6),(7,2,7),(8,2,8),(9,2,9),(10,3,5),(11,3,10),(12,3,6),(13,3,9),(14,4,5),(16,1,1),(17,1,2),(18,1,4),(19,1,5),(20,1,6),(21,1,3),(22,1,8),(23,1,9),(24,1,10),(25,2,10),(26,1,7),(27,1,11),(28,2,11);
+/*!40000 ALTER TABLE `tipos_usuarios_derechos` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -458,7 +539,7 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`id_usuario`),
   KEY `usuarios_FK` (`id_tipo_usuario`),
   CONSTRAINT `usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -467,7 +548,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'jonas','jonas','porro','admin','administracion','$2y$12$nyBLCPBCXiYrb1.0iFqyW.XNlVnvaGs4/duTYLP4pSceVjF.KkuqK',1,1),(2,'asdasdasd','galo2','orellana2','doctor','municipal','$2y$12$MWLzK7tAYKZikjV/JKJgKe5z0kRUoIsBsrcXL4ZWp93hDxcAvzH9u',1,1),(3,'aaca','galo2','orellana2','doctor','municipal','$2y$12$VOVYgyqLZ0C1RmCcr16hHOHPJUh99S9i2wSWDqnADUpcohIT985Wy',1,1),(4,'galo 10','galo','calderon','doctor','chapatin','$2y$12$RcirYd7Rwlk6alRpK5hZ9e9SsD4rZdHySOIxN.qkcwjk5eaI0rVRm',1,1),(5,'1231','galo','calderon','doctor','chapatin','$2y$12$yDimeUermDdZ76WRzA67nOYvVQOf3dlXzweG1XKnmNii87DdZ2Ste',2,1);
+INSERT INTO `usuarios` VALUES (1,'admin','admin','admin','admin','administracion','$2y$12$nyBLCPBCXiYrb1.0iFqyW.XNlVnvaGs4/duTYLP4pSceVjF.KkuqK',1,1),(6,'operario','operario','a','a','a','$2y$12$LOuYBbjJ.p6eV6jrVXpgUudAx3fw8LYV.t1lS/NXzUDczCYQV9k0u',3,1),(7,'invitado','Invitado','A','B','B','$2y$12$xjLfdttcELU1r/W1Cl8Hs.FW31.QJT2hbS6IYQRbexT34rpPEmqRa',4,1),(8,'director','director','A','A','A','$2y$12$nyBLCPBCXiYrb1.0iFqyW.XNlVnvaGs4/duTYLP4pSceVjF.KkuqK',2,1);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -484,4 +565,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-21 10:54:21
+-- Dump completed on 2025-08-28 11:36:19

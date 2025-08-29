@@ -16,39 +16,25 @@ class RecorridosPermisos extends Control
     // Mostrar todos los recorridos_permisos
     public function index()
     {
-        $recorridosPermisos = $this->model->getAllRecorridosPermisos();
-        $datos = [
-            'title' => 'Recorridos por Permiso',
-            'urlCrear' => URL . '/recorridosPermisos/create',
-            'columnas' => ['Permiso', 'Recorrido'],
-            'columnas_claves' => ['id_permiso', 'recorrido'],
-            'data' => $recorridosPermisos,
-            'acciones' => function($fila) {
-                $id = $fila['id_recorrido_permiso'];
-                $url = URL . '/recorridosPermisos';
-                return;
-            }
-        ];
-        $this->load_view('partials/tablaAbm', $datos);
-
-    }
-
-    // Mostrar detalles de un recorrido_permiso específico
-    public function show($id)
-    {
-        $recorridoPermiso = $this->model->getRecorridoPermiso($id);
-
-        if (!$recorridoPermiso) {
-            $this->load_view('recorridos_permisos/index', [
-                'error' => 'Recorrido-Permiso no encontrado.',
-                'recorridos_permisos' => $this->model->getAllRecorridosPermisos()
-            ]);
-            return;
+        if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+            $recorridosPermisos = $this->model->getAllRecorridosPermisos();
+            $datos = [
+                'title' => 'Recorridos por Permiso',
+                'urlCrear' => URL . '/recorridosPermisos/create',
+                'columnas' => ['Permiso', 'Recorrido'],
+                'columnas_claves' => ['id_permiso', 'recorrido'],
+                'data' => $recorridosPermisos,
+                'acciones' => function($fila) {
+                    $id = $fila['id_recorrido_permiso'];
+                    $url = URL . '/recorridosPermisos';
+                    return;
+                }
+            ];
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-
-        $this->load_view('recorridos_permisos/show', [
-            'recorrido_permiso' => $recorridoPermiso
-        ]);
     }
 
     // Formulario para crear un nuevo recorrido_permiso

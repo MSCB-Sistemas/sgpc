@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../helpers/DerechosUsuariosHelper.php';
 class Control
 {
 
@@ -75,6 +76,7 @@ class Control
                 $_SESSION['usuario_nombre'] = $usuarioData['nombre'];
                 $_SESSION['usuario_apellido'] = $usuarioData['apellido'];
                 $_SESSION['usuario_tipo'] = $usuarioData['id_tipo_usuario'];
+                $_SESSION['usuario_derechos'] = DerechosUsuariosHelper::getDerechos($usuarioData['id_tipo_usuario']);
 
                 $this->createRememberMeToken($usuarioData['id_usuario']); // renovar token
 
@@ -117,6 +119,10 @@ class Control
             header("Location: " . URL . "/auth/login");
             exit;
         }
+    }
+
+    protected function tienePermiso($permiso){
+        return (in_array($permiso,$_SESSION['usuario_derechos']));
     }
 }
 

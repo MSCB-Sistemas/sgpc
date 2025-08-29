@@ -35,7 +35,8 @@ class PuntosDetencionModel {
         FROM 
             puntos_detencion pd
         JOIN 
-            calles c ON pd.id_calle = c.id_calle;");
+            calles c ON pd.id_calle = c.id_calle
+        where pd.activo = 1;");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -103,6 +104,13 @@ class PuntosDetencionModel {
         $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_punto_detencion = :id_punto_detencion");
         $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarPuntoDetencion($id_punto_detencion): bool
+    {
+        $stmt = $this->db->prepare("UPDATE puntos_detencion SET activo = 0 WHERE id_punto_detencion = :id_punto_detencion");
+        // Ejecuta la consulta pasando los valores
+        return $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
     }
 }
 

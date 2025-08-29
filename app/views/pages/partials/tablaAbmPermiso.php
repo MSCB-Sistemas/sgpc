@@ -11,9 +11,6 @@
 <div class="container-fluid mt-5 px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><?= $datos['title'] ?></h2>
-        <?php if (!empty($datos['urlCrear'])): ?>
-            <a href="<?= $datos['urlCrear'] ?>" class="btn btn-success">+ Nuevo</a>
-        <?php endif; ?>
     </div>
     <div class="row mb-3">
     <div class="col-md-2">

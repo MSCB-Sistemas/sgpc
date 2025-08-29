@@ -15,39 +15,39 @@ class ReservasPuntos extends Control
     // Mostrar todas las reservas
     public function index()
     {
-        $reservas = $this->model->getAllReservasPuntos();
-        $datos = [
-            'title' => 'Listado de Puntos Reservados',
-            'urlCrear' => URL . '/reservaspuntos/create',
-            'columnas' => ['Fecha', 'Hotel','Punto de Detencion'.'Permiso'],
-            'columnas_claves' => ['fecha_horario','hotel','punto_detencion','id_permiso'],
-            'data' => $reservas,
-            'acciones' => function($fila) {
-                $id = $fila['id_reserva_punto'];
-                $url = URL . '/reservaspuntos';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
-                ';
-            }
-        ];    
-        $this->load_view('partials/tablaAbm', $datos);
-    }
+        if(in_array('ver abm', $_SESSION['usuario_derechos'])) {
+            $reservas = $this->model->getAllReservasPuntos();
+            $datos = [
+                'title' => 'Listado de Puntos Reservados',
+                'urlCrear' => URL . '/reservaspuntos/create',
+                'columnas' => ['Fecha', 'Hotel', 'Punto de Detencion', 'Permiso'],
+                'columnas_claves' => ['fecha_horario','hotel','punto_detencion','id_permiso'],
+                'data' => $reservas,
+                'acciones' => function($fila) {
+                    $id = $fila['id_reserva_punto'];
+                    $url = URL . '/reservaspuntos';
+                    $botones = '';
 
-    // Mostrar una reserva específica
-    public function show($id)
-    {
-        $reserva = $this->model->getReservaPunto($id);
+                    if ($this->tienePermiso('editar abm')) {
+                        $botones .= '
+                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
+                        ';
+                    }
 
-        if (!$reserva) {
-            $this->load_view('reservas_puntos/index', [
-                'error' => 'Reserva no encontrada.',
-                'reservas' => $this->model->getAllReservasPuntos()
-            ]);
-            return;
+                    if ($this->tienePermiso('borrar abm')) {
+                        $botones .= '
+                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
+                        ';
+                    }
+
+                    return $botones;
+                }
+            ];    
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-
-        $this->load_view('reservas_puntos/show', ['reserva' => $reserva]);
     }
 
     // Formulario de creación
@@ -68,23 +68,23 @@ class ReservasPuntos extends Control
     public function store()
     {
         if (isset($_POST['fecha_horario'])) {
-            $fecha_horario = trim($_POST['fecha_horario'] ?? '');
+            $fecha_horario = trim($_POST['fecha_horario']);
         } else {
             $fecha_horario = '';
         }   
 
         if(isset($_POST['id_hotel'])) {
-            $id_hotel = $_POST['id_hotel'] ?? '';
+            $id_hotel = $_POST['id_hotel'];
         } else {
             $id_hotel = '';
         }
         if(isset($_POST['id_permiso'])) {
-            $id_permiso = $_POST['id_permiso'] ?? '';
+            $id_permiso = $_POST['id_permiso'];
         } else {
             $id_permiso = '';
         }
         if(isset($_POST['id_punto_detencion'])) {
-            $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
+            $id_punto_detencion = $_POST['id_punto_detencion'];
         } else {
             $id_punto_detencion = '';
         }
@@ -130,25 +130,25 @@ class ReservasPuntos extends Control
     public function update($id)
     {
         if(isset($_POST['fecha_horario'])) {
-            $fecha_horario = trim($_POST['fecha_horario'] ?? '');
+            $fecha_horario = trim($_POST['fecha_horario']);
         } else {
             $fecha_horario = '';
         }
 
         if(isset($_POST['id_hotel'])) {
-            $id_hotel = $_POST['id_hotel'] ?? '';
+            $id_hotel = $_POST['id_hotel'];
         } else {
             $id_hotel = '';
         }
 
         if(isset($_POST['id_permiso'])) {
-            $id_permiso = $_POST['id_permiso'] ?? '';
+            $id_permiso = $_POST['id_permiso'];
         } else {
             $id_permiso = '';
         }
      
         if(isset($_POST['id_punto_detencion'])) {
-            $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
+            $id_punto_detencion = $_POST['id_punto_detencion'];
         } else {
             $id_punto_detencion = '';
         }

@@ -71,7 +71,7 @@
               </select>
             </div>
             <div class="col-2">
-              <button type="button" class="btn btn-outline-success w-100" id="btnAgregarEmpresa">+</button>
+              <button type="button" class="btn btn-success w-100" id="btnAgregarEmpresa">+</button>
             </div>
           </div>
 
