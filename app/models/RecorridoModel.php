@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /*
@@ -55,10 +56,17 @@ class RecorridoModel
      */
     public function updateRecorrido($id_recorrido, $nombre_recorrido): bool
     {
-        $stmt = $this->db->prepare("UPDATE recorridos SET nombre = :nombre 
-        WHERE id_recorrido = :id_recorrido");
+        $query = "UPDATE recorridos SET nombre = :nombre WHERE id_recorrido = :id_recorrido";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido' => $id_recorrido,'nombre' => $nombre_recorrido ];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_recorrido' => $id_recorrido,'nombre' => $nombre_recorrido ]);
+        return $stmt->execute($params);
     }
  
     /**
@@ -70,9 +78,17 @@ class RecorridoModel
      */
     public function insertRecorrido($nombre_recorrido)
     {
-        $stmt = $this->db->prepare("INSERT INTO recorridos (nombre) VALUES (:nombre)");
+        $query = "INSERT INTO recorridos (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+        $params = ['nombre' => $nombre_recorrido];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_recorrido]);
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -85,17 +101,32 @@ class RecorridoModel
      */
     public function deleteRecorrido($id_recorrido): bool
     {
-        $stmt = $this->db->prepare("DELETE from recorridos WHERE id_recorrido = :id_recorrido");
+        $query = "DELETE from recorridos WHERE id_recorrido = :id_recorrido";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido' => $id_recorrido];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido' => $id_recorrido]);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
     public function desactivarRecorrido($id_recorrido): bool
     {
-        $stmt = $this->db->prepare("UPDATE recorridos SET activo = 0 
-        WHERE id_recorrido = :id_recorrido");
+        $query = "UPDATE recorridos SET activo = 0 WHERE id_recorrido = :id_recorrido";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido' => $id_recorrido];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_recorrido' => $id_recorrido]);
+        return $stmt->execute($params);
     }
 }
