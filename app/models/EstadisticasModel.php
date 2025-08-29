@@ -180,6 +180,67 @@ class EstadisticasModel
         $sql = "
             SELECT 
                 p.*, 
+                CONCAT(c.apellido,' ',c.nombre) AS nombre_chofer,
+                e.nombre AS empresa, 
+                c.dni AS dni,
+                fecha_emision AS fecha,
+                l.nombre AS lugar,
+                pasajeros AS cantidad_pasajeros
+            FROM permisos p
+            LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
+            LEFT JOIN servicios s ON p.id_servicio = s.id_servicio
+            LEFT JOIN empresas e ON s.id_empresa = e.id_empresa
+            LEFT JOIN lugares l  ON p.id_lugar = l.id_lugar
+            WHERE p.activo = 1
+        ";
+
+        $params = [];
+
+        if (!empty($fecha_inicio)) {
+            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
+            $params[':fecha_inicio'] = $fecha_inicio;
+        }
+
+        if (!empty($fecha_fin)) {
+            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
+            $params[':fecha_fin'] = $fecha_fin;
+        }
+
+        if (!empty($dni)) {
+            $sql .= " AND c.dni = :dni";
+            $params[':dni'] = $dni;
+        }
+
+        if (!empty($tipo)) {
+            $sql .= " AND p.tipo = :tipo";
+            $params[':tipo'] = $tipo;
+        }
+
+        if (!empty($limite_por_pagina)) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
+
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        if (!empty($limite_por_pagina)) {
+            $stmt->bindValue(':limit', (int)$limite_por_pagina, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPermisosFiltradosChoferReal($fecha_inicio = null, $fecha_fin = null, $dni = null, $tipo = null, $offset = 0, $limite_por_pagina = null): array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+        $sql = "
+            SELECT 
+                p.*, 
                 CONCAT(c.apellido,' ',c.nombre) AS chofer_completo,
                 e.nombre AS empresa, 
                 l.nombre AS lugar
@@ -231,6 +292,7 @@ class EstadisticasModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
         /**
      * Obtiene la cantidad de permisos por tipo (charter, línea, otros).
@@ -382,6 +444,7 @@ class EstadisticasModel
 
         $stmt->bindValue(':fecha_inicio', $fecha_inicio);
         $stmt->bindValue(':fecha_fin', $fecha_fin);
+        $stmt->bindValue(':tipo_movimiento', $tipo_movimiento);
 
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -402,78 +465,54 @@ class EstadisticasModel
      * @return array Arreglo asociativo con los permisos encontrados.
      */
     public function getPermisosFiltrados(
-        $fecha_inicio = null,
-        $fecha_fin = null,
-        $dni = null,
-        $tipo = null,
-        $sort_col = 'fecha',
-        $sort_dir = 'ASC',
-        $limit = null,
-        $offset = 0
-    ): array {
-        // Columnas válidas para ordenar
-        $columnasValidas = ['empresa', 'fecha', 'lugar', 'tipo_movimiento', 'cantidad'];
-        $sort_col = in_array($sort_col, $columnasValidas) ? $sort_col : 'fecha';
-        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
-
-        // Consulta base con joins necesarios
-        $sql = "
-           SELECT COUNT(*) AS total
+    $fecha_inicio = null,
+    $fecha_fin = null,
+    $dni = null,
+    $tipo = null
+): int {
+    $sql = "
+        SELECT COUNT(*) AS total
         FROM permisos p
         INNER JOIN servicios s ON p.id_servicio = s.id_servicio
         INNER JOIN empresas e ON s.id_empresa = e.id_empresa
         INNER JOIN lugares l ON p.id_lugar = l.id_lugar
         LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
         WHERE p.activo = 1
-        ";
+    ";
 
-        // Parametros de filtrado
-        $params = [];
+    $params = [];
 
-        if (!empty($fecha_inicio)) {
-            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
-            $params[':fecha_inicio'] = $fecha_inicio;
-        }
-
-        if (!empty($fecha_fin)) {
-            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
-            $params[':fecha_fin'] = $fecha_fin;
-        }
-
-        if (!empty($dni)) {
-            $sql .= " AND c.dni = :dni";
-            $params[':dni'] = $dni;
-        }
-
-        if (!empty($tipo)) {
-            $sql .= " AND p.tipo = :tipo";
-            $params[':tipo'] = $tipo;
-        }
-
-        // Ordenamiento
-        $sql .= " ORDER BY $sort_col $sort_dir";
-
-        // Paginación (si se usa)
-        if ($limit !== null && $offset !== null) {
-            $sql .= " LIMIT :limit OFFSET :offset";
-        }
-
-        // Preparar consulta
-        $stmt = $this->db->prepare($sql);
-
-        // Asignar parámetros dinámicamente
-        foreach ($params as $key => &$value) {
-            $stmt->bindParam($key, $value);
-        }
-
-        // Asignar paginación si aplica
-        if ($limit !== null && $offset !== null) {
-            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        }
-
-        // Ejecutar y devolver resultados
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($fecha_inicio)) {
+        $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
+        $params[':fecha_inicio'] = $fecha_inicio;
     }
+
+    if (!empty($fecha_fin)) {
+        $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
+        $params[':fecha_fin'] = $fecha_fin;
+    }
+
+    if (!empty($dni)) {
+        $sql .= " AND c.dni = :dni";
+        $params[':dni'] = $dni;
+    }
+
+    if (!empty($tipo)) {
+        $sql .= " AND p.tipo = :tipo";
+        $params[':tipo'] = $tipo;
+    }
+
+    $stmt = $this->db->prepare($sql);
+
+    foreach ($params as $key => &$value) {
+        $stmt->bindParam($key, $value);
+    }
+
+    $stmt->execute();
+
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return (int)$resultado['total'];
+}
+
 }

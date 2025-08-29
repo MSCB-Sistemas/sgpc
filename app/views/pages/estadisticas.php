@@ -244,60 +244,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Resumen</a>
 </ul>
 
-<div class="tab-content mt-4">
-    <!-- TAB DATOS -->
-    <div class="tab-pane fade <?php if ($tabActivo === 'tablas') { echo 'show active'; } ?>"
-     id="tablas"
-     role="tabpanel"
-     aria-labelledby="tablas-tab">
-        <!-- Formulario de filtros -->
-        <form method="GET" action="?tab=tablas" id="form-filtro-tablas" class="row g-3 mb-4 justify-content-center">
-            <input type="hidden" name="tab" value="tablas">
-            <div class="col-auto">
-                <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?= $valor_fecha_inicio ?>">
-            </div>
+<div class="container mt-5">
+    <h2><?= $datos['title'] ?></h2>
 
-            <div class="col-auto">
-                <label for="fecha_fin" class="form-label">Fecha Fin</label>
-                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?= $valor_fecha_fin ?>">
-            </div>
+    <?php if (!empty($datos['errores'])): ?>
+        <div class="alert alert-danger">
+            <ul>
+                <?php foreach ($datos['errores'] as $e): ?>
+                    <li><?= htmlspecialchars($e) ?></li>
+                <?php endforeach ?>
+            </ul>
+        </div>
+    <?php endif; ?>
 
-            <div class="col-auto">
-                <label for="buscar_por" class="form-label">Buscar por</label>
-                <select name="buscar_por" id="buscar_por" class="form-select" onchange="this.form.submit()">
-                    <option value="">-- Seleccionar --</option>
-                    <option value="chofer" <?php if ($valor_buscar_por === 'chofer') { echo 'selected'; } ?>>Chofer</option>
-                    <option value="tipo" <?php if ($valor_buscar_por === 'tipo') { echo 'selected'; } ?>>Tipo</option>
-                </select>
-            </div>
+    <form action="<?= $datos['action'] ?>" method="POST">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" 
+                   value="<?php if (!empty($datos['values']['nombre'])){echo htmlspecialchars($datos['values']['nombre']);}?>" required>
+        </div>
 
-            <!-- Campo DNI solo si buscar_por = chofer -->
-            <div class="col-auto" id="campo_dni" style="<?php if ($valor_buscar_por === 'chofer') { echo 'display:block;'; } else { echo 'display:none;'; } ?>">
-                <label for="dni" class="form-label">DNI del Chofer</label>
-                <input type="text" class="form-control" name="dni" id="dni" value="<?= $valor_dni ?>">
-            </div>
+        <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="apellido" name="apellido" 
+                   value="<?php if (!empty($datos['values']['apellido'])){echo htmlspecialchars($datos['values']['apellido']);}?>" required>
+        </div>
 
-            <!-- Campo Tipo visible si buscar_por es chofer o tipo -->
-            <div class="col-auto" id="campo_tipo" style="<?php if ($valor_buscar_por === 'chofer' || $valor_buscar_por === 'tipo') { echo 'display:block;'; } else { echo 'display:none;'; } ?>">
-                <label for="tipo" class="form-label">Tipo de Servicio</label>
-                <select name="tipo" id="tipo" class="form-select">
-                    <option value="" <?php if ($valor_tipo === '') { echo 'selected'; } ?>>-- Todos --</option>
-                    <option value="linea" <?php if ($valor_tipo === 'linea') { echo 'selected'; } ?>>Línea</option>
-                    <option value="charter" <?php if ($valor_tipo === 'charter') { echo 'selected'; } ?>>Charter</option>
-                    <option value="otros" <?php if ($valor_tipo === 'otros') { echo 'selected'; } ?>>Otros</option>
-                </select>
-            </div>
+        <div class="mb-3">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni" name="dni" 
+                   value="<?php if (!empty($datos['values']['dni'])){echo htmlspecialchars($datos['values']['dni']);}?>" required>
+        </div>
 
-            <div class="col-auto align-self-end">
-                <button type="submit" name="filtrar" class="btn btn-primary">Filtrar</button>
-            </div>
-        </form>
+        <div class="mb-3">
+            <label for="nacionalidad" class="form-label">Nacionalidad</label>
+            <select class="form-select" id="nacionalidad" name="nacionalidad" required>
+                <option value="">Seleccione...</option>
+                <?php foreach ($datos['nacionalidades'] as $n): ?>
+                    <option value="<?= $n['id_nacionalidad'] ?>"
+                        <?php if (!empty($datos['values']['nacionalidad']) && $datos['values']['nacionalidad'] == $n['id_nacionalidad']){echo 'selected';} else {echo '';}?>>
+                        <?= htmlspecialchars($n['nacionalidad']) ?>
+                    </option>
+                <?php endforeach ?>
+            </select>
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar</button>
+            <a href="<?= URL ?>/calle" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar</a>
+        </div>
+    </form>
+</div>
 
-        <!-- Error -->
-        <?php if ($error): ?>
-            <div class="alert alert-warning text-center"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
 
         <!-- Tabla -->
        <!-- Cargar bootstrap-table -->
@@ -349,7 +348,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="2" class="text-center text-muted">No se encontraron resultados.</td>
+                        <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
@@ -434,9 +433,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-3 mb-3">
                 <div class="card text-white" style="background: linear-gradient(135deg,#6a11cb,#2575fc); height:185px;">
                     <div class="card-body text-center">
-                        <h3>📅</h3>
-                        <h5>Promedio de reservas</h5>
-                        <h2><?php if (!empty($datos['promedio_reservas'])){echo count($datos['promedio_reservas']);} else {echo 0;}?></h2>
+                        <h3>🌎</h3>
+                        <h5>Destinos más Frecuentes</h5>
+                        <h5><?php if (!empty($datos['arribo_mas_usado'][0]['nombre'])){echo $datos['arribo_mas_usado'][0]['nombre'];} else {echo 'N/A';} ?></h5>
                     </div>
                 </div>
             </div>
