@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -66,9 +67,19 @@ class ReservasPuntosModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updateReservaPunto($id_reserva_punto, $fecha_horario, $id_hotel, $id_permiso, $id_punto_detencion) : bool {
-        $stmt = $this->db->prepare("UPDATE reservas_puntos SET fecha_horario = :fecha_horario, id_hotel = :id_hotel, id_permiso = :id_permiso, id_punto_detencion = :id_punto_detencion WHERE id_reserva_punto = :id_reserva_punto");
+        $query = "UPDATE reservas_puntos SET fecha_horario = :fecha_horario, id_hotel = :id_hotel, id_permiso = :id_permiso, id_punto_detencion = :id_punto_detencion 
+        WHERE id_reserva_punto = :id_reserva_punto";
         
-        return $stmt->execute(['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion]);
+        $stmt = $this->db->prepare($query);
+        $params = ['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        
+        return $stmt->execute($params);
     }
 
     /**
@@ -81,8 +92,17 @@ class ReservasPuntosModel {
      * @return int|string ID de la reserva de punto insertada.
      */
     public function insertReservaPunto($fecha_horario, $id_hotel, $id_permiso, $id_punto_detencion) {
-        $stmt = $this->db->prepare("INSERT INTO reservas_puntos (fecha_horario, id_hotel, id_permiso, id_punto_detencion) VALUES (:fecha_horario, :id_hotel, :id_permiso, :id_punto_detencion)");
-        $stmt->execute(['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion]);
+        $query = "INSERT INTO reservas_puntos (fecha_horario, id_hotel, id_permiso, id_punto_detencion) VALUES (:fecha_horario, :id_hotel, :id_permiso, :id_punto_detencion)";
+        $stmt = $this->db->prepare($query);
+        $params = ['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -93,8 +113,17 @@ class ReservasPuntosModel {
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
     public function deleteReservaPunto($id_reserva_punto) : bool {
-        $stmt = $this->db->prepare("DELETE FROM reservas_puntos WHERE id_reserva_punto = :id_reserva_punto");
-        $stmt->execute(['id_reserva_punto' => $id_reserva_punto]);
+        $query = "DELETE FROM reservas_puntos WHERE id_reserva_punto = :id_reserva_punto";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_reserva_punto' => $id_reserva_punto];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
@@ -125,6 +154,18 @@ class ReservasPuntosModel {
         $stmt->execute([
             'id_punto' => $id_punto,
             'fecha' => $fecha
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getReservasPuntosByHotel($id_hotel): array {
+        $stmt = $this->db->prepare("
+            SELECT TIME(fecha_horario) as hora
+            FROM reservas_puntos
+            WHERE id_hotel = :id_hotel"
+        );
+        $stmt->execute([
+            'id_hotel' => $id_hotel,
         ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

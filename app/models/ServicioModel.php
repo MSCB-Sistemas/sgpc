@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -70,14 +71,21 @@ class ServicioModel
      */
     public function insertServicio($id_empresa, $interno, $dominio): bool|string
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO servicios (id_empresa, interno, dominio) VALUES (:id_empresa, :interno, :dominio)"
-        );
-        $stmt->execute([
+        $query = "INSERT INTO servicios (id_empresa, interno, dominio) VALUES (:id_empresa, :interno, :dominio)";
+        $stmt = $this->db->prepare($query);
+        $params = [
             'id_empresa' => $id_empresa,
             'interno' => $interno,
             'dominio' => $dominio
-        ]);
+        ];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -92,18 +100,27 @@ class ServicioModel
      */
     public function updateServicio($id, $id_empresa, $interno, $dominio): bool|string
     {
-        $stmt = $this->db->prepare(
+        $query = $this->db->prepare(
             "UPDATE servicios 
              SET id_empresa = :id_empresa, interno = :interno, dominio = :dominio 
              WHERE id_servicio = :id"
         );
         
-        return $stmt->execute([
+        $stmt = $this->db->prepare($query);
+        $params = [
             'id' => $id,
             'id_empresa' => $id_empresa,
             'interno' => $interno,
             'dominio' => $dominio
-        ]);
+        ];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        
+        return $stmt->execute($params);
     }
 
     /**
@@ -114,8 +131,17 @@ class ServicioModel
      */
     public function deleteServicio($id): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM servicios WHERE id_servicio = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "DELETE FROM servicios WHERE id_servicio = :id";
+        
+        $stmt = $this->db->prepare($query);
+        $params = ['id' => $id];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 }

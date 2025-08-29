@@ -33,6 +33,7 @@ class Empresa extends Control
                     if ($this->tienePermiso('borrar abm')){
                         $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>';
                     }
+                    return $botones;
                 },
                 'errores' => $errores
             ];

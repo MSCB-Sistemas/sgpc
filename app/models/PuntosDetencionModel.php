@@ -84,8 +84,17 @@ class PuntosDetencionModel {
      * @return int|string ID del punto de detención insertado.
      */
     public function insertPuntoDetencion($nombre, $id_calle) {
-        $stmt = $this->db->prepare("INSERT INTO puntos_detencion (nombre, id_calle) VALUES (:nombre, :id_calle)");
-        $stmt->execute(['nombre' => $nombre, 'id_calle' => $id_calle]);
+        
+        $query = "INSERT INTO puntos_detencion (nombre, id_calle) VALUES (:nombre, :id_calle)";
+        $stmt = $this->db->prepare($query);
+        $params = ['nombre' => $nombre, 'id_calle' => $id_calle];
+        $stmt->execute($params);
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         return $this->db->lastInsertId();
     }
 
@@ -96,8 +105,16 @@ class PuntosDetencionModel {
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
     public function deletePuntoDetencion($id_punto_detencion) : bool {
-        $stmt = $this->db->prepare("DELETE FROM puntos_detencion WHERE id_punto_detencion = :id_punto_detencion");
-        $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
+        $query = "DELETE FROM puntos_detencion WHERE id_punto_detencion = :id_punto_detencion";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_punto_detencion' => $id_punto_detencion];
+        $stmt->execute($params);
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         return $stmt->rowCount() > 0;
     }
 
@@ -117,9 +134,16 @@ class PuntosDetencionModel {
 
     public function desactivarPuntoDetencion($id_punto_detencion): bool
     {
-        $stmt = $this->db->prepare("UPDATE puntos_detencion SET activo = 0 WHERE id_punto_detencion = :id_punto_detencion");
+        $query = "UPDATE puntos_detencion SET activo = 0 WHERE id_punto_detencion = :id_punto_detencion";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_punto_detencion' => $id_punto_detencion];
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
+        return $stmt->execute($params);
     }
 }
 

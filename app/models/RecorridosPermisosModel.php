@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /*
@@ -63,12 +64,18 @@ class RecorridosPermisosModel
      */ 
     public function updateRecorrido($id_recorrido_permiso, $id_permiso, $id_recorrido): bool
     {
-        $stmt = $this->db->prepare("UPDATE recorridos SET id_recorrido = :id_recorrido, id_permiso =
-        :id_permiso WHERE id_recorrido_permiso = :id_recorrido_permiso");
-        // Ejecuta la consulta pasando los valores
+        $query = "UPDATE recorridos SET id_recorrido = :id_recorrido, id_permiso = :id_permiso WHERE id_recorrido_permiso = :id_recorrido_permiso";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido_permiso' => $id_recorrido_permiso,'id_permiso' => $id_permiso, 'id_recorrido' => $id_recorrido];
         
-        return $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso,'id_permiso' => $id_permiso, 
-        'id_recorrido' => $id_recorrido]);
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute($params);
+        return $stmt->execute();
     }
  
     /**
@@ -81,9 +88,17 @@ class RecorridosPermisosModel
      */
     public function insertRecorrido($id_permiso, $id_recorrido)
     {
-        $stmt = $this->db->prepare("INSERT INTO recorridos_permisos (id_permiso,id_recorrido) VALUES (:id_permiso,:id_recorrido)");
+        $query = "INSERT INTO recorridos_permisos (id_permiso,id_recorrido) VALUES (:id_permiso,:id_recorrido)";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_permiso' => $id_permiso,'id_recorrido' => $id_recorrido];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_permiso' => $id_permiso,'id_recorrido' => $id_recorrido]);
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -96,9 +111,17 @@ class RecorridosPermisosModel
      */
     public function deleteRecorrido($id_recorrido_permiso): bool
     {
-        $stmt = $this->db->prepare("DELETE from recorridos_permisos WHERE id_recorrido_permiso = :id_recorrido_permiso");
+        $query = "DELETE from recorridos_permisos WHERE id_recorrido_permiso = :id_recorrido_permiso";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido_permiso' => $id_recorrido_permiso];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso]);
+        $stmt->execute($params);
         return $stmt->rowCount() > 0;
     }
 
