@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -56,8 +57,18 @@ class ChoferesModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updateChofer($id_chofer, $dni, $nombre, $apellido, $nacionalidad) : bool {
-        $stmt = $this->db->prepare("UPDATE choferes SET dni = :dni, nombre = :nombre, apellido = :apellido, id_nacionalidad = :nacionalidad WHERE id_chofer = :id_chofer");
-        return $stmt->execute(['id_chofer' => $id_chofer, 'dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad]);
+        $query = "UPDATE choferes SET dni = :dni, nombre = :nombre, apellido = :apellido, id_nacionalidad = :nacionalidad WHERE id_chofer = :id_chofer";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_chofer' => $id_chofer, 'dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 
     /**
@@ -70,8 +81,18 @@ class ChoferesModel {
      * @return int|string ID del chofer insertado.
      */
     public function insertChofer($dni, $nombre, $apellido, $nacionalidad) {
-        $stmt = $this->db->prepare("INSERT INTO choferes (dni, nombre, apellido, id_nacionalidad) VALUES (:dni, :nombre, :apellido, :nacionalidad)");
-        $stmt->execute(['dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad]);
+        $query = "INSERT INTO choferes (dni, nombre, apellido, id_nacionalidad) VALUES (:dni, :nombre, :apellido, :nacionalidad)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $this->db->lastInsertId();
     }
 
@@ -82,8 +103,18 @@ class ChoferesModel {
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
     public function deleteChofer($id_chofer) : bool {
-        $stmt = $this->db->prepare("DELETE FROM choferes WHERE id_chofer = :id_chofer");
-        $stmt->execute(['id_chofer' => $id_chofer]);
+        $query = "DELETE FROM choferes WHERE id_chofer = :id_chofer";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_chofer' => $id_chofer];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 }

@@ -56,7 +56,7 @@ class HotelesModel {
      */
     public function updateHotel($id_hotel, $nombre_hotel, $direccion) : bool {
 
-        $query = ("UPDATE hoteles SET nombre = :nombre, direccion = :direccion WHERE id_hotel = :id_hotel");
+        $query = "UPDATE hoteles SET nombre = :nombre, direccion = :direccion WHERE id_hotel = :id_hotel";
         $stmt = $this->db->prepare($query);
 
         $params = ['id_hotel' => $id_hotel, 'nombre' => $nombre_hotel, 'direccion' => $direccion];
@@ -78,8 +78,19 @@ class HotelesModel {
      * @return int|string ID del hotel insertado.
      */
     public function insertHotel($nombre_hotel, $direccion) {
-        $stmt = $this->db->prepare("INSERT INTO hoteles (nombre, direccion) VALUES (:nombre, :direccion)");
-        $stmt->execute(['nombre' => $nombre_hotel, 'direccion' => $direccion]);
+
+        $query = "INSERT INTO hoteles (nombre, direccion) VALUES (:nombre, :direccion)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_hotel, 'direccion' => $direccion];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $this->db->lastInsertId();
     }
 
@@ -90,24 +101,43 @@ class HotelesModel {
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
     public function deleteHotel($id_hotel) : bool {
-        $stmt = $this->db->prepare("DELETE FROM hoteles WHERE id_hotel = :id_hotel");
-        $stmt->execute(['id_hotel' => $id_hotel]);
+
+        $query = "DELETE FROM hoteles WHERE id_hotel = :id_hotel";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_hotel' => $id_hotel];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 
     public function getReservasByHotel($id_hotel): array
     {
         $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_hotel = :id_hotel");
-        // Ejecuta la consulta pasando los valores
         $stmt->execute(['id_hotel' => $id_hotel]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function desactivarHotel($id_hotel): bool
     {
-        $stmt = $this->db->prepare("UPDATE hoteles SET activo = 0 WHERE id_hotel = :id_hotel");
-        // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_hotel' => $id_hotel]);
+        $query = "UPDATE hoteles SET activo = 0 WHERE id_hotel = :id_hotel";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_hotel' => $id_hotel];
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 }
 

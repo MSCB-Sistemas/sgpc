@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /*    Clase para manejar las operaciones sobre la tabla lugares en la base de datos.
@@ -58,11 +59,18 @@ class LugarModel
     */
     public function updateLugar($id_lugar, $nombre_lugar): bool
     {
-        $stmt = $this->db->prepare("UPDATE lugares SET nombre = :nombre 
-        WHERE id_lugar = :id_lugar");
-        // Ejecuta la consulta pasando los valores
+        $query = "UPDATE lugares SET nombre = :nombre WHERE id_lugar = :id_lugar";
+        $stmt = $this->db->prepare($query);
         
-        return $stmt->execute(['id_lugar' => $id_lugar,'nombre' => $nombre_lugar]);
+        $params = ['id_lugar' => $id_lugar,'nombre' => $nombre_lugar];
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
     /** 
      * Funcion que ejecuta una query para insertar un nuevo lugar.
@@ -73,9 +81,18 @@ class LugarModel
     */
     public function insertLugar($nombre_lugar)
     {
-        $stmt = $this->db->prepare("INSERT INTO lugares (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_lugar]);
+        $query = "INSERT INTO lugares (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_lugar];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $this->db->lastInsertId();
     }
 
@@ -89,9 +106,18 @@ class LugarModel
     */
     public function deleteLugar($id_lugar): bool
     {
-        $stmt = $this->db->prepare("DELETE from lugares WHERE id_lugar = :id_lugar");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_lugar' => $id_lugar]);
+        $query = "DELETE from lugares WHERE id_lugar = :id_lugar";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_lugar' => $id_lugar];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 
@@ -104,9 +130,18 @@ class LugarModel
 
     public function desactivarLugar($id_lugar): bool
     {
-        $stmt = $this->db->prepare("UPDATE lugares SET activo = 0 WHERE id_lugar = :id_lugar");
-        // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_lugar' => $id_lugar]);
+        $query = "UPDATE lugares SET activo = 0 WHERE id_lugar = :id_lugar";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_lugar' => $id_lugar];
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 
     public function getPermisosByLugar($id_lugar): array
