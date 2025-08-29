@@ -27,7 +27,7 @@
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
             <button type="submit" class="btn btn-success">
                 <i class="bi bi-save"></i> Guardar</button>
-            <a href="<?= URL ?>/lugares" class="btn btn-secondary">
+            <a href="<?= URL ?>/lugar" class="btn btn-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar</a>
         </div>
     </form>
