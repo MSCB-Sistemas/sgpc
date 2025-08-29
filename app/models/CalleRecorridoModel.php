@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -60,13 +61,18 @@ class CalleRecorridoModel
      */
     public function insertCalleRecorrido($id_recorrido, $id_calle): bool|string
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO calles_recorridos (id_recorrido, id_calle) VALUES (:id_recorrido, :id_calle)"
+        $query = "INSERT INTO calles_recorridos (id_recorrido, id_calle) VALUES (:id_recorrido, :id_calle)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_recorrido' => $id_recorrido, 'id_calle' => $id_calle];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
         );
-        $stmt->execute([
-            'id_recorrido' => $id_recorrido,
-            'id_calle' => $id_calle
-        ]);
+
         return $this->db->lastInsertId();
     }
 
@@ -80,16 +86,22 @@ class CalleRecorridoModel
      */
     public function updateCalleRecorrido($id, $id_recorrido, $id_calle): bool|string
     {
-        $stmt = $this->db->prepare(
-            "UPDATE calles_recorridos 
-             SET id_recorrido = :id_recorrido, id_calle = :id_calle 
-             WHERE id_calle_recorrido = :id"
-        );
-        return $stmt->execute([
+        $query = "UPDATE calles_recorridos SET id_recorrido = :id_recorrido, id_calle = :id_calle WHERE id_calle_recorrido = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = [
             'id' => $id,
             'id_recorrido' => $id_recorrido,
             'id_calle' => $id_calle
-        ]);
+        ];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 
     /**
@@ -100,8 +112,18 @@ class CalleRecorridoModel
      */
     public function deleteCalleRecorrido($id): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM calles_recorridos WHERE id_calle_recorrido = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "DELETE FROM calles_recorridos WHERE id_calle_recorrido = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id' => $id];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
     
@@ -141,8 +163,18 @@ class CalleRecorridoModel
      */
     public function deleteByRecorrido($id): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM calles_recorridos WHERE id_recorrido = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "DELETE FROM calles_recorridos WHERE id_recorrido = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id' => $id];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['ususario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 }
