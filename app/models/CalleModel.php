@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /*
@@ -59,11 +60,20 @@ class CalleModel
     */
     public function updateCalle($id_calle, $nombre_calle): bool
     {
-        $stmt = $this->db->prepare("UPDATE calles SET nombre = :nombre 
-        WHERE id_calle = :id_calle");
-        // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_calle' => $id_calle,'nombre' => $nombre_calle ]);
+        $query = "UPDATE calles SET nombre = :nombre WHERE id_calle = :id_calle";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_calle' => $id_calle,'nombre' => $nombre_calle ];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute();
     }
+
     /** 
         * Funcion que ejecuta una query para insertar una nueva calle en la base de datos.
         * PRE: Recibe el nombre de la nueva calle a ser almacenada en la base de datos.
@@ -73,9 +83,18 @@ class CalleModel
     */
     public function insertCalle($nombre_calle)
     {
-        $stmt = $this->db->prepare("INSERT INTO calles (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_calle]);
+        $query = "INSERT INTO calles (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_calle];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $this->db->lastInsertId();
     }
 
@@ -89,9 +108,18 @@ class CalleModel
     */
     public function deleteCalle($id_calle): bool
     {
-        $stmt = $this->db->prepare("DELETE from calles WHERE id_calle = :id_calle");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_calle' => $id_calle]);
+        $query = "DELETE from calles WHERE id_calle = :id_calle";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_calle' => $id_calle];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 

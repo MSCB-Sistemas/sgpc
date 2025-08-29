@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /*
@@ -7,10 +8,8 @@ require_once 'Database.php';
 */
 class EmpresaModel
 {
-    // Instancia de conexion la base de datos.
     private PDO $db;
 
-    // Establece la conexion la base de datos.
     public function __construct()
     {
         $this->db = Database::connect();
@@ -59,10 +58,18 @@ class EmpresaModel
     */
     public function updateEmpresa($id_empresa, $nombre_empresa): bool 
     {
-        $stmt = $this->db->prepare("UPDATE empresas SET nombre = :nombre 
-        WHERE id_empresa = :id_empresa");
-        // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_empresa' => $id_empresa,'nombre' => $nombre_empresa]);
+        $query = "UPDATE empresas SET nombre = :nombre WHERE id_empresa = :id_empresa";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_empresa' => $id_empresa,'nombre' => $nombre_empresa];
+
+        auditoriaHelper::log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 
     /** 
@@ -74,9 +81,18 @@ class EmpresaModel
     */
     public function insertEmpresa($nombre_empresa)
     {
-        $stmt = $this->db->prepare("INSERT INTO empresas (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_empresa]);
+        $query = "INSERT INTO empresas (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_empresa];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        ); 
+
         return $this->db->lastInsertId();
     }
 
@@ -89,9 +105,18 @@ class EmpresaModel
     */
     public function deleteEmpresa($id_empresa): bool
     {
-        $stmt = $this->db->prepare("DELETE from empresas WHERE id_empresa = :id_empresa");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_empresa' => $id_empresa]);
+        $query = "DELETE from empresas WHERE id_empresa = :id_empresa";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_empresa' => $id_empresa];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 
@@ -100,15 +125,23 @@ class EmpresaModel
         $stmt = $this->db->prepare("SELECT p.* FROM permisos p
                                     INNER JOIN servicios s ON p.id_servicio = s.id_servicio
                                     WHERE s.id_empresa = :id_empresa");
-        // Ejecuta la consulta pasando los valores
         $stmt->execute(['id_empresa' => $id_empresa]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function desactivarEmpresa($id_empresa): bool
     {
-        $stmt = $this->db->prepare("UPDATE empresas SET activo = 0 WHERE id_empresa = :id_empresa");
-        // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_empresa' => $id_empresa]);
+        $query = "UPDATE empresas SET activo = 0 WHERE id_empresa = :id_empresa";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_empresa' => $id_empresa];
+
+        auditoriaHelper::Log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 }

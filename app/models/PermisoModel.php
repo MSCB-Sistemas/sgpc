@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -158,10 +159,11 @@ class PermisoModel
      */
     public function insertPermiso($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion,$pasajeros,$id_lugar): bool|string
     {
-        $stmt = $this->db->prepare("INSERT INTO sgpc.permisos
-            (id_chofer, id_usuario, id_servicio, tipo, fecha_reserva, fecha_emision, arribo_salida, observacion, pasajeros, id_lugar)
-            VALUES (:id_chofer, :id_usuario, :id_servicio, :tipo, :fecha_reserva, :fecha_emision, :arribo_salida, :observacion, :pasajeros, :id_lugar)");
-        $stmt->execute([
+        $query = "INSERT INTO sgpc.permisos (id_chofer, id_usuario, id_servicio, tipo, fecha_reserva, fecha_emision, arribo_salida, observacion, pasajeros, id_lugar)
+                VALUES (:id_chofer, :id_usuario, :id_servicio, :tipo, :fecha_reserva, :fecha_emision, :arribo_salida, :observacion, :pasajeros, :id_lugar)";
+        $stmt = $this->db->prepare($query);
+
+        $params = [
             'id_chofer' => $id_chofer,
             'id_usuario' => $id_usuario,
             'id_servicio' => $id_servicio,
@@ -172,7 +174,15 @@ class PermisoModel
             'observacion' => $observacion,
             'pasajeros'=> $pasajeros,
             'id_lugar'=> $id_lugar
-        ]);
+        ];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $this->db->lastInsertId();
     }
 
@@ -193,13 +203,14 @@ class PermisoModel
      */
     public function updatePermiso($id, $id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion, $activo): bool|string
     {
-        $stmt = $this->db->prepare("UPDATE sgpc.permisos
-            SET id_chofer = :id_chofer, id_usuario = :id_usuario, id_servicio = :id_servicio, tipo = :tipo,
-                fecha_reserva = :fecha_reserva, fecha_emision = :fecha_emision, arribo_salida = :arribo_salida,
-                observacion = :observacion, activo = :activo
-            WHERE id_permiso = :id");
+        $query = "UPDATE sgpc.permisos
+                    SET id_chofer = :id_chofer, id_usuario = :id_usuario, id_servicio = :id_servicio, tipo = :tipo,
+                    fecha_reserva = :fecha_reserva, fecha_emision = :fecha_emision, arribo_salida = :arribo_salida,
+                    observacion = :observacion, activo = :activo
+                    WHERE id_permiso = :id";
+        $stmt = $this->db->prepare($query);
         
-        return $stmt->execute([
+        $params = [
             'id' => $id,
             'id_chofer' => $id_chofer,
             'id_usuario' => $id_usuario,
@@ -210,7 +221,15 @@ class PermisoModel
             'arribo_salida' => $arribo_salida,
             'observacion' => $observacion,
             'activo' => $activo
-        ]);
+        ];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        return $stmt->execute($params);
     }
 
     /**
@@ -221,8 +240,18 @@ class PermisoModel
      */
     public function deletePermiso($id): bool
     {
-        $stmt = $this->db->prepare("UPDATE permisos SET activo = 0 WHERE id_permiso = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "UPDATE permisos SET activo = 0 WHERE id_permiso = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id' => $id];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
         return $stmt->rowCount() > 0;
     }
 

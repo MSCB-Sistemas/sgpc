@@ -1,5 +1,5 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/../models/Database.php';
 
 class auditoriaHelper {
     public static function log($id_usuario, $query, $param): bool {

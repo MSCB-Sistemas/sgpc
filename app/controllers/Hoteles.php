@@ -33,6 +33,8 @@ class Hoteles extends Control
                     if ($this->tienePermiso('borrar abm')){
                         $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este Hotel?\');">Eliminar</a>';
                     }
+
+                    return $botones;
                 }
                 ,'errores' => $errores
             ];
