@@ -86,13 +86,11 @@ class Estadisticas extends Control
                 $total_paginas    = max(1, ceil($total_resultados / $limite_por_pagina));
 
                 // Obtener movimientos filtrados
-                $movimientos = $this->model->getPermisosFiltrados(
+                $movimientos = $this->model->getPermisosFiltradosChofer(
                     $fecha_inicio,
                     $fecha_fin,
                     $dni,
                     $tipo,
-                    $sort_col,
-                    $sort_dir,
                     $limite_por_pagina,
                     $offset
                 );
@@ -123,22 +121,5 @@ class Estadisticas extends Control
         $this->load_view('estadisticas', $datos);
     }
 
-    public function resumenCardsAjax() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $valor_fecha_inicio_resumen = $_POST['fecha_inicio_resumen'];
-            $valor_fecha_fin_resumen    = $_POST['fecha_fin_resumen'];
-
-            $datos = [
-                'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen), 
-                'hoteles_usados' => $this->model->getHotelesMasUsados($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen),
-                'punto_mas_usado' => $this->model->getPuntosMasUsados($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen),
-                'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($valor_fecha_inicio_resumen, $valor_fecha_fin_resumen)
-            ];
-
-            
-            $this->load_view('resumen', $datos, false); // el tercer parámetro en false para que no cargue el layout
-        }
     }
-
-
 }

@@ -181,24 +181,78 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
     $promedio_por_tipo = [];
 }
 
+$tabActivo = 'tablas'; // valor por defecto
+
+if (isset($_GET['tab'])) {
+    if ($_GET['tab'] === 'resumen') {
+        $tabActivo = 'resumen';
+    } else if ($_GET['tab'] === 'tablas') {
+        $tabActivo = 'tablas';
+    }
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Asegurar que mantenemos la pestaña activa desde el action
+    if (isset($_GET['tab'])) {
+        $tabActivo = $_GET['tab'];
+    }
+
+    if ($tabActivo === 'tablas') {
+        if (isset($_POST['fecha_inicio'])) $fecha_inicio = $_POST['fecha_inicio'];
+        if (isset($_POST['fecha_fin'])) $fecha_fin = $_POST['fecha_fin'];
+        if (isset($_POST['buscar_por'])) $buscar_por = $_POST['buscar_por'];
+        if (isset($_POST['dni'])) $dni = $_POST['dni'];
+        if (isset($_POST['tipo'])) $tipo = $_POST['tipo'];
+
+        // Asegurar que esos valores se pasen a las variables para usar en el formulario
+        $valor_fecha_inicio = $fecha_inicio;
+        $valor_fecha_fin = $fecha_fin;
+        $valor_buscar_por = $buscar_por;
+        $valor_dni = $dni;
+        $valor_tipo = $tipo;
+    }
+
+    if ($tabActivo === 'resumen') {
+        if (isset($_POST['fecha_inicio_resumen'])) $valor_fecha_inicio_resumen = $_POST['fecha_inicio_resumen'];
+        if (isset($_POST['fecha_fin_resumen'])) $valor_fecha_fin_resumen = $_POST['fecha_fin_resumen'];
+    }
+}
+
 ?>
 
 <link rel="stylesheet" href="<?= URL . '/public/css/estadisticas.css' ?>">
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-        <button class="nav-link active" id="tablas-tab" data-bs-toggle="tab" data-bs-target="#tablas" type="button" role="tab">Datos</button>
+        <a class="nav-link <?php if ($tabActivo === 'tablas') { echo 'active'; } ?>" 
+            id="tablas-tab" 
+            data-bs-toggle="tab" 
+            data-bs-target="#tablas" 
+            role="tab">
+        Datos
+        </a>
+
     </li>
     <li class="nav-item">
-        <button class="nav-link" id="resumen-tab" data-bs-toggle="tab" data-bs-target="#resumen" type="button" role="tab">Resumen</button>
-    </li>
+        <a class="nav-link <?php if ($tabActivo === 'resumen') { echo 'show active'; } ?>"
+         id="resumen-tab" 
+                data-bs-toggle="tab" 
+                data-bs-target="#resumen" 
+                type="button" 
+                role="tab">
+        Resumen</a>
 </ul>
 
 <div class="tab-content mt-4">
     <!-- TAB DATOS -->
-    <div class="tab-pane fade show active" id="tablas" role="tabpanel">
+    <div class="tab-pane fade <?php if ($tabActivo === 'tablas') { echo 'show active'; } ?>"
+     id="tablas"
+     role="tabpanel"
+     aria-labelledby="tablas-tab">
         <!-- Formulario de filtros -->
-        <form method="GET" class="row g-3 mb-4 justify-content-center">
+        <form method="GET" action="?tab=tablas" id="form-filtro-tablas" class="row g-3 mb-4 justify-content-center">
+            <input type="hidden" name="tab" value="tablas">
             <div class="col-auto">
                 <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
                 <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?= $valor_fecha_inicio ?>">
@@ -254,7 +308,7 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
             class="table table-bordered table-striped"
             data-toggle="table"
             data-search="true"
-            data-pagination="true">
+            data-pagination="false">
             
             <thead class="table-dark">
                 <tr>
@@ -295,14 +349,14 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
+                        <td colspan="2" class="text-center text-muted">No se encontraron resultados.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
 
         <!-- Paginado -->
-        <?php if ($total_paginas > 1): ?>
+       <?php if ($total_paginas > 1): ?>
             <ul class="pagination">
                 <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
                     <li>
@@ -320,12 +374,26 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
     
     <!-- TAB RESUMEN -->
                     
-    <div class="tab-pane fade" id="resumen" role="tabpanel">
+    <div class="tab-pane fade <?php if ($tabActivo === 'resumen') { echo 'show active'; } ?>"
+     id="resumen"
+     role="tabpanel"
+     aria-labelledby="tablas-tab">
         <?php
-        $valor_fecha_inicio_resumen = $_POST['fecha_inicio_resumen'] ?? '';
-        $valor_fecha_fin_resumen = $_POST['fecha_fin_resumen'] ?? '';
+        if (isset($_POST['fecha_inicio_resumen'])) {
+            $valor_fecha_inicio_resumen = $_POST['fecha_inicio_resumen'];
+        } else {
+            $valor_fecha_inicio_resumen = '';
+        }
+
+        if (isset($_POST['fecha_fin_resumen'])) {
+            $valor_fecha_fin_resumen = $_POST['fecha_fin_resumen'];
+        } else {
+            $valor_fecha_fin_resumen = '';
+        }
+
         ?>
-        <form id="form-filtro-resumen" method="POST" class="row g-2 mb-3 justify-content-left">
+        <form method="GET" action="?tab=resumen" id="form-filtro-resumen" class="row g-3 mb-4 justify-content-center">
+            <input type="hidden" name="tab" value="resumen">
             <div class="col-auto">
                 <label for="fecha_inicio_resumen" class="form-label">Fecha Inicio</label>
                 <input type="date" class="form-control" name="fecha_inicio_resumen" id="fecha_inicio_resumen" value="<?= htmlspecialchars($valor_fecha_inicio_resumen) ?>">
@@ -340,38 +408,6 @@ if (isset($datos['promedio_por_tipo']) && !empty($datos['promedio_por_tipo'])) {
                 <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </form>
-    
-
-    <body>
-        <!-- contenedor AJAX -->
-        <div id="contenedor-resumen"></div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.getElementById('form-filtro-resumen');
-                const contenedor = document.getElementById('contenedor-resumen');
-
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault(); // Evita recargar la página
-
-                    const formData = new FormData(form);
-
-                    fetch('<?= URL ?>/estadisticas/resumenCardsAjax', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(res => res.text())
-                    .then(html => {
-                        contenedor.innerHTML = html;
-                    })
-                    .catch(err => {
-                        contenedor.innerHTML = "<p class='text-danger'>Error al cargar datos</p>";
-                        console.error(err);
-                    });
-                });
-            });
-            </script>
-
-    </body>
     
         <!-- Cards métricas -->
         <div class="row mb-4">

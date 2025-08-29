@@ -367,7 +367,7 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getLugarMasUsado($fecha_inicio = null, $fecha_fin = null, $tipo_movimiento): array {
+    public function getLugarMasUsado($fecha_inicio = null, $fecha_fin = null, $tipo_movimiento = null): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         $stmt = $this->db->prepare("
             SELECT l.nombre, COUNT(*) AS cantidad
@@ -386,5 +386,94 @@ class EstadisticasModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    }
+
+     /**
+     * Obtiene un listado de permisos filtrados por fecha, DNI, tipo, orden y paginación.
+     *
+     * @param string|null $fecha_inicio Fecha inicial para filtrar los permisos.
+     * @param string|null $fecha_fin Fecha final para filtrar los permisos.
+     * @param string|null $dni DNI del chofer (si se busca por chofer).
+     * @param string|null $tipo Tipo de servicio (línea, charter, etc.).
+     * @param string $sort_col Columna por la que se ordenan los resultados.
+     * @param string $sort_dir Dirección de ordenamiento (ASC o DESC).
+     * @param int|null $limit Límite de resultados por página (para paginación).
+     * @param int|null $offset Desplazamiento de la paginación.
+     * @return array Arreglo asociativo con los permisos encontrados.
+     */
+    public function getPermisosFiltrados(
+        $fecha_inicio = null,
+        $fecha_fin = null,
+        $dni = null,
+        $tipo = null,
+        $sort_col = 'fecha',
+        $sort_dir = 'ASC',
+        $limit = null,
+        $offset = 0
+    ): array {
+        // Columnas válidas para ordenar
+        $columnasValidas = ['empresa', 'fecha', 'lugar', 'tipo_movimiento', 'cantidad'];
+        $sort_col = in_array($sort_col, $columnasValidas) ? $sort_col : 'fecha';
+        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
+
+        // Consulta base con joins necesarios
+        $sql = "
+           SELECT COUNT(*) AS total
+        FROM permisos p
+        INNER JOIN servicios s ON p.id_servicio = s.id_servicio
+        INNER JOIN empresas e ON s.id_empresa = e.id_empresa
+        INNER JOIN lugares l ON p.id_lugar = l.id_lugar
+        LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
+        WHERE p.activo = 1
+        ";
+
+        // Parametros de filtrado
+        $params = [];
+
+        if (!empty($fecha_inicio)) {
+            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
+            $params[':fecha_inicio'] = $fecha_inicio;
+        }
+
+        if (!empty($fecha_fin)) {
+            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
+            $params[':fecha_fin'] = $fecha_fin;
+        }
+
+        if (!empty($dni)) {
+            $sql .= " AND c.dni = :dni";
+            $params[':dni'] = $dni;
+        }
+
+        if (!empty($tipo)) {
+            $sql .= " AND p.tipo = :tipo";
+            $params[':tipo'] = $tipo;
+        }
+
+        // Ordenamiento
+        $sql .= " ORDER BY $sort_col $sort_dir";
+
+        // Paginación (si se usa)
+        if ($limit !== null && $offset !== null) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
+
+        // Preparar consulta
+        $stmt = $this->db->prepare($sql);
+
+        // Asignar parámetros dinámicamente
+        foreach ($params as $key => &$value) {
+            $stmt->bindParam($key, $value);
+        }
+
+        // Asignar paginación si aplica
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
+
+        // Ejecutar y devolver resultados
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
