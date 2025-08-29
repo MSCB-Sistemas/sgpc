@@ -29,7 +29,8 @@ MANEJO EN GENERAR AL ELIMINAR DATOS ASIGNADOS A OTRAS TABLAS POR CLAVES FORANEAS
 --🐄poder eliminar las calles de recorrido?
 
 --⛰️quitar editar o anular la posibilidad de editar un dato asociado a un permiso
-(falta evitar modificar puntos de detencion, calles,lugares, empresas,hoteles)
+aun se pueden editar calles y algunos otros datos
+
 ------------------------------------------------------------------------------------------
 agregar el campo chofer en vez de empresa en la tabla de estadísticas
 agregar los modelos con las query para los cuadros de resúmenes de estadisticas

@@ -47,22 +47,13 @@ class Estadisticas extends Control
                 $fecha_inicio_resumen = $_GET['fecha_inicio_resumen'];
             }
 
-            if (!empty($_GET['fecha_fin_resumen'])) {
-                $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
-            }
-            
+        if (!empty($_GET['fecha_fin_resumen'])) {
+            $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
+        }
+        
+        // Llamada al modelo
+       
 
-            $sort_col = 'fecha';
-
-            if (!empty($_GET['sort_col'])){
-                $sort_col = $_GET['sort_col']; // Por defecto ordenar por fecha
-            }
-
-            $sort_dir = 'ASC';
-
-            if (!empty($_GET['sort_dir']) && in_array($sort_dir, ['ASC', 'DESC'])) {
-                $sort_dir = strtoupper($_GET['sort_dir']); // Por defecto ordenar ascendente
-            }
 
             // Paginación
 
@@ -95,13 +86,11 @@ class Estadisticas extends Control
                 $total_paginas    = max(1, ceil($total_resultados / $limite_por_pagina));
 
                 // Obtener movimientos filtrados
-                $movimientos = $this->model->getPermisosFiltrados(
+                $movimientos = $this->model->getPermisosFiltradosChofer(
                     $fecha_inicio,
                     $fecha_fin,
                     $dni,
                     $tipo,
-                    $sort_col,
-                    $sort_dir,
                     $limite_por_pagina,
                     $offset
                 );
@@ -109,29 +98,28 @@ class Estadisticas extends Control
                 $error = null;
             }
 
-            // Preparar datos para la vista
-            $datos = [
-                'title' => 'Estadísticas',
-                'movimientos'   => $movimientos,
-                'fecha_inicio'  => $fecha_inicio,
-                'fecha_fin'     => $fecha_fin,
-                'dni'           => $dni,
-                'tipo'          => $tipo,
-                'buscar_por'    => $buscar_por,
-                'sort_col'      => $sort_col,
-                'sort_dir'      => $sort_dir,
-                'pagina_actual' => $pagina_actual,
-                'total_paginas' => $total_paginas,
-                'error'         => $error,
-                'total_resultados' => $total_resultados,
-                'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
-                'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
-            ];  
+        // Preparar datos para la vista
+        $datos = [
+            'title' => 'Estadísticas',
+            'movimientos'   => $movimientos,
+            'fecha_inicio'  => $fecha_inicio,
+            'fecha_fin'     => $fecha_fin,
+            'dni'           => $dni,
+            'tipo'          => $tipo,
+            'buscar_por'    => $buscar_por,
+            'pagina_actual' => $pagina_actual,
+            'total_paginas' => $total_paginas,
+            'error'         => $error,
+            'total_resultados' => $total_resultados,
+            'por_tipo' => $this->model->getServicioMasUsado($fecha_inicio_resumen, $fecha_fin_resumen),
+            'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
+            'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+            'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
+            'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen)
+            ,
+        ];  
+        $this->load_view('estadisticas', $datos);
+    }
 
-            $this->load_view('estadisticas', $datos);
-        } else {
-            header("Location: " . URL);
-            exit;
-        }
     }
 }
