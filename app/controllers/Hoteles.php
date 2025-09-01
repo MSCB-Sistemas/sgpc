@@ -13,9 +13,14 @@ class Hoteles extends Control
     }
 
     // Listar todos los hoteles.
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso("ver abm")){
+            $errores = [];
+            if (isset($_SESSION['error_hoteles'])) {
+                $errores[] = $_SESSION['error_hoteles'];
+                unset($_SESSION['error_hoteles']); // Borramos el mensaje después de usarlo
+            }
             $hoteles = $this->model->getAllHoteles();
             $datos = [
                 'title' => 'Listado de Hoteles',
@@ -91,7 +96,9 @@ class Hoteles extends Control
                         header("Location: " . URL . "/hoteles");
                         exit;
                     } else {
-                        die("Error al guardar hotel");
+                        $_SESSION['error_hoteles'] = "Error al guardar hotel.";
+                        header("Location: " . URL . "/hoteles");
+                        exit;
                     }
                 } catch (Exception $e) {
                     if ($e->getCode() == 23000) {
@@ -120,7 +127,9 @@ class Hoteles extends Control
             $hotel = $this->model->getHotel($id);  
 
             if (!$hotel) {
-                die("Hotel no encontrado");
+                $_SESSION['error_hoteles'] = "Hotel no encontrado.";
+                header("Location: " . URL . "/hoteles");
+                exit;
             }
 
             $this->load_view('hoteles/form', [
@@ -184,7 +193,10 @@ class Hoteles extends Control
                         header("Location: " . URL . "/hoteles/index");
                         exit;
                     } else {
-                        die("Error al actualizar el hotel");
+                        
+                        $_SESSION['error_hoteles'] = "Error al actualizar el hotel.";
+                        header("Location: " . URL . "/hoteles");
+                        exit;
                     }
                 }
             }
@@ -203,7 +215,10 @@ class Hoteles extends Control
             if (empty($reservas)) {
                 $eliminado = $this->model->deleteHotel($id);
                 if (!$eliminado) {
-                    $this->index(["No se pudo eliminar el Hotel."]);
+                        
+                    $_SESSION['error_hoteles'] = "No se pudo eliminar el Hotel.";
+                    header("Location: " . URL . "/hoteles");
+                    exit;
                 }
 
                 header("Location: " . URL . "/hoteles");
@@ -211,7 +226,9 @@ class Hoteles extends Control
             }
             $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
             $string_reservas = implode(', ', $nombres_reservas);
-            $this->index(["No se puede eliminar el hotel, esta asignado a los siguientes permisos: ". $string_reservas]);
+            $_SESSION['error_hoteles'] = "No se puede eliminar el hotel, está asignado a los siguientes permisos: ". $string_reservas;
+            header("Location: " . URL . "/hoteles");
+            exit;
         } else {
             header("Location: " . URL);
             exit;

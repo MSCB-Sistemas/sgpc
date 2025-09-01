@@ -15,9 +15,14 @@ class Servicio extends Control
     }
 
     // Mostrar todos los servicios
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso('ver abm')) {
+            $errores = [];
+            if (isset($_SESSION['error_servicio'])) {
+                $errores[] = $_SESSION['error_servicio'];
+                unset($_SESSION['error_servicio']); // Borramos el mensaje después de usarlo
+            }
             $servicios = $this->model->getAllServicios();
             $datos = [
                 'title' => 'Listado de Servicios',
@@ -128,12 +133,15 @@ class Servicio extends Control
             $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
 
             if (!$servicio) {
-                die("Servicio no encontrado.");
+                $_SESSION['error_servicio'] = "Servicio no encontrado.";
+                header("Location: " . URL . "/servicio");
+                exit;
             }
 
             if (!empty($permisos)){
-                $errores[] = 'Error: No se puede editar un servicio con permisos asignados.';
-                $this->index($errores);
+                $_SESSION['error_servicio'] = "Error: No se puede editar un servicio con permisos asignados.";
+                header("Location: " . URL . "/servicio");
+                exit;
             }
 
             $this->load_view('servicios/form', [
@@ -205,7 +213,9 @@ class Servicio extends Control
                         header("Location: " . URL . "/servicio/index");
                         exit;
                     } else {
-                        die("Error al actualizar el servicio.");
+                        $_SESSION['error_servicio'] = "Error al actualizar el servicio.";
+                        header("Location: " . URL . "/servicio");
+                        exit;
                     }
                 } catch (\PDOException $e) {
                     $empresaData = $this->empresaModel->getEmpresa($empresa);
@@ -238,7 +248,9 @@ class Servicio extends Control
                 $eliminado = $this->model->deleteServicio($id);
 
                 if (!$eliminado) {
-                    $this->index(["Error al eliminar el servicio"]);
+                    $_SESSION['error_servicio'] = "Error al eliminar el servicio.";
+                    header("Location: " . URL . "/servicio");
+                    exit;
                 }
                 header("Location: " . URL . "/servicio");
                 exit;
@@ -246,7 +258,9 @@ class Servicio extends Control
             
             $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
             $string_permisos = implode(', ', $ids_permisos);
-            $this->index(["No se puede eliminar el servicio, tiene los siguientes permisos asignados: ". $string_permisos]);
+            $_SESSION['error_servicio'] = "No se puede eliminar el servicio, tiene los siguientes permisos asignados: ". $string_permisos;
+            header("Location: " . URL . "/servicio");
+            exit;
         }
     }
     

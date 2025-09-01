@@ -13,9 +13,14 @@ class Empresa extends Control
     }
 
     // Mostrar listado de empresas
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso("ver abm")){
+            $errores = [];
+            if (isset($_SESSION['error_empresa'])) {
+                $errores[] = $_SESSION['error_empresa'];
+                unset($_SESSION['error_empresa']); // Borramos el mensaje después de usarlo
+            }
             $empresas = $this->model->getAllEmpresas();
             $datos = [
                 'title' => 'Listado de Empresas',
@@ -49,7 +54,9 @@ class Empresa extends Control
             $empresa = $this->model->getEmpresa($id);
 
             if (!$empresa) {
-                die("Empresa no encontrada");
+                $_SESSION['error_empresa'] = "Empresa no encontrada.";
+                header("Location: " . URL . "/empresa");
+                exit;
             }
 
             $this->load_view('empresas/form', [
@@ -100,7 +107,9 @@ class Empresa extends Control
                         header("Location: " . URL . "/empresa");
                         exit;
                     } else {
-                        die("Error al actualizar la empresa");
+                        $_SESSION['error_empresa'] = "Error al actualizar la empresa.";
+                        header("Location: " . URL . "/empresa");
+                        exit;
                     }
                 }
             }
@@ -150,7 +159,9 @@ class Empresa extends Control
                         header("Location: " . URL . "/empresa");
                         exit;
                     } else {
-                        die("Error al guardar la empresa");
+                        $_SESSION['error_empresa'] = "Error al guardar la empresa.";
+                        header("Location: " . URL . "/empresa");
+                        exit;
                     }
                 } catch (Exception $e) {
                     if ($e->getCode() == 23000) {
@@ -181,7 +192,9 @@ class Empresa extends Control
                 $eliminado = $this->model->deleteEmpresa($id);
 
                 if (!$eliminado) {
-                    $this->index(["Error al eliminar la empresa"]);
+                    $_SESSION['error_empresa'] = "Error al eliminar la empresa.";
+                    header("Location: " . URL . "/empresa");
+                    exit;
                 }
                 header("Location: " . URL . "/empresa");
                 exit;
@@ -189,7 +202,9 @@ class Empresa extends Control
             
             $internos = $servicios ? array_column($servicios, 'interno') : [];
             $string_internos = implode(', ', $internos);
-            $this->index(["No se puede eliminar la empresa, tiene asignados los servicios con numero de interno: ". $string_internos]);
+            $_SESSION['error_empresa'] = "No se puede eliminar la empresa, tiene asignados los servicios con numero de interno: ". $string_internos;
+            header("Location: " . URL . "/empresa");
+            exit;
         } else {
             header("Location: " . URL);
             exit;

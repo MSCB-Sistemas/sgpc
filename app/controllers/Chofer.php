@@ -12,9 +12,14 @@ class Chofer extends Control
         $this->modeloNacionalidades = $this->load_model('NacionalidadModel');
     }
 
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso("ver abm")) {
+            $errores = [];
+            if (isset($_SESSION['error_chofer'])) {
+                $errores[] = $_SESSION['error_chofer'];
+                unset($_SESSION['error_chofer']); // Borramos el mensaje después de usarlo
+            }
             $choferes = $this->modelo->getAllChoferes();
             $datos = [
                 'title' => 'Listado de Choferes',
@@ -52,12 +57,15 @@ class Chofer extends Control
             $permisos = $permisosModel->getPermisosByChofer($id);
 
             if (!$chofer) {
-                die("Chofer no encontrado");
+                $_SESSION['error_chofer'] = "Chofer no encontrado.";
+                header("Location: " . URL . "/chofer");
+                exit;
             }
 
             if (!empty($permisos)){
-                $errores[] = 'Error: No se puede editar un chofer con permisos asignados.';
-                $this->index($errores);
+                $_SESSION['error_chofer'] = "Error: No se puede editar un chofer con permisos asignados.";
+                header("Location: " . URL . "/chofer");
+                exit;
             }
 
             $this->load_view('choferes/form', [
@@ -116,7 +124,9 @@ class Chofer extends Control
                         header("Location: " . URL . "/chofer");
                         exit;
                     } else {
-                        die("Error al actualizar el chofer");
+                        $_SESSION['error_chofer'] = "Error al actualizar el chofer.";
+                        header("Location: " . URL . "/chofer");
+                        exit;
                     }
                 } catch (Exception $e) {
                     $nombre_nacionalidad = $this->modeloNacionalidades->getNacionalidad($nacionalidad)['nacionalidad'];
@@ -190,7 +200,9 @@ class Chofer extends Control
                         header("Location: " . URL . "/chofer");
                         exit;
                     } else {
-                        die("Error al guardar el chofer");
+                        $_SESSION['error_chofer'] = "Error al guardar el chofer.";
+                        header("Location: " . URL . "/chofer");
+                        exit;
                     }
                 } catch (Exception $e) {
                     $nombre_nacionalidad = $this->modeloNacionalidades->getNacionalidad($nacionalidad)['nacionalidad'];
@@ -225,7 +237,9 @@ class Chofer extends Control
             }
             $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
             $string_permisos = implode(', ', $ids_permisos);
-            $this->index(["No se puede eliminar el chofer, tiene los siguientes permisos asignados: ". $string_permisos]);
+            $_SESSION['error_chofer'] = "No se puede eliminar el chofer, tiene los siguientes permisos asignados: ". $string_permisos;
+            header("Location: " . URL . "/chofer");
+            exit;
         } else {
             header("Location: " . URL);
         }

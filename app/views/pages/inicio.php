@@ -1,4 +1,13 @@
 <div class="container mt-4">
+    <?php if (!empty($datos['errores'])): ?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach ($datos['errores'] as $e): ?>
+                <li><?= htmlspecialchars($e) ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>
     <h1 class="mb-4 text-center"style="font-family: 'Lexend';">Bienvenido al Sistema SGPC</h1>
     
     <input type="text" id="buscarReservas" class="form-control mb-3" placeholder="🔍 Buscar reservas...">

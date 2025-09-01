@@ -17,9 +17,14 @@ class Recorrido extends Control
     }
 
     // Mostrar todos los recorridos
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso('ver abm')){
+            $errores = [];
+            if (isset($_SESSION['error_recorrido'])) {
+                $errores[] = $_SESSION['error_recorrido'];
+                unset($_SESSION['error_recorrido']); // Borramos el mensaje después de usarlo
+            }
             $recorridos = $this->model->getAllRecorridos();
             foreach ($recorridos as &$recorrido) {
                 $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
@@ -114,11 +119,15 @@ class Recorrido extends Control
                     if ($idRecorrido) {
                         foreach ($calles as $idCalle) {
                             if(!$this->calleRecorridoModel->insertCalleRecorrido($idRecorrido, $idCalle)){
-                                die("Error al guardar la calle del recorrido");
+                                $_SESSION['error_recorrido'] = "Error al guardar la calle del recorrido.";
+                                header("Location: " . URL . "/recorrido");
+                                exit;
                             };
                         }
                     } else {
-                        die("Error al guardar el recorrido");
+                        $_SESSION['error_recorrido'] = "Error al guardar el recorrido.";
+                        header("Location: " . URL . "/recorrido");
+                        exit;
                     }
 
                     header('Location: ' . URL . '/recorrido');
@@ -161,7 +170,9 @@ class Recorrido extends Control
         if ($this->tienePermiso('editar abm')) {
             $recorrido = $this->model->getRecorrido($id);
             if (!$recorrido) {
-                die("Recorrido no encontrado");
+                $_SESSION['error_recorrido'] = "Recorrido no encontrado.";
+                header("Location: " . URL . "/recorrido");
+                exit;
             }
 
             $calles = $this->calleModel->getAllCalles();
@@ -223,26 +234,34 @@ class Recorrido extends Control
                     if (empty($permisos)) {
                         // actualizar nombre
                         if (!$this->model->updateRecorrido($id, $nombre)) {
-                            die("Error al actualizar el recorrido");
+                            $_SESSION['error_recorrido'] = "Error al actualizar el recorrido.";
+                            header("Location: " . URL . "/recorrido");
+                            exit;
                         }
 
                         // borrar calles viejas e insertar nuevas
                         $this->calleRecorridoModel->deleteByRecorrido($id);
                         foreach ($calles as $idCalle) {
                             if (!$this->calleRecorridoModel->insertCalleRecorrido($id, $idCalle)) {
-                                die("Error al guardar las calles del recorrido");
+                                $_SESSION['error_recorrido'] = "Error al guardar las calles del recorrido.";
+                                header("Location: " . URL . "/recorrido");
+                                exit;
                             }
                         }
                     } else {
                         $this->model->desactivarRecorrido($id);
                         $id_nuevo = $this->model->insertRecorrido($nombre);
                         if(empty($id_nuevo)) {
-                            die("Error al actualizar el recorrido");
+                            $_SESSION['error_recorrido'] = "Error al actualizar el recorrido.";
+                            header("Location: " . URL . "/recorrido");
+                            exit;
                         }
                         
                         foreach ($calles as $idCalle) {
                             if (!$this->calleRecorridoModel->insertCalleRecorrido($id_nuevo, $idCalle)) {
-                                die("Error al guardar las calles del recorrido");
+                                $_SESSION['error_recorrido'] = "Error al guardar las calles del recorrido.";
+                                header("Location: " . URL . "/recorrido");
+                                exit;
                             }
                         }
                     }
@@ -279,7 +298,9 @@ class Recorrido extends Control
 
                 $eliminado = $this->model->deleteRecorrido($id);
                 if (!$eliminado) {
-                    $this->index(["Error al eliminar el recorrido"]);
+                    $_SESSION['error_recorrido'] = "Error al eliminar el recorrido.";
+                    header("Location: " . URL . "/recorrido");
+                    exit;
                 }
                 header("Location: " . URL . "/recorrido");
                 exit;
@@ -287,7 +308,9 @@ class Recorrido extends Control
             
             $ids_permisos = $permisos ? array_column($permisos, 'id_permiso') : [];
             $string_permisos = implode(', ', $ids_permisos);
-            $this->index(["No se puede eliminar el recorrido, tiene los siguientes permisos asignados: ". $string_permisos]);
+            $_SESSION['error_recorrido'] = "No se puede eliminar el recorrido, tiene los siguientes permisos asignados: ". $string_permisos;
+            header("Location: " . URL . "/recorrido");
+            exit;
         }
     }
 

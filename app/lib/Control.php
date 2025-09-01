@@ -48,7 +48,9 @@ class Control
                 require_once $viewFile;
             }
         } else {
-            die($viewFile);
+            $_SESSION['error_inicio'] = "Error: La vista {$viewFile} no existe.";
+            header("Location: " . URL);
+            exit;
         }
     }
 

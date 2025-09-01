@@ -31,8 +31,9 @@
           $this->controller = ucwords($url[0]);
           unset($url[0]);
       } else {
-          // Controlador no encontrado
-          die("Controlador no encontrado");
+        $_SESSION['error_inicio'] = "Error: Controlador no encontrado.";
+        header("Location: " . URL);
+        exit;
       }
 
       // Cargar el controlador
