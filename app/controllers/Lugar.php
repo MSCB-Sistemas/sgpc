@@ -13,9 +13,14 @@ class Lugar extends Control
     }
 
     // Mostrar todos los lugares en una vista.
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso("ver abm")){
+            $errores = [];
+            if (isset($_SESSION['error_lugar'])) {
+                $errores[] = $_SESSION['error_lugar'];
+                unset($_SESSION['error_lugar']); // Borramos el mensaje después de usarlo
+            }
             $lugares = $this->model->getAllLugares();
             $datos = [
                 'title' => 'Listado de Lugares',
@@ -84,7 +89,9 @@ class Lugar extends Control
                         header("Location: " . URL . "/lugar");
                         exit;
                     } else {
-                        die("Error al guardar calle");
+                        $_SESSION['error_lugar'] = "Error al guardar el lugar.";
+                        header("Location: " . URL . "/lugar");
+                        exit;
                     }
                     
                 } catch (Exception $e) {
@@ -114,7 +121,9 @@ class Lugar extends Control
             $lugar = $this->model->getLugar($id);  
 
             if (!$lugar) {
-                die("Lugar no encontrado");
+                $_SESSION['error_lugar'] = "Lugar no encontrado.";
+                header("Location: " . URL . "/lugar");
+                exit;
             }
 
             $this->load_view('lugares/form', [
@@ -167,7 +176,9 @@ class Lugar extends Control
                         header("Location: " . URL . "/lugar");
                         exit;
                     } else {
-                        die("Error al actualizar lugar");
+                        $_SESSION['error_lugar'] = "Error al actualizar lugar.";
+                        header("Location: " . URL . "/lugar");
+                        exit;
                     }
                 }
             }
@@ -185,7 +196,9 @@ class Lugar extends Control
             if (empty($permiso)) {
                 $eliminado = $this->model->deleteLugar($id);
                 if (!$eliminado) {
-                    $this->index(["No se pudo eliminar el Lugar."]);
+                    $_SESSION['error_lugar'] = "No se pudo eliminar el Lugar.";
+                    header("Location: " . URL . "/lugar");
+                    exit;
                 }
 
                 header("Location: " . URL . "/lugar");
@@ -193,7 +206,9 @@ class Lugar extends Control
             }
             $nombres_permisos = $permiso ? array_column($permiso, 'id_permiso') : [];
             $string_permisos = implode(', ', $nombres_permisos);
-            $this->index(["No se puede eliminar el lugar, esta asignado a los siguientes permisos: ". $string_permisos]);
+            $_SESSION['error_lugar'] = "No se puede eliminar el lugar, esta asignado a los siguientes permisos: ". $string_permisos;
+            header("Location: " . URL . "/lugar");
+            exit;
         } else {
             header("Location: " . URL);
             exit;

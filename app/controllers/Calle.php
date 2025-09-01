@@ -16,11 +16,20 @@ class Calle extends Control
     }
 
     // Mostrar todas las calles en una vista.
-    public function index($errores = [])
+    public function index()
     {
         if ($this->tienePermiso('ver abm')) {
+            $errores = [];
             if (isset($_SESSION['error_calle'])) {
-                $errores[] = $_SESSION['error_calle'];
+                foreach($_SESSION['error_calle'] as $error) {
+                    if (is_array($error)) {
+                        foreach ($error as $e) {
+                            $errores[] = $e;
+                        }
+                    } else {
+                        $errores[] = $error;
+                    }
+                }
                 unset($_SESSION['error_calle']); // Borramos el mensaje después de usarlo
             }
 
@@ -92,7 +101,9 @@ class Calle extends Control
                         header("Location: " . URL . "/calle");
                         exit;
                     } else {
-                        die("Error al guardar calle");
+                        $_SESSION['error_calle'][] = "No se pudo guardar la calle.";
+                        header("Location: " . URL . "/calle");
+                        exit;
                     }
                 } catch (Exception $e) {
                     if ($e->getCode() == 23000) {
@@ -122,11 +133,13 @@ class Calle extends Control
             $permisos = $this->model->getPermisosByCalle($id);
 
             if (!$calle) {
-                die("Calle no encontrada");
+                $_SESSION['error_calle'][] = "Calle no encontrada.";
+                header("Location: " . URL . "/calle");
+                exit;
             }
 
             if (!empty($permisos)) {
-                $_SESSION['error_calle'] = "Esta calle no se puede editar porque tiene permisos asociados";
+                $_SESSION['error_calle'][] = "Esta calle no se puede editar porque tiene permisos asociados";
                 header("Location: " . URL . "/calle");
                 exit;
             }
@@ -173,7 +186,9 @@ class Calle extends Control
                         header("Location: " . URL . "/calle");
                         exit;
                     } else {
-                        die("Error al actualizar calle");
+                        $_SESSION['error_calle'][] = "Error al actualizar calle.";
+                        header("Location: " . URL . "/calle");
+                        exit;
                     }
                 } catch (Exception $e) {
                     if ($e->getCode() == 23000) {
@@ -206,7 +221,9 @@ class Calle extends Control
             if (empty($puntos) && empty($recorridos)) {
                 $eliminado = $this->model->deleteCalle($id);
                 if (!$eliminado) {
-                    $this->index(errores: ["No se puede eliminar la calle."]);
+                    $_SESSION['error_calle'][] = "No se puede eliminar la calle.";
+                    header("Location: " . URL . "/calle");
+                    exit;
                 }
                 header("Location: " . URL . "/calle");
                 exit;
@@ -223,8 +240,9 @@ class Calle extends Control
                 $string_recorridos = implode(', ', $nombres_recorridos);
                 $errores[] = "No se puede eliminar la calle, tiene los siguientes recorridos asociados: ". $string_recorridos;
             }
-
-            $this->index($errores);
+            $_SESSION['error_calle'][] = $errores;
+            header("Location: " . URL . "/calle");
+            exit;
         } else {
             header("Location: " . URL);
         }

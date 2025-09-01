@@ -15,9 +15,14 @@ class PuntosDetencion extends Control
     }
 
     // Mostrar todos los puntos de detención
-    public function index($errores = null)
+    public function index()
     {
         if (in_array('ver abm',$_SESSION['usuario_derechos'])){
+            $errores = [];
+            if (isset($_SESSION['error_pd'])) {
+                $errores[] = $_SESSION['error_pd'];
+                unset($_SESSION['error_pd']); // Borramos el mensaje después de usarlo
+            }
             $puntos = $this->model->getAllPuntosDetencion();
             $datos = [
                 'title' => 'Listado de Puntos de Detencion',
@@ -97,10 +102,12 @@ class PuntosDetencion extends Control
                 }
                 try {
                     if ($this->model->insertPuntoDetencion($nombre, $calle)) {
-                        header("Location: " . URL . "/puntosDetencion/index");
+                        header("Location: " . URL . "/puntosDetencion");
                         exit;
                     } else {
-                        die("Error al insertar el punto de detención.");
+                        $_SESSION['error_pd'] = "Error al insertar el punto de detención.";
+                        header("Location: " . URL . "/PuntosDetencion");
+                        exit;
                     }
                 } catch (Exception $e) {
                     if ($e->getCode() == 23000) {
@@ -129,7 +136,9 @@ class PuntosDetencion extends Control
             $calles = $this->calleModel->getAllCalles();
 
             if (!$punto_detencion) {
-                die("Punto de detención no encontrado.");
+                $_SESSION['error_pd'] = "Punto de detención no encontrado.";
+                header("Location: " . URL . "/PuntosDetencion");
+                exit;
             }
 
             $this->load_view('puntos_detencion/form', [
@@ -187,7 +196,9 @@ class PuntosDetencion extends Control
                         header("Location: " . URL . "/puntosDetencion");
                         exit;
                     } else {
-                        die("Error al actualizar el punto de detención.");
+                        $_SESSION['error_pd'] = "Error al actualizar el punto de detención.";
+                        header("Location: " . URL . "/PuntosDetencion");
+                        exit;
                     }
                 }
             }
@@ -202,7 +213,9 @@ class PuntosDetencion extends Control
             if (empty($reservas)) {
                 $eliminado = $this->model->deletePuntoDetencion($id);
                 if (!$eliminado) {
-                    $this->index(["No se pudo eliminar el punto de detención."]);
+                    $_SESSION['error_pd'] = "No se pudo eliminar el punto de detención.";
+                    header("Location: " . URL . "/PuntosDetencion");
+                    exit;
                 }
 
                 header("Location: " . URL . "/puntosDetencion");
@@ -211,7 +224,9 @@ class PuntosDetencion extends Control
 
             $nombres_reservas = $reservas ? array_column($reservas, 'id_permiso') : [];
             $string_reservas = implode(', ', $nombres_reservas);
-            $this->index(["No se puede eliminar el punto de detencion, esta reservado por los siguientes permisos: ". $string_reservas]);
+            $_SESSION['error_pd'] = "No se puede eliminar el punto de detencion, esta reservado por los siguientes permisos: ". $string_reservas;
+            header("Location: " . URL . "/PuntosDetencion");
+            exit;
         }
     }
 }

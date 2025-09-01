@@ -18,6 +18,10 @@ class Usuarios extends Control
     public function index()
     {
         if (in_array('editar usuarios',$_SESSION['usuario_derechos'])){
+            if (isset($_SESSION['error_usuarios'])) {
+                $errores[] = $_SESSION['error_usuarios'];
+                unset($_SESSION['error_usuarios']); // Borramos el mensaje después de usarlo
+            }
             $usuarios = $this->model->getAllUsuarios();
             $datos = [
             'title' => 'Listado de Usuarios',
@@ -70,7 +74,9 @@ class Usuarios extends Control
             $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
 
             if (!$usuario) {
-                die("Usuario no encontrado");
+                $_SESSION['error_usuarios'] = "Usuario no encontrado.";
+                header("Location: " . URL . "/usuarios");
+                exit;
             }
 
             $this->load_view('usuarios/form', [
@@ -134,7 +140,9 @@ class Usuarios extends Control
                     header("Location: " . URL . "/usuarios");
                     exit;
                 } else {
-                    die("Error al actualizar el usuario");
+                    $_SESSION['error_usuarios'] = "Error al actualizar el usuario.";
+                    header("Location: " . URL . "/usuarios");
+                    exit;
                 }
             }
         }
@@ -193,7 +201,9 @@ class Usuarios extends Control
                     header("Location: " . URL . "/usuarios");
                     exit;
                 } else {
-                    die("Error al guardar el usuario");
+                    $_SESSION['error_usuarios'] = "Error al guardar el usuario.";
+                    header("Location: " . URL . "/usuarios");
+                    exit;
                 }
             }
         }
@@ -205,7 +215,9 @@ class Usuarios extends Control
                 header(header: "Location: " . URL . "/usuarios");
                 exit;
             } else {
-                die("No se puedo eliminar al usuario.");
+                $_SESSION['error_usuarios'] = "No se pudo eliminar al usuario.";
+                header("Location: " . URL . "/usuarios");
+                exit;
             }
         }
     }
@@ -216,7 +228,9 @@ class Usuarios extends Control
                 header(header: "Location: " . URL . "/usuarios");
                 exit;
             } else {
-                die("No se puedo activar al usuario.");
+                $_SESSION['error_usuarios'] = "No se pudo activar al usuario.";
+                header("Location: " . URL . "/usuarios");
+                exit;
             }
         }
     }
@@ -254,7 +268,9 @@ class Usuarios extends Control
                     header("Location: " . URL . "/usuarios");
                     exit;
                 } else {
-                    die("Error al cambiar la clave");
+                    $_SESSION['error_usuarios'] = "Error al cambiar la clave.";
+                    header("Location: " . URL . "/usuarios");
+                    exit;
                 }
             }
         }

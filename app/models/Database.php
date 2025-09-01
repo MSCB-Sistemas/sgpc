@@ -12,7 +12,9 @@ class Database   {
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                 ]);
             } catch (PDOException $e) {
-                die(" Error de conexión: " . $e->getMessage());
+                $_SESSION['error_inicio'] = "Error de conexión a la base de datos.";
+                header("Location: " . URL);
+                exit;
             }
         }
 
