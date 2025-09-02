@@ -244,6 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Resumen</a>
 </ul>
 
+
 <div class="tab-content mt-4">
     <!-- TAB DATOS -->
     <div class="tab-pane fade <?php if ($tabActivo === 'tablas') { echo 'show active'; } ?>"
@@ -304,11 +305,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css">
         <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
 
-        <table 
-            class="table table-bordered table-striped"
-            data-toggle="table"
-            data-search="true"
-            data-pagination="false">
+        <div class="table-responsive-lg shadow rounded">
+         <table class="table table-hover align-middle mb-0" id="tablaEstadistica" style="min-width: 800px;">
             
             <thead class="table-dark">
                 <tr>
@@ -347,27 +345,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td><?= htmlspecialchars($m['pasajeros']) ?></td>
                         </tr>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="2" class="text-center text-muted">No se encontraron resultados.</td>
-                    </tr>
+
                 <?php endif; ?>
             </tbody>
         </table>
-
-        <!-- Paginado -->
-       <?php if ($total_paginas > 1): ?>
-            <ul class="pagination">
-                <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                    <li>
-                        <a href="?<?= http_build_query(array_merge($_GET, ['pagina' => $i])) ?>"
-                           class="pagina-link <?php if ($pagina_actual == $i) { echo 'pagina-activa'; } ?>">
-                           <?= $i ?>
-                        </a>
-                    </li>
-                <?php endfor; ?>
-            </ul>
-        <?php endif; ?>
+    </div>
     </div>
 
 
@@ -506,3 +488,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#tablaEstadistica').DataTable({
+        dom: 'Bfrtip', // B: botones, f: filtro, r: información, t: tabla, i: info, p: paginación
+        buttons: [
+            { extend: 'copy', text: 'Copiar', className: 'btn btn-secondary btn-sm', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'csv', text: 'CSV', className: 'btn btn-primary btn-sm', bom: true, charset: 'UTF-8', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'excel', text: 'Excel', className: 'btn btn-success btn-sm', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'pdf', text: 'PDF', className: 'btn btn-danger btn-sm', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'print', text: 'Imprimir', className: 'btn btn-info btn-sm', exportOptions: { columns: ':not(:last-child)' } }
+        ],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+        pageLength: 10,       // Número de filas por página
+        lengthMenu: [5, 10, 25, 50, 100], // Opciones para cambiar cantidad
+        order: []             // Sin orden inicial (para que el usuario elija)
+    });
+});
+</script>
