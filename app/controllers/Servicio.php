@@ -130,7 +130,7 @@ class Servicio extends Control
             $servicio = $this->model->getServicio($id);
             $empresas = $this->empresaModel->getAllEmpresas();
             
-            $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
+            $permisos = $this->load_model("PermisoModel")->getPermisosByServicio($id);
 
             if (!$servicio) {
                 $_SESSION['error_servicio'] = "Servicio no encontrado.";
@@ -242,7 +242,7 @@ class Servicio extends Control
     public function delete($id)
     {
         if ($this->tienePermiso('borrar abm')) {
-            $permisos = $this->load_model("permisoModel")->getPermisosByServicio($id);
+            $permisos = $this->load_model("PermisoModel")->getPermisosByServicio($id);
 
             if (empty($permisos)) {
                 $eliminado = $this->model->deleteServicio($id);
