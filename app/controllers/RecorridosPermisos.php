@@ -37,12 +37,6 @@ class RecorridosPermisos extends Control
         }
     }
 
-    // Formulario para crear un nuevo recorrido_permiso
-    public function create()
-    {
-        $this->load_view('recorridos_permisos/create');
-    }
-
     // Procesar creación
     public function store()
     {

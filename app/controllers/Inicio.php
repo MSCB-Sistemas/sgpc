@@ -22,6 +22,6 @@ class Inicio extends Control
             'errores' => $errores
         ];
 
-        $this->load_view('Inicio', $datos);
+        $this->load_view('inicio', $datos);
     }
 }
