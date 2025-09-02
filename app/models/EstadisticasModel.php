@@ -367,7 +367,7 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getLugarMasUsado($fecha_inicio = null, $fecha_fin = null, $tipo_movimiento = null): array {
+    public function getLugarMasUsado($fecha_inicio = null, $fecha_fin = null, $tipo_movimiento): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         $stmt = $this->db->prepare("
             SELECT l.nombre, COUNT(*) AS cantidad
@@ -382,6 +382,7 @@ class EstadisticasModel
 
         $stmt->bindValue(':fecha_inicio', $fecha_inicio);
         $stmt->bindValue(':fecha_fin', $fecha_fin);
+        $stmt->bindValue(':tipo_movimiento', $tipo_movimiento);
 
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

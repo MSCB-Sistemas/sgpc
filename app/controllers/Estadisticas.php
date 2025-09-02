@@ -97,7 +97,8 @@ class Estadisticas extends Control
 
                 $error = null;
             }
-
+        $arribo = 'arribo';
+        $salida = 'salida';
         // Preparar datos para la vista
         $datos = [
             'title' => 'Estadísticas',
@@ -115,8 +116,9 @@ class Estadisticas extends Control
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
             'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
-            'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen)
-            ,
+            'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen),
+            'arribo_mas_usado' => $this->model->getLugarMasUsado($fecha_inicio_resumen, $fecha_fin_resumen, $arribo),
+            'salida_mas_usado' => $this->model->getLugarMasUsado($fecha_inicio_resumen, $fecha_fin_resumen, $arribo),
         ];  
         $this->load_view('estadisticas', $datos);
     }

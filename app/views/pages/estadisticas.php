@@ -416,9 +416,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-3 mb-3">
                 <div class="card text-white" style="background: linear-gradient(135deg,#6a11cb,#2575fc); height:185px;">
                     <div class="card-body text-center">
-                        <h3>📅</h3>
-                        <h5>Promedio de reservas</h5>
-                        <h2><?php if (!empty($datos['promedio_reservas'])){echo count($datos['promedio_reservas']);} else {echo 0;}?></h2>
+                        <h3>🌎</h3>
+                        <h5>Lugares mas concurrentes</h5>
+                        <h6><?php if (!empty($datos['arribo_mas_usado'][0]['l.nombre'])){echo $datos['arribo_mas_usado']['l.nombre'];} else {echo 'N/A';} ?></h6>
+                        <h6><?php if (!empty($datos['salida_mas_usado'][0]['l.nombre'])){echo $datos['salida_mas_usado']['l.nombre'];} else {echo 'N/A';} ?></h6>
                     </div>
                 </div>
             </div>
