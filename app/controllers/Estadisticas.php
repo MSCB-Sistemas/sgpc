@@ -4,7 +4,7 @@
  */
 class Estadisticas extends Control
 {
-    private $model;
+    private EstadisticasModel $model;
 
     public function __construct()
     {
@@ -117,8 +117,9 @@ class Estadisticas extends Control
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
             'punto_mas_usado' => $this->model->getPuntosMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
             'recorrido_mas_usado' => $this->model->getRecorridoMasUtilizado($fecha_inicio_resumen, $fecha_fin_resumen),
-            'arribo_mas_usado' => $this->model->getLugarMasUsado($fecha_inicio_resumen, $fecha_fin_resumen, $arribo),
-            'salida_mas_usado' => $this->model->getLugarMasUsado($fecha_inicio_resumen, $fecha_fin_resumen, $arribo),
+            'arribo_mas_usado' => $this->model->getLugarMasUsado($arribo,$fecha_inicio_resumen, $fecha_fin_resumen),
+            'salida_mas_usado' => $this->model->getLugarMasUsado($salida,$fecha_inicio_resumen, $fecha_fin_resumen),
+            'promedio_diario' => $this->model->getPromedioPermisos($fecha_inicio_resumen, $fecha_fin_resumen)
         ];  
         $this->load_view('estadisticas', $datos);
     }

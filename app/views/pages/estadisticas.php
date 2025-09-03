@@ -418,8 +418,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card-body text-center">
                         <h3>🌎</h3>
                         <h5>Lugares mas concurrentes</h5>
-                        <h6><?php if (!empty($datos['arribo_mas_usado'][0]['l.nombre'])){echo $datos['arribo_mas_usado']['l.nombre'];} else {echo 'N/A';} ?></h6>
-                        <h6><?php if (!empty($datos['salida_mas_usado'][0]['l.nombre'])){echo $datos['salida_mas_usado']['l.nombre'];} else {echo 'N/A';} ?></h6>
+                        <h6><?php if (!empty($datos['arribo_mas_usado'][0]['nombre_lugar'])){echo "Arribos: ".$datos['arribo_mas_usado'][0]['nombre_lugar'];} else {echo 'N/A';} ?></h6>
+                        <h6><?php if (!empty($datos['salida_mas_usado'][0]['nombre_lugar'])){echo "Salidas: ".$datos['salida_mas_usado'][0]['nombre_lugar'];} else {echo 'N/A';} ?></h6>
                     </div>
                 </div>
             </div>
@@ -427,10 +427,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="card text-white" style="background: linear-gradient(#e66465, #9198e5); height:185px;">
                     <div class="card-body text-center">
                         <h3>🏨</h3>
-                        <h4>Hotel con mas Reservas</h4>
-                        <h5><?php if (!empty($datos['hoteles_usados'][0]['nombre_hotel'])){echo $datos['hoteles_usados'][0]['nombre_hotel'];} else {echo 'N/A';} ?></h5>
-                        <h5><?php if (!empty($datos['hoteles_usados'][0]['total'])){echo $datos['hoteles_usados'][0]['total'];} else {echo 'N/A';} ?></h5>
-                        <h5><?php if (!empty($datos['hoteles_usados'][0]['promedio'])){echo $datos['hoteles_usados'][0]['promedio'];} else {echo 'N/A';} ?></h5>
+                        <h5>Hotel con mas Reservas</h5>
+                        <h6><?php if (!empty($datos['hoteles_usados'][0]['nombre_hotel'])){echo $datos['hoteles_usados'][0]['nombre_hotel'];} else {echo 'N/A';} ?></h6>
+                        <h6><?php if (!empty($datos['hoteles_usados'][0]['cantidad'])){echo "Cantidad: ".$datos['hoteles_usados'][0]['cantidad'];} else {echo 'N/A';} ?></h6>
                     </div>
                 </div>
             </div>
