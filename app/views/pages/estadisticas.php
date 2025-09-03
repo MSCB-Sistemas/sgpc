@@ -407,7 +407,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card-body text-center">
                         <h5>Permisos por día</h5>
                         <?php if (!empty($datos['values'])): ?>
-                            <canvas id="permisosChart" height="85"></canvas>
+                            <div style="height:125px;">
+                                <canvas id="permisosChart"></canvas>
+                            </div>
                         <?php else: ?>
                             <p>No hay datos.</p>
                         <?php endif; ?>
@@ -524,6 +526,7 @@ new Chart(ctx, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
         },
