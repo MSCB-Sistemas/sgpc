@@ -224,7 +224,7 @@ class EstadisticasModel
             $params[':fecha_fin'] = $fecha_fin;
         }
 
-        if (!empty($dni)) {
+        if ($dni !== null && $dni !== '') {
             $sql .= " AND c.dni = :dni";
             $params[':dni'] = $dni;
         }
