@@ -64,9 +64,9 @@ class EstadisticasModel
 
 
     /**
-     * Promedio de permisos por tipo
+     * Promedio de permisos rango de fechas
      */
-    public function getPromedioPermisosPorTipo($fecha_inicio = null, $fecha_fin = null): array
+    public function getPromedioPermisos($fecha_inicio = null, $fecha_fin = null): string|null
     {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
 
@@ -74,17 +74,38 @@ class EstadisticasModel
             SELECT tipo, COUNT(*) / COUNT(DISTINCT DATE(fecha_reserva)) AS promedio_diario
             FROM permisos
             WHERE activo = 1 AND DATE(fecha_reserva) BETWEEN :inicio AND :fin
-            GROUP BY tipo
         ");
         $stmt->bindValue(':inicio', $fecha_inicio);
         $stmt->bindValue(':fin', $fecha_fin);
         $stmt->execute();
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($resultado) {
-            return $resultado;
+            return $resultado['promedio_diario'];
         }
-        return [];
+        return '';
         
+    }
+
+    /**
+     * Promedio de permisos por día rango de fechas
+     */
+    public function getPermisosPorDia($fecha_inicio = null, $fecha_fin = null): array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT DATE(fecha_emision) AS dia, COUNT(*) AS total
+            FROM permisos
+            WHERE activo = 1 
+            AND DATE(fecha_emision) BETWEEN :inicio AND :fin
+            GROUP BY DATE(fecha_emision)
+            ORDER BY dia;
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
     /**
@@ -367,10 +388,10 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getLugarMasUsado($fecha_inicio = null, $fecha_fin = null, $tipo_movimiento = null): array {
+    public function getLugarMasUsado($tipo_movimiento, $fecha_inicio = null, $fecha_fin = null): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         $stmt = $this->db->prepare("
-            SELECT l.nombre, COUNT(*) AS cantidad
+            SELECT l.nombre as nombre_lugar, COUNT(*) AS cantidad
             FROM permisos p
             JOIN lugares l ON p.id_lugar = l.id_lugar
             WHERE p.fecha_emision BETWEEN :fecha_inicio AND :fecha_fin
@@ -382,6 +403,7 @@ class EstadisticasModel
 
         $stmt->bindValue(':fecha_inicio', $fecha_inicio);
         $stmt->bindValue(':fecha_fin', $fecha_fin);
+        $stmt->bindValue(':tipo_movimiento', $tipo_movimiento);
 
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
