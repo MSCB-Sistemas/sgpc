@@ -64,7 +64,7 @@ class EstadisticasModel
 
 
     /**
-     * Promedio de permisos por tipo
+     * Promedio de permisos rango de fechas
      */
     public function getPromedioPermisos($fecha_inicio = null, $fecha_fin = null): string|null
     {
@@ -84,6 +84,28 @@ class EstadisticasModel
         }
         return '';
         
+    }
+
+    /**
+     * Promedio de permisos por día rango de fechas
+     */
+    public function getPermisosPorDia($fecha_inicio = null, $fecha_fin = null): array
+    {
+        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
+
+        $stmt = $this->db->prepare("
+            SELECT DATE(fecha_emision) AS dia, COUNT(*) AS total
+            FROM permisos
+            WHERE activo = 1 
+            AND DATE(fecha_emision) BETWEEN :inicio AND :fin
+            GROUP BY DATE(fecha_emision)
+            ORDER BY dia;
+        ");
+        $stmt->bindValue(':inicio', $fecha_inicio);
+        $stmt->bindValue(':fin', $fecha_fin);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
     /**

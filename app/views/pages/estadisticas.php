@@ -403,13 +403,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-                <div class="card text-white" style="background: linear-gradient(135deg,#43e97b,#38f9d7,#81FF47); height:185px;">
+                <div class="card text-white" style="background: linear-gradient(135deg,#830dde,#00eb46); height:185px;">
                     <div class="card-body text-center">
-                        <h3>🏢</h3>
-                        <h4>Empresa más activa</h4>
-                        <h5><?= htmlspecialchars($empresa_mas_usada_nombre) ?></h5>
-                        <h6>Total de Permisos: <?= htmlspecialchars($empresa_mas_usada_total) ?></h6>
-                        <small><?= number_format($empresa_mas_usada_promedio_diario, 2) ?> permisos/día</small>
+                        <h5>Permisos por día</h5>
+                        <?php if (!empty($datos['values'])): ?>
+                            <canvas id="permisosChart" height="85"></canvas>
+                        <?php else: ?>
+                            <p>No hay datos.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -470,17 +471,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-md-6 mb-3">
             <div class="card text-white" style="background: linear-gradient(to right,#ff758c,#D143D1); height:185px;">
                 <div class="card-body text-center">
-                    <h3>📊</h3>
-                    <h5>Promedio de Tipos de Permisos</h5>
-                    <?php if (!empty($datos['promedio_por_tipo'])): ?>
-                        <ul class="list-unstyled mb-0">
-                            <?php foreach ($datos['promedio_por_tipo'] as $tipo): ?>
-                                <li><?= ucfirst($tipo['tipo']) ?>: <?= number_format($tipo['promedio_diario'], 2) ?> / día</li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>No hay datos.</p>
-                    <?php endif; ?>
+                    <h3>🏢</h3>
+                    <h4>Empresa más activa</h4>
+                    <h5><?= htmlspecialchars($empresa_mas_usada_nombre) ?></h5>
+                    <h6>Total de Permisos: <?= htmlspecialchars($empresa_mas_usada_total) ?></h6>
+                    <small><?= number_format($empresa_mas_usada_promedio_diario, 2) ?> permisos/día</small>
                 </div>
             </div>
         </div>
@@ -506,5 +501,44 @@ document.addEventListener('DOMContentLoaded', function () {
         lengthMenu: [5, 10, 25, 50, 100], // Opciones para cambiar cantidad
         order: []             // Sin orden inicial (para que el usuario elija)
     });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('permisosChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: <?= json_encode($datos['labels']) ?>,
+        datasets: [{
+            label: 'Permisos por día',
+            data: <?= json_encode($datos['values']) ?>,
+            borderColor: 'rgba(131, 203, 250, 1)',
+            backgroundColor: 'rgba(226, 232, 236, 0.2)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+            pointRadius: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+        },
+        scales: {
+            y: { 
+                ticks: {
+                    color: '#ffffffff' // 👈 color de las fechas (eje X)
+                    },
+                beginAtZero: true },
+            x: {
+                ticks: {
+                    color: '#ffffffff' // 👈 color de las fechas (eje X)
+                }
+            }
+        }
+    }
 });
 </script>
