@@ -21,7 +21,7 @@
               session_start();
           }
           if (isset($_SESSION['usuario_id'])) {
-              $this->controller = 'inicio';
+              $this->controller = 'Inicio';
               $this->method = 'index';
           } else {
               $this->controller = 'Auth';
