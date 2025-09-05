@@ -109,17 +109,18 @@ class UsuariosModel {
         $query = "INSERT INTO usuarios (usuario, nombre, apellido, cargo, sector, contrasenia, id_tipo_usuario) VALUES (:usuario, :nombre, :apellido, :cargo, :sector, :contrasenia, :id_tipo_usuario)";
         $stmt = $this->db->prepare($query);
         $params = ['usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'contrasenia' => $contrasenia, 'id_tipo_usuario' => $id_tipo_usuario];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+        
+        return $result;
     }
-
+    
     /**
      * Desactiva un usuario de la base de datos por su ID.
      *

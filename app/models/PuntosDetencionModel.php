@@ -89,13 +89,14 @@ class PuntosDetencionModel {
         $stmt = $this->db->prepare($query);
         $params = ['nombre' => $nombre, 'id_calle' => $id_calle];
         $stmt->execute($params);
-        
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        return $this->db->lastInsertId();
+
+        return $result;
     }
 
     /**

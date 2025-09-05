@@ -86,14 +86,14 @@ class EmpresaModel
 
         $params = ['nombre' => $nombre_empresa];
         $stmt->execute($params);
-
-        auditoriaHelper::Log(
-            $_SESSION['id_usuario'],
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
             $query,
             $params
-        ); 
+        );
 
-        return $this->db->lastInsertId();
+        return $result;
     }
 
     /** 
