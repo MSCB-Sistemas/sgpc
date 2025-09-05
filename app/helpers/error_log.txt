@@ -1,0 +1,12 @@
+[2025-09-05 13:35:47] La consulta no trajo datos- 
+[2025-09-05 13:36:00] La consulta no trajo datos- 
+[2025-09-05 13:36:47] La consulta no trajo datos- 
+[2025-09-05 13:37:04] La consulta no trajo datos- 
+[2025-09-05 13:37:06] La consulta no trajo datos- 
+[2025-09-05 13:41:27] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-05 13:41:29] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-05 13:41:29] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-05 13:41:29] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-05 13:41:29] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-05 13:41:30] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-05 13:41:30] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":null,"offset":10,"limit":0}
