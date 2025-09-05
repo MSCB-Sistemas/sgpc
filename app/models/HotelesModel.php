@@ -98,6 +98,10 @@ class HotelesModel {
             $params
         );
 
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el hotel ".$nombre_hotel." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
         return $result;
     }
 

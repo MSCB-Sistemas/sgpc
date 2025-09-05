@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -124,6 +125,10 @@ class UsuariosModel {
             $params
         );
         
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el usuario ".$usuario." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
         return $result;
     }
     

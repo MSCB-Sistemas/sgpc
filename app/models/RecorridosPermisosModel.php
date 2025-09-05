@@ -105,6 +105,10 @@ class RecorridosPermisosModel
             $params
         );
 
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el recorrido en el permiso "." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
         return $result;
     }
 
@@ -128,6 +132,10 @@ class RecorridosPermisosModel
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la asociacion de recorrido permiso id ".$id_recorrido_permiso." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 

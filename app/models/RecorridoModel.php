@@ -95,6 +95,10 @@ class RecorridoModel
             $params
         );
 
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el recorrido ".$nombre_recorrido." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
         return $result;
     }
 

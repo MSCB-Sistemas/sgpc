@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -101,6 +102,10 @@ class PuntosDetencionModel {
             $query,
             $params
         );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el punto de detencion ".$nombre." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
 
         return $result;
     }
