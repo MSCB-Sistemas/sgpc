@@ -11,7 +11,7 @@
       session_set_cookie_params([
             'lifetime' => 0,       // Expira al cerrar el navegador
             'path' => '/',
-            'secure' => false,      // Solo HTTPS (false en desarrollo local)
+            'secure' => true,      // Solo HTTPS (false en desarrollo local)
             'httponly' => true,   // Protección contra JS malicioso
             'samesite' => 'Lax'   // Seguridad CSRF
       ]);
