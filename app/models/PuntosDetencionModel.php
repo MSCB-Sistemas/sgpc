@@ -95,16 +95,13 @@ class PuntosDetencionModel {
         $stmt = $this->db->prepare($query);
         $params = ['nombre' => $nombre, 'id_calle' => $id_calle];
         $stmt->execute($params);
-        
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        $result = $this->db->lastInsertId();
-        if (!$result) {
-            writeLog("❌ Error: No se pudo insertar el punto de detencion".$nombre." en la base de datos. Query: ".$query."parametros: ".$params);
-        }
+
         return $result;
     }
 

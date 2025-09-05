@@ -176,15 +176,14 @@ class PermisoModel
             'id_lugar'=> $id_lugar
         ];
         $stmt->execute($params);
-
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
 
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+        return $result;
     }
 
     /**

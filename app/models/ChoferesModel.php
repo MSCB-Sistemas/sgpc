@@ -91,13 +91,13 @@ class ChoferesModel {
 
         $params = ['dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad];
         $stmt->execute($params);
-
-        auditoriaHelper::Log(
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        $result = $this->db->lastInsertId();
+        $result = $result;
         if (!$result) {
             writeLog("❌ Error: No se pudo insertar el chofer " . $nombre . " " . $apellido . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
         }

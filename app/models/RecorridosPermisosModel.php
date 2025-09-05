@@ -97,15 +97,15 @@ class RecorridosPermisosModel
         $query = "INSERT INTO recorridos_permisos (id_permiso,id_recorrido) VALUES (:id_permiso,:id_recorrido)";
         $stmt = $this->db->prepare($query);
         $params = ['id_permiso' => $id_permiso,'id_recorrido' => $id_recorrido];
-        
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+
+        return $result;
     }
 
     /**

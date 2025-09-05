@@ -78,15 +78,15 @@ class ServicioModel
             'interno' => $interno,
             'dominio' => $dominio
         ];
-        
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+
+        return $result;
     }
 
     /**

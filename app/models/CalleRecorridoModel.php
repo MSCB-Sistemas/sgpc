@@ -67,20 +67,14 @@ class CalleRecorridoModel
 
         $params = ['id_recorrido' => $id_recorrido, 'id_calle' => $id_calle];
         $stmt->execute($params);
-
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        $result = $this->db->lastInsertId();
-        if ($result) {
-            return $result;
-        } else {
-            writeLog("❌ Error: No se pudo insertar la relación entre recorrido ".$id_recorrido." y calle ".$id_calle." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
-            return false;
-        }
 
+        return $result;
     }
 
     /**

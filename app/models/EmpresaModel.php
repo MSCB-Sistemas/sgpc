@@ -91,12 +91,12 @@ class EmpresaModel
 
         $params = ['nombre' => $nombre_empresa];
         $stmt->execute($params);
-
-        auditoriaHelper::Log(
-            $_SESSION['id_usuario'],
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
             $query,
             $params
-        ); 
+        );
         $result = $this->db->lastInsertId();
         if (!$result) {
             writeLog("❌ Error: No se pudo insertar la empresa " . $nombre_empresa . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));

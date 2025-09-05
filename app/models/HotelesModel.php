@@ -91,15 +91,14 @@ class HotelesModel {
 
         $params = ['nombre' => $nombre_hotel, 'direccion' => $direccion];
         $stmt->execute($params);
-
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
 
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+        return $result;
     }
 
     /**
