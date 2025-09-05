@@ -15,7 +15,7 @@
             'httponly' => true,   // Protección contra JS malicioso
             'samesite' => 'Lax'   // Seguridad CSRF
       ]);
-      session_start();
+      //session_start();
      //var_dump($_SESSION);
       //exit();
       // Si no hay controlador definido en la URL, redirigir según el login
