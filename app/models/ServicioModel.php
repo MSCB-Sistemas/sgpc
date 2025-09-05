@@ -120,7 +120,13 @@ class ServicioModel
             $params
         );
         
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el servicio con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -142,6 +148,10 @@ class ServicioModel
             $params
         );
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el servicio con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 }

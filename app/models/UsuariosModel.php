@@ -90,7 +90,13 @@ class UsuariosModel {
             $params
         );
         
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el usuario con id ".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -138,6 +144,10 @@ class UsuariosModel {
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el usuario con id ".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
@@ -159,6 +169,10 @@ class UsuariosModel {
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo activar el usuario con id ".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
     
@@ -181,6 +195,10 @@ class UsuariosModel {
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo actualizar la contraseña del usuario id".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
