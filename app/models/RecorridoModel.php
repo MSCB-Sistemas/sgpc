@@ -81,15 +81,15 @@ class RecorridoModel
         $query = "INSERT INTO recorridos (nombre) VALUES (:nombre)";
         $stmt = $this->db->prepare($query);
         $params = ['nombre' => $nombre_recorrido];
-        
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+
+        return $result;
     }
 
     /**

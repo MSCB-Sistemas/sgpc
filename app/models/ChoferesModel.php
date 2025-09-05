@@ -86,14 +86,14 @@ class ChoferesModel {
 
         $params = ['dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad];
         $stmt->execute($params);
-
-        auditoriaHelper::Log(
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
 
-        return $this->db->lastInsertId();
+        return $result;
     }
 
     /**

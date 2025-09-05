@@ -95,15 +95,15 @@ class ReservasPuntosModel {
         $query = "INSERT INTO reservas_puntos (fecha_horario, id_hotel, id_permiso, id_punto_detencion) VALUES (:fecha_horario, :id_hotel, :id_permiso, :id_punto_detencion)";
         $stmt = $this->db->prepare($query);
         $params = ['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion];
-        
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+
+        return $result;
     }
 
     /**

@@ -86,14 +86,14 @@ class LugarModel
 
         $params = ['nombre' => $nombre_lugar];
         $stmt->execute($params);
-
-        auditoriaHelper::Log(
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
 
-        return $this->db->lastInsertId();
+        return $result;
     }
 
     /** 
