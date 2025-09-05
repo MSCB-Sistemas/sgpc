@@ -16,8 +16,8 @@
             'samesite' => 'Lax'   // Seguridad CSRF
       ]);
       session_start();
-      var_dump($_SESSION);
-      exit();
+     // var_dump($_SESSION);
+      //exit();
       // Si no hay controlador definido en la URL, redirigir según el login
       if (!$url || empty($url[0])) {
           if (isset($_SESSION['usuario_id'])) {
