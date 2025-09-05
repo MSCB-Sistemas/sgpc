@@ -87,4 +87,5 @@ class Auth extends Control
         header("Location: " . URL . "/auth/login");
         exit;
     }
+    
 }
