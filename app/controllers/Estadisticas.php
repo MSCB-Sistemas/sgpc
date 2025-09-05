@@ -51,9 +51,8 @@ class Estadisticas extends Control
             $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
         }
         
-        // Llamada al modelo
-       
-
+        $total_resultados = 0;
+        $total_paginas = 1;
 
             // Paginación
 
@@ -66,10 +65,14 @@ class Estadisticas extends Control
             // Validar si se busca por chofer pero no se completó DNI
             if ($buscar_por === 'chofer' && empty($dni)) {
                 // No hacer consulta, resultados vacíos y mostrar error
-                $movimientos = [];
-                $total_resultados = 0;
-                $total_paginas = 1;
-                $error = 'Debe ingresar un DNI para buscar por chofer';
+                $dni = null;
+                $movimientos = $this->model->getPermisosFiltradosChofer(
+                    $fecha_inicio,
+                    $fecha_fin,
+                    $dni,
+                    $tipo,
+                );
+                
             } else {
                 // Ajustar filtros según buscar_por
                 if ($buscar_por !== 'chofer') {
@@ -111,7 +114,6 @@ class Estadisticas extends Control
             'buscar_por'    => $buscar_por,
             'pagina_actual' => $pagina_actual,
             'total_paginas' => $total_paginas,
-            'error'         => $error,
             'total_resultados' => $total_resultados,
             'por_tipo' => $this->model->getServicioMasUsado($fecha_inicio_resumen, $fecha_fin_resumen),
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 

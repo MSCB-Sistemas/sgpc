@@ -39,12 +39,7 @@ if (isset($_GET['filtrar'])) {
 }
 
 
-// Validación: solo si se presionó "Filtrar" y buscar_por es chofer
-if ($filtrar && $buscar_por === 'chofer' && $dni === '') {
-    $error = "Debe ingresar un DNI para buscar por chofer.";
-    // No mostrar resultados si hay error
-    $datos['movimientos'] = [];
-}
+
 
 // Para los valores que usas en la vista desde $datos, hacer asignaciones con if para evitar usar ?? o ternarios:
 
