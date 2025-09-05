@@ -15,6 +15,7 @@ form principal permisos
     View 8 hs
     Controller 8hs
     Resumen: View 12hs Controllers 12hs models 8hs
+    Inicio: 8hs
 
     Otros:
     Controllers: 8hs

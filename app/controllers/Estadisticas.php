@@ -51,11 +51,6 @@ class Estadisticas extends Control
             $fecha_fin_resumen = $_GET['fecha_fin_resumen'];
         }
         
-        // Llamada al modelo
-       
-
-
-            // Paginación
 
             $pagina_actual = 1;
 
@@ -67,8 +62,6 @@ class Estadisticas extends Control
             if ($buscar_por === 'chofer' && empty($dni)) {
                 // No hacer consulta, resultados vacíos y mostrar error
                 $movimientos = [];
-                $total_resultados = 0;
-                $total_paginas = 1;
                 $error = 'Debe ingresar un DNI para buscar por chofer';
             } else {
                 // Ajustar filtros según buscar_por
@@ -81,9 +74,7 @@ class Estadisticas extends Control
                 $limite_por_pagina = 10;
                 $offset            = ($pagina_actual - 1) * $limite_por_pagina;
 
-                // Total de resultados y total de páginas para la paginación
-                $total_resultados = $this->model->getCantidadPermisosFiltrados($fecha_inicio, $fecha_fin, $dni, $tipo);
-                $total_paginas    = max(1, ceil($total_resultados / $limite_por_pagina));
+            
 
                 // Obtener movimientos filtrados
                 $movimientos = $this->model->getPermisosFiltradosChofer(
@@ -110,9 +101,7 @@ class Estadisticas extends Control
             'tipo'          => $tipo,
             'buscar_por'    => $buscar_por,
             'pagina_actual' => $pagina_actual,
-            'total_paginas' => $total_paginas,
             'error'         => $error,
-            'total_resultados' => $total_resultados,
             'por_tipo' => $this->model->getServicioMasUsado($fecha_inicio_resumen, $fecha_fin_resumen),
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
