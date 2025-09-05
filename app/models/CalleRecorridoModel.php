@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /**
@@ -72,8 +73,14 @@ class CalleRecorridoModel
             $query,
             $params
         );
+        $result = $this->db->lastInsertId();
+        if ($result) {
+            return $result;
+        } else {
+            writeLog("❌ Error: No se pudo insertar la relación entre recorrido ".$id_recorrido." y calle ".$id_calle." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+            return false;
+        }
 
-        return $this->db->lastInsertId();
     }
 
     /**
@@ -100,8 +107,12 @@ class CalleRecorridoModel
             $query,
             $params
         );
-
-        return $stmt->execute($params);
+        if ($stmt->execute($params)){
+            return true;
+        } else {
+            writeLog("❌ Error: No se pudo actualizar la relación con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+            return false;
+        }
     }
 
     /**
@@ -123,6 +134,9 @@ class CalleRecorridoModel
             $query,
             $params
         );
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la relación con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
 
         return $stmt->rowCount() > 0;
     }
@@ -174,6 +188,9 @@ class CalleRecorridoModel
             $query,
             $params
         );
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar las calles asociadas al recorrido con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
 
         return $stmt->rowCount() > 0;
     }

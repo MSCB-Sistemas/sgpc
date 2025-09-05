@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../helpers/logHelper.php';
 //Conexion de base de datos
 class Database   {
     private static PDO $connection;
@@ -13,6 +14,7 @@ class Database   {
                 ]);
             } catch (PDOException $e) {
                 $_SESSION['error_inicio'] = "Error de conexión a la base de datos.";
+                writeLog("❌ Error de conexión a la base de datos: " . $e->getMessage());
                 header("Location: " . URL);
                 exit;
             }

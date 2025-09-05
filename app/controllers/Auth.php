@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../helpers/DerechosUsuariosHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 class Auth extends Control
 {
     /**
@@ -15,6 +16,7 @@ class Auth extends Control
 
             if (empty($user) || empty($password)) {
                 $datos['error'] = 'Debe ingresar usuario y contraseña';
+                writeLog("❌ Error: En inicio de sesión - ".$datos['error']);
                 $this->load_view('login', $datos, false);
                 exit;
             }
@@ -41,6 +43,7 @@ class Auth extends Control
                 exit;
             } else {
                 $datos['error'] = 'Credenciales incorrectas';
+                writeLog("❌ Error: En inicio de sesión - ".$datos['error']);
                 $this->load_view('login', $datos, false);
             }
         } else {
@@ -84,8 +87,4 @@ class Auth extends Control
         header("Location: " . URL . "/auth/login");
         exit;
     }
-
-
-    
-    
 }
