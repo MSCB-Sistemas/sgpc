@@ -75,7 +75,13 @@ class RecorridosPermisosModel
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
-        return $stmt->execute();
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el recorrido del permiso con id ".$id_permiso." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
  
     /**

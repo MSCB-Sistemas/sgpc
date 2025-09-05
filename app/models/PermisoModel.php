@@ -183,6 +183,7 @@ class PermisoModel
             $params
         );
 
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -251,6 +252,10 @@ class PermisoModel
             $query,
             $params
         );
+
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el permiso con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
 
         return $stmt->rowCount() > 0;
     }

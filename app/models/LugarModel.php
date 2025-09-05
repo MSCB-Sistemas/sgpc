@@ -70,7 +70,13 @@ class LugarModel
             $params
         );
 
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
     /** 
      * Funcion que ejecuta una query para insertar un nuevo lugar.
@@ -93,6 +99,7 @@ class LugarModel
             $params
         );
 
+        $stmt->execute($params);
         return $this->db->lastInsertId();
     }
 
@@ -118,6 +125,10 @@ class LugarModel
             $params
         );
 
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
@@ -141,7 +152,13 @@ class LugarModel
             $params
         );
 
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     public function getPermisosByLugar($id_lugar): array
