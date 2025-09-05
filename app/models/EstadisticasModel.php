@@ -16,7 +16,12 @@ class EstadisticasModel
     }
 
     /**
-     * Genera fechas por defecto (últimos 30 días) si no se proporcionan
+     * Establece fechas por defecto si no se proporcionan.
+     * Si no se proporciona fecha_fin, se establece en la fecha actual.
+     * Si no se proporciona fecha_inicio, se establece en 30 días antes de fecha_fin.
+     *
+     * @param string|null $fecha_inicio Fecha inicial.
+     * @param string|null $fecha_fin Fecha final.
      */
     private function establecerFechasPorDefecto(&$fecha_inicio, &$fecha_fin)
     {
@@ -30,7 +35,10 @@ class EstadisticasModel
     }
 
     /**
-     * Empresa con más permisos diarios en promedio
+     * Funcion para obtener la empresa con mas permisos diarios en promedio
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): array
     {
@@ -62,9 +70,11 @@ class EstadisticasModel
 
     }
 
-
     /**
-     * Promedio de permisos rango de fechas
+     * Funcion para obtener el promedio de permisos por dia
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return string|null
      */
     public function getPromedioPermisos($fecha_inicio = null, $fecha_fin = null): string|null
     {
@@ -87,7 +97,10 @@ class EstadisticasModel
     }
 
     /**
-     * Promedio de permisos por día rango de fechas
+     * Funcion para obtener los permisos por dia
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getPermisosPorDia($fecha_inicio = null, $fecha_fin = null): array
     {
@@ -109,7 +122,10 @@ class EstadisticasModel
     }
 
     /**
-     * Recorrido más utilizado
+     * Funcion para obtener el recorrido mas utilizado
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getRecorridoMasUtilizado($fecha_inicio = null, $fecha_fin = null): array
     {
@@ -311,9 +327,11 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
     /**
-     * Obtiene los puntos de detención más utilizados en las reservas de puntos.
-     * Se limita a los 5 puntos más frecuentes.
+     * Funcion para obtener el punto mas usado
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
      * @return array
      */
     public function getPuntosMasUsados( $fecha_inicio = null, $fecha_fin = null): array {
@@ -339,6 +357,9 @@ class EstadisticasModel
 
     /**
      * Funcion para obtener el servicio mas usado
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getServicioMasUsado($fecha_inicio = null, $fecha_fin = null): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
@@ -359,6 +380,13 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Obtiene el lugar más utilizado para arribo o salida en los permisos.
+     * @param string $tipo_movimiento 'arribo' o 'salida'
+     * @param string|null $fecha_inicio Fecha inicial de filtrado.
+     * @param string|null $fecha_fin Fecha final de filtrado.
+     * @return array Lugar más utilizado con su nombre y cantidad.
+     */
     public function getLugarMasUsado($tipo_movimiento, $fecha_inicio = null, $fecha_fin = null): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         $stmt = $this->db->prepare("
