@@ -23,6 +23,24 @@
 
     }
 
+    public function manual()
+    {
+      $file = APP . '/views/manual.pdf'; // Ruta absoluta del PDF
+
+      if (file_exists($file)) {
+          // Forzar descarga o abrir en navegador
+          header('Content-Type: application/pdf');
+          header('Content-Disposition: inline; filename="manual.pdf"');
+          header('Content-Length: ' . filesize($file));
+          readfile($file);
+          exit;
+      } else {
+          $_SESSION['error_inicio'] = "El manual de usuario no está disponible. Ruta: ". $file;
+          header("Location: " . URL);
+          exit;
+      }
+    }
+
     /**public function login()
     {
       $datos = [
