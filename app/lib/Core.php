@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../helpers/logHelper.php';
   class Core
   {
     protected $controller;
@@ -31,6 +32,7 @@
       } else {
         if ($url[0]!='css'){
           $_SESSION['error_inicio'] = "Error: Controlador no encontrado: " . $url[0] ;
+          writeLog("❌ Error: Controlador no encontrado: " . $url[0]);
         }
         header("Location: " . URL);
         exit;
@@ -56,7 +58,14 @@
       }
 
       // Llamar al método con parámetros
-      call_user_func_array([$this->controller, $this->method], $this->parameters);
+      try{
+        call_user_func_array([$this->controller, $this->method], $this->parameters);
+      }
+      catch (Exception $e) {
+        writeLog("❌ Error: Parámetros incorrectos para el método " . $this->method . " del controlador " . $this->controller::class . ". Mensaje: " . $e->getMessage());
+        header("Location: " . URL);
+        exit;
+      }
     }
 
     public function getUrl()
