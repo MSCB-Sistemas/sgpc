@@ -22,10 +22,10 @@
                 <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
                 <label for="floatingPassword">Contraseña</label>
             </div>
-            <div class="form-check text-start mb-3">
+            <!-- <div class="form-check text-start mb-3">
                 <input class="form-check-input" type="checkbox" name="remember" id="remember">
                 <label class="form-check-label" for="remember">Recuérdame</label>
-            </div>
+            </div> -->
             <div>
                 <button class="btn btn-primary w-100 py-2" style="border-color: #ff6900; background-color: #ff6900 !important;" type="submit">Iniciar sesión</button>
             </div><br>

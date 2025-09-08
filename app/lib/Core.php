@@ -8,13 +8,13 @@
     public function __construct()
     {
       $url = $this->getUrl();
-      session_set_cookie_params([
-            'lifetime' => 0,       // Expira al cerrar el navegador
-            'path' => '/',
-            'secure' => true,      // Solo HTTPS (false en desarrollo local)
-            'httponly' => true,   // Protección contra JS malicioso
-            'samesite' => 'Lax'   // Seguridad CSRF
-      ]);
+      // session_set_cookie_params([
+      //       'lifetime' => 0,       // Expira al cerrar el navegador
+      //       'path' => '/',
+      //       'secure' => true,      // Solo HTTPS (false en desarrollo local)
+      //       'httponly' => true,   // Protección contra JS malicioso
+      //       'samesite' => 'Lax'   // Seguridad CSRF
+      // ]);
       session_start();
       // Si no hay controlador definido en la URL, redirigir según el login
       if (!$url || empty($url[0])) {

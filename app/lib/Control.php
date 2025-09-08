@@ -96,15 +96,15 @@ class Control
      */
     protected function createRememberMeToken($id_usuario)
     {
-        $token = bin2hex(random_bytes(32));
-        $expiry = time() + 60 * 60 * 24 * 30;
+        // $token = bin2hex(random_bytes(32));
+        // $expiry = time() + 60 * 60 * 24 * 30;
 
-        $tokenModel = $this->load_model('RememberTokensModel');
-        $tokenModel->insertRememberMeToken($id_usuario, $token, $expiry);
+        // $tokenModel = $this->load_model('RememberTokensModel');
+        // $tokenModel->insertRememberMeToken($id_usuario, $token, $expiry);
 
-        $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
-        setcookie('remember_token', $token, $expiry, '/', '', $secure, true);
-        setcookie('id_usuario', $id_usuario, $expiry, '/', '', $secure, true);
+        // $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        // setcookie('remember_token', $token, $expiry, '/', '', $secure, true);
+        // setcookie('id_usuario', $id_usuario, $expiry, '/', '', $secure, true);
     }
 
     //**
