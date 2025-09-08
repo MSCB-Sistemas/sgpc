@@ -59,33 +59,33 @@ class Control
      */
     protected function checkRememberMeToken()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        // if (session_status() === PHP_SESSION_NONE) {
+        //     session_start();
+        // }
 
-        if (!isset($_SESSION['usuario_id']) &&
-            isset($_COOKIE['remember_token']) &&
-            isset($_COOKIE['id_usuario'])) {
+        // if (!isset($_SESSION['usuario_id']) &&
+        //     isset($_COOKIE['remember_token']) &&
+        //     isset($_COOKIE['id_usuario'])) {
 
-            $token = $_COOKIE['remember_token'];
-            $usuarioId = $_COOKIE['id_usuario'];
+        //     $token = $_COOKIE['remember_token'];
+        //     $usuarioId = $_COOKIE['id_usuario'];
 
-            $tokenModel = $this->load_model('RememberTokensModel');
-            $usuarioData = $tokenModel->validateRememberMeToken($usuarioId, $token);
+        //     $tokenModel = $this->load_model('RememberTokensModel');
+        //     $usuarioData = $tokenModel->validateRememberMeToken($usuarioId, $token);
 
-            if ($usuarioData) {
-                $_SESSION['usuario_id'] = $usuarioData['id_usuario'];
-                $_SESSION['usuario_nombre'] = $usuarioData['nombre'];
-                $_SESSION['usuario_apellido'] = $usuarioData['apellido'];
-                $_SESSION['usuario_tipo'] = $usuarioData['id_tipo_usuario'];
-                $_SESSION['usuario_derechos'] = DerechosUsuariosHelper::getDerechos($usuarioData['id_tipo_usuario']);
+        //     if ($usuarioData) {
+        //         $_SESSION['usuario_id'] = $usuarioData['id_usuario'];
+        //         $_SESSION['usuario_nombre'] = $usuarioData['nombre'];
+        //         $_SESSION['usuario_apellido'] = $usuarioData['apellido'];
+        //         $_SESSION['usuario_tipo'] = $usuarioData['id_tipo_usuario'];
+        //         $_SESSION['usuario_derechos'] = DerechosUsuariosHelper::getDerechos($usuarioData['id_tipo_usuario']);
 
-                $this->createRememberMeToken($usuarioData['id_usuario']); // renovar token
+        //         $this->createRememberMeToken($usuarioData['id_usuario']); // renovar token
 
-                header("Location: " . URL . "/inicio");
-                exit;
-            }
-        }
+        //         header("Location: " . URL . "/inicio");
+        //         exit;
+        //     }
+        // }
     }
 
     /**

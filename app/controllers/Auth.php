@@ -55,23 +55,24 @@ class Auth extends Control
             session_start();
         }
 
-        $idUsuario = null;
-        $token = null;
+        // $idUsuario = null;
+        // $token = null;
 
-        if(!empty($_SESSION['usuario_id'])) {
-            $idUsuario = $_SESSION['usuario_id'];
-        } elseif (!empty($_COOKIE['id_usuario'])) {
-            $idUsuario = $_COOKIE['id_usuario'];
-        }
+        // if(!empty($_SESSION['usuario_id'])) {
+        //     $idUsuario = $_SESSION['usuario_id'];
+        // } 
+        // elseif (!empty($_COOKIE['id_usuario'])) {
+        //     $idUsuario = $_COOKIE['id_usuario'];
+        // }
 
-        if (!empty($_COOKIE['remember_token'])) {
-            $token = $_COOKIE['remember_token'];
-        }
+        // if (!empty($_COOKIE['remember_token'])) {
+        //     $token = $_COOKIE['remember_token'];
+        // }
 
-        if ($idUsuario && $token) {
+        // if ($idUsuario && $token) {
         // $tokenModel = $this->load_model('RememberTokensModel');
         // $tokenModel->deleteRememberMeToken($idUsuario, $token); 
-    }
+    // }
 
         // // Eliminar cookies del navegador
         // setcookie('remember_token', '', time() - 3600, '/');
