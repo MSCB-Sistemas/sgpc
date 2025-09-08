@@ -16,12 +16,12 @@
         <div class="col-md-12 mb-3">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-info text-white">📅 Reservas Programadas</div>
-                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="card-body" style="max-height: 450px; overflow-y: auto;">
                     <?php if (!empty($datos['reservas_desde_hoy'])): ?>
                         <ul id="listaReservas" class="list-group list-group-flush">
                             <?php if (!empty($datos['reservas_desde_hoy'])): ?>
                                 <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
-                                    <li class="list-group-item" style="height:110px; ">
+                                    <li class="list-group-item" style="height:90px; ">
                                         <span style="font-size:1rem; font-weight:500; " style=> 🕜 <?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></span>
                                         <br><br>
                                         <span style=" text-transform: capitalize; font-size:1rem; font-weight:500; letter-spacing: 0px; word-spacing: 10px;" >
