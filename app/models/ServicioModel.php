@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -78,15 +79,19 @@ class ServicioModel
             'interno' => $interno,
             'dominio' => $dominio
         ];
-        
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el servicio "." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -120,7 +125,13 @@ class ServicioModel
             $params
         );
         
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el servicio con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -142,6 +153,10 @@ class ServicioModel
             $params
         );
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el servicio con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../helpers/logHelper.php';
 
 /**
  * Controlador de CalleModel.php
@@ -72,6 +73,7 @@ class Calle extends Control
                 'errores' => [],
             ]);
         } else {
+            writeLog("⚠ Advertencia: usuario ".$_SESSION['usuario_nombre']."(id: ".$_SESSION['usuario_id'].") intentó acceder a calle/create sin permisos.");
             header("Location: " . URL);
         }
     }

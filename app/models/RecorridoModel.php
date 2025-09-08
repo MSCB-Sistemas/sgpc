@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ .'/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /*
@@ -66,7 +67,13 @@ class RecorridoModel
             $params
         );
         // Ejecuta la consulta pasando los valores
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el recorrido con id ".$id_recorrido." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
  
     /**
@@ -81,15 +88,19 @@ class RecorridoModel
         $query = "INSERT INTO recorridos (nombre) VALUES (:nombre)";
         $stmt = $this->db->prepare($query);
         $params = ['nombre' => $nombre_recorrido];
-        
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el recorrido ".$nombre_recorrido." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -112,6 +123,10 @@ class RecorridoModel
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el recorrido con id ".$id_recorrido." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
@@ -127,6 +142,12 @@ class RecorridoModel
             $params
         );
         // Ejecuta la consulta pasando los valores
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el recorrido con id ".$id_recorrido." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 }

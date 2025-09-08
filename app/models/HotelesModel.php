@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -67,7 +68,13 @@ class HotelesModel {
             $params
         );
         
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el hotel con id ".$id_hotel." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -84,14 +91,18 @@ class HotelesModel {
 
         $params = ['nombre' => $nombre_hotel, 'direccion' => $direccion];
         $stmt->execute($params);
-
+        $result = $this->db->lastInsertId();
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
 
-        return $this->db->lastInsertId();
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el hotel ".$nombre_hotel." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -113,6 +124,10 @@ class HotelesModel {
             $query,
             $params
         );
+
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el hotel con id ".$id_hotel." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
 
         return $stmt->rowCount() > 0;
     }
@@ -137,7 +152,13 @@ class HotelesModel {
             $params
         );
 
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el hotel con id ".$id_hotel." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 }
 

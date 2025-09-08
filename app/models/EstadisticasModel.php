@@ -240,7 +240,7 @@ class EstadisticasModel
             $params[':fecha_fin'] = $fecha_fin;
         }
 
-        if (!empty($dni)) {
+        if ($dni !== null && $dni !== '') {
             $sql .= " AND c.dni = :dni";
             $params[':dni'] = $dni;
         }
@@ -266,7 +266,20 @@ class EstadisticasModel
         }
 
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($result)) {
+        $filtros = json_encode([
+            'fecha_inicio' => $fecha_inicio,
+            'fecha_fin' => $fecha_fin,
+            'dni' => $dni,
+            'tipo' => $tipo,
+            'offset' => $offset,
+            'limit' => $limite_por_pagina
+        ]);
+        writeLog("getPermisosFiltradosChofer: No se encontraron resultados para los filtros: $filtros");
+    }
+
+    return $result;
     }
 
 

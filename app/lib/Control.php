@@ -1,6 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../helpers/DerechosUsuariosHelper.php';
+
+require_once __DIR__ . '/../helpers/logHelper.php';
 class Control
 {
 
@@ -49,6 +51,7 @@ class Control
             }
         } else {
             $_SESSION['error_inicio'] = "Error: La vista {$viewFile} no existe.";
+            writeLog("❌ Error: La vista {$viewFile} no existe.");
             header("Location: " . URL);
             exit;
         }

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -90,7 +91,13 @@ class UsuariosModel {
             $params
         );
         
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el usuario con id ".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -109,17 +116,22 @@ class UsuariosModel {
         $query = "INSERT INTO usuarios (usuario, nombre, apellido, cargo, sector, contrasenia, id_tipo_usuario) VALUES (:usuario, :nombre, :apellido, :cargo, :sector, :contrasenia, :id_tipo_usuario)";
         $stmt = $this->db->prepare($query);
         $params = ['usuario' => $usuario, 'nombre' => $nombre, 'apellido' => $apellido, 'cargo' => $cargo, 'sector' => $sector, 'contrasenia' => $contrasenia, 'id_tipo_usuario' => $id_tipo_usuario];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
         
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        return $this->db->lastInsertId();
-    }
+        
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el usuario ".$usuario." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
 
+        return $result;
+    }
+    
     /**
      * Desactiva un usuario de la base de datos por su ID.
      *
@@ -138,6 +150,10 @@ class UsuariosModel {
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el usuario con id ".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
@@ -159,6 +175,10 @@ class UsuariosModel {
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo activar el usuario con id ".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
     
@@ -181,6 +201,10 @@ class UsuariosModel {
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo actualizar la contraseña del usuario id".$id_usuario." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 

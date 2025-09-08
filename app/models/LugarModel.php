@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -70,7 +71,13 @@ class LugarModel
             $params
         );
 
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
     /** 
      * Funcion que ejecuta una query para insertar un nuevo lugar.
@@ -86,14 +93,18 @@ class LugarModel
 
         $params = ['nombre' => $nombre_lugar];
         $stmt->execute($params);
-
-        auditoriaHelper::Log(
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
 
-        return $this->db->lastInsertId();
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el lugar ".$nombre_lugar." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /** 
@@ -118,6 +129,10 @@ class LugarModel
             $params
         );
 
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
@@ -141,7 +156,13 @@ class LugarModel
             $params
         );
 
-        return $stmt->execute($params);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     public function getPermisosByLugar($id_lugar): array

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/../models/Database.php';
+require_once 'logHelper.php';
 
 class auditoriaHelper {
     public static function log($id_usuario, $query, $param): bool {
@@ -19,6 +20,7 @@ class auditoriaHelper {
 
         } catch (Exception $e) {
             error_log('Error al registrar auditoria: ' . $e->getMessage());
+            writeLog("❌ Error al registrar auditoria: " . $e->getMessage());
             return false;
         }
     }

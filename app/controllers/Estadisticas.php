@@ -61,8 +61,14 @@ class Estadisticas extends Control
             // Validar si se busca por chofer pero no se completó DNI
             if ($buscar_por === 'chofer' && empty($dni)) {
                 // No hacer consulta, resultados vacíos y mostrar error
-                $movimientos = [];
-                $error = 'Debe ingresar un DNI para buscar por chofer';
+                $dni = null;
+                $movimientos = $this->model->getPermisosFiltradosChofer(
+                    $fecha_inicio,
+                    $fecha_fin,
+                    $dni,
+                    $tipo,
+                );
+                
             } else {
                 // Ajustar filtros según buscar_por
                 if ($buscar_por !== 'chofer') {
@@ -101,7 +107,6 @@ class Estadisticas extends Control
             'tipo'          => $tipo,
             'buscar_por'    => $buscar_por,
             'pagina_actual' => $pagina_actual,
-            'error'         => $error,
             'por_tipo' => $this->model->getServicioMasUsado($fecha_inicio_resumen, $fecha_fin_resumen),
             'empresa_mas_usada' => $this->model->getEmpresaConMasPermisos($fecha_inicio_resumen, $fecha_fin_resumen), 
             'hoteles_usados' => $this->model->getHotelesMasUsados($fecha_inicio_resumen, $fecha_fin_resumen),
