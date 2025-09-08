@@ -12,7 +12,7 @@ class Auth extends Control
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $_POST['user'];
             $password = trim($_POST['password']);
-            $remember = isset($_POST['remember']);
+            // $remember = isset($_POST['remember']);
 
             if (empty($user) || empty($password)) {
                 $datos['error'] = 'Debe ingresar usuario y contraseña';
@@ -35,9 +35,9 @@ class Auth extends Control
                 $_SESSION['usuario_tipo'] = $usuario['id_tipo_usuario'];
                 $_SESSION['usuario_derechos'] = DerechosUsuariosHelper::getDerechos($usuario['id_tipo_usuario']);
 
-                if ($remember) {
-                    $this->createRememberMeToken($usuario['id_usuario']); 
-                }
+                // if ($remember) {
+                //     $this->createRememberMeToken($usuario['id_usuario']); 
+                // }
 
                 header("Location: " . URL . "/inicio");
                 exit;
@@ -47,7 +47,7 @@ class Auth extends Control
                 $this->load_view('login', $datos, false);
             }
         } else {
-            $this->checkRememberMeToken();
+            // $this->checkRememberMeToken();
             $this->load_view('login', $datos, false);
         }
     }
@@ -58,27 +58,28 @@ class Auth extends Control
             session_start();
         }
 
-        $idUsuario = null;
-        $token = null;
+        // $idUsuario = null;
+        // $token = null;
 
-        if(!empty($_SESSION['usuario_id'])) {
-            $idUsuario = $_SESSION['usuario_id'];
-        } elseif (!empty($_COOKIE['id_usuario'])) {
-            $idUsuario = $_COOKIE['id_usuario'];
-        }
+        // if(!empty($_SESSION['usuario_id'])) {
+        //     $idUsuario = $_SESSION['usuario_id'];
+        // } 
+        // elseif (!empty($_COOKIE['id_usuario'])) {
+        //     $idUsuario = $_COOKIE['id_usuario'];
+        // }
 
-        if (!empty($_COOKIE['remember_token'])) {
-            $token = $_COOKIE['remember_token'];
-        }
+        // if (!empty($_COOKIE['remember_token'])) {
+        //     $token = $_COOKIE['remember_token'];
+        // }
 
-        if ($idUsuario && $token) {
-        $tokenModel = $this->load_model('RememberTokensModel');
-        $tokenModel->deleteRememberMeToken($idUsuario, $token); 
-    }
+        // if ($idUsuario && $token) {
+        // $tokenModel = $this->load_model('RememberTokensModel');
+        // $tokenModel->deleteRememberMeToken($idUsuario, $token); 
+    // }
 
-        // Eliminar cookies del navegador
-        setcookie('remember_token', '', time() - 3600, '/');
-        setcookie('id_usuario', '', time() - 3600, '/');
+        // // Eliminar cookies del navegador
+        // setcookie('remember_token', '', time() - 3600, '/');
+        // setcookie('id_usuario', '', time() - 3600, '/');
 
         // Destruir sesión si está activa
         $_SESSION = [];
