@@ -97,7 +97,6 @@ class ChoferesModel {
             $query,
             $params
         );
-        $result = $result;
         if (!$result) {
             writeLog("❌ Error: No se pudo insertar el chofer " . $nombre . " " . $apellido . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
         }
