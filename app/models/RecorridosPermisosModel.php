@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ .'/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /*
@@ -75,7 +76,13 @@ class RecorridosPermisosModel
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
-        return $stmt->execute();
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el recorrido del permiso con id ".$id_permiso." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
  
     /**
@@ -98,6 +105,10 @@ class RecorridosPermisosModel
             $query,
             $params
         );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el recorrido en el permiso "." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
 
         return $result;
     }
@@ -122,6 +133,10 @@ class RecorridosPermisosModel
         );
         // Ejecuta la consulta pasando los valores
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la asociacion de recorrido permiso id ".$id_recorrido_permiso." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
@@ -183,6 +184,10 @@ class PermisoModel
             $params
         );
 
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el permiso "." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
         return $result;
     }
 
@@ -251,6 +256,10 @@ class PermisoModel
             $query,
             $params
         );
+
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el permiso con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
 
         return $stmt->rowCount() > 0;
     }

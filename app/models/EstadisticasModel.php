@@ -16,7 +16,12 @@ class EstadisticasModel
     }
 
     /**
-     * Genera fechas por defecto (últimos 30 días) si no se proporcionan
+     * Establece fechas por defecto si no se proporcionan.
+     * Si no se proporciona fecha_fin, se establece en la fecha actual.
+     * Si no se proporciona fecha_inicio, se establece en 30 días antes de fecha_fin.
+     *
+     * @param string|null $fecha_inicio Fecha inicial.
+     * @param string|null $fecha_fin Fecha final.
      */
     private function establecerFechasPorDefecto(&$fecha_inicio, &$fecha_fin)
     {
@@ -30,7 +35,10 @@ class EstadisticasModel
     }
 
     /**
-     * Empresa con más permisos diarios en promedio
+     * Funcion para obtener la empresa con mas permisos diarios en promedio
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getEmpresaConMasPermisos($fecha_inicio = null, $fecha_fin = null): array
     {
@@ -62,9 +70,11 @@ class EstadisticasModel
 
     }
 
-
     /**
-     * Promedio de permisos rango de fechas
+     * Funcion para obtener el promedio de permisos por dia
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return string|null
      */
     public function getPromedioPermisos($fecha_inicio = null, $fecha_fin = null): string|null
     {
@@ -87,7 +97,10 @@ class EstadisticasModel
     }
 
     /**
-     * Promedio de permisos por día rango de fechas
+     * Funcion para obtener los permisos por dia
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getPermisosPorDia($fecha_inicio = null, $fecha_fin = null): array
     {
@@ -109,7 +122,10 @@ class EstadisticasModel
     }
 
     /**
-     * Recorrido más utilizado
+     * Funcion para obtener el recorrido mas utilizado
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getRecorridoMasUtilizado($fecha_inicio = null, $fecha_fin = null): array
     {
@@ -250,38 +266,22 @@ class EstadisticasModel
         }
 
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($result)) {
+        $filtros = json_encode([
+            'fecha_inicio' => $fecha_inicio,
+            'fecha_fin' => $fecha_fin,
+            'dni' => $dni,
+            'tipo' => $tipo,
+            'offset' => $offset,
+            'limit' => $limite_por_pagina
+        ]);
+        writeLog("getPermisosFiltradosChofer: No se encontraron resultados para los filtros: $filtros");
     }
 
-        /**
-     * Obtiene la cantidad de permisos por tipo (charter, línea, otros).
-     *
-     * @return array Arreglo asociativo con la cantidad de permisos por tipo.
-     */
-    public function getPromediosPermisos($fecha_inicio = null, $fecha_fin = null): array {
-        $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
-
-        $sql = "
-            SELECT 
-                COUNT(CASE WHEN tipo='linea' AND arribo_salida='arribo' THEN 1 END) AS cantidad_linea_arribos,
-                COUNT(CASE WHEN tipo='linea' AND arribo_salida='salida' THEN 1 END) AS cantidad_linea_salidas,
-                COUNT(CASE WHEN tipo='charter' AND arribo_salida='arribo' THEN 1 END) AS cantidad_charter_arribos,
-                COUNT(CASE WHEN tipo='charter' AND arribo_salida='salida' THEN 1 END) AS cantidad_charter_salidas,
-                COUNT(CASE WHEN tipo='otros' AND arribo_salida='arribo' THEN 1 END) AS cantidad_otros_arribos,
-                COUNT(CASE WHEN tipo='otros' AND arribo_salida='salida' THEN 1 END) AS cantidad_otros_salidas,
-                COUNT(*) AS cantidad_total
-            FROM permisos
-            WHERE activo = 1
-            AND DATE(fecha_reserva) BETWEEN :fecha_inicio AND :fecha_fin
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':fecha_inicio', $fecha_inicio);
-        $stmt->bindValue(':fecha_fin', $fecha_fin);
-        $stmt->execute();
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result;
     }
+
 
     /**
      * Obtiene los hoteles más utilizados en las reservas de puntos.
@@ -340,9 +340,11 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
     /**
-     * Obtiene los puntos de detención más utilizados en las reservas de puntos.
-     * Se limita a los 5 puntos más frecuentes.
+     * Funcion para obtener el punto mas usado
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
      * @return array
      */
     public function getPuntosMasUsados( $fecha_inicio = null, $fecha_fin = null): array {
@@ -368,6 +370,9 @@ class EstadisticasModel
 
     /**
      * Funcion para obtener el servicio mas usado
+     * @param mixed $fecha_inicio
+     * @param mixed $fecha_fin
+     * @return array
      */
     public function getServicioMasUsado($fecha_inicio = null, $fecha_fin = null): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
@@ -388,6 +393,13 @@ class EstadisticasModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Obtiene el lugar más utilizado para arribo o salida en los permisos.
+     * @param string $tipo_movimiento 'arribo' o 'salida'
+     * @param string|null $fecha_inicio Fecha inicial de filtrado.
+     * @param string|null $fecha_fin Fecha final de filtrado.
+     * @return array Lugar más utilizado con su nombre y cantidad.
+     */
     public function getLugarMasUsado($tipo_movimiento, $fecha_inicio = null, $fecha_fin = null): array {
         $this->establecerFechasPorDefecto($fecha_inicio, $fecha_fin);
         $stmt = $this->db->prepare("
@@ -408,94 +420,5 @@ class EstadisticasModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    }
-
-     /**
-     * Obtiene un listado de permisos filtrados por fecha, DNI, tipo, orden y paginación.
-     *
-     * @param string|null $fecha_inicio Fecha inicial para filtrar los permisos.
-     * @param string|null $fecha_fin Fecha final para filtrar los permisos.
-     * @param string|null $dni DNI del chofer (si se busca por chofer).
-     * @param string|null $tipo Tipo de servicio (línea, charter, etc.).
-     * @param string $sort_col Columna por la que se ordenan los resultados.
-     * @param string $sort_dir Dirección de ordenamiento (ASC o DESC).
-     * @param int|null $limit Límite de resultados por página (para paginación).
-     * @param int|null $offset Desplazamiento de la paginación.
-     * @return array Arreglo asociativo con los permisos encontrados.
-     */
-    public function getPermisosFiltrados(
-        $fecha_inicio = null,
-        $fecha_fin = null,
-        $dni = null,
-        $tipo = null,
-        $sort_col = 'fecha',
-        $sort_dir = 'ASC',
-        $limit = null,
-        $offset = 0
-    ): array {
-        // Columnas válidas para ordenar
-        $columnasValidas = ['empresa', 'fecha', 'lugar', 'tipo_movimiento', 'cantidad'];
-        $sort_col = in_array($sort_col, $columnasValidas) ? $sort_col : 'fecha';
-        $sort_dir = strtoupper($sort_dir) === 'DESC' ? 'DESC' : 'ASC';
-
-        // Consulta base con joins necesarios
-        $sql = "
-           SELECT COUNT(*) AS total
-        FROM permisos p
-        INNER JOIN servicios s ON p.id_servicio = s.id_servicio
-        INNER JOIN empresas e ON s.id_empresa = e.id_empresa
-        INNER JOIN lugares l ON p.id_lugar = l.id_lugar
-        LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
-        WHERE p.activo = 1
-        ";
-
-        // Parametros de filtrado
-        $params = [];
-
-        if (!empty($fecha_inicio)) {
-            $sql .= " AND DATE(p.fecha_emision) >= :fecha_inicio";
-            $params[':fecha_inicio'] = $fecha_inicio;
-        }
-
-        if (!empty($fecha_fin)) {
-            $sql .= " AND DATE(p.fecha_emision) <= :fecha_fin";
-            $params[':fecha_fin'] = $fecha_fin;
-        }
-
-        if (!empty($dni)) {
-            $sql .= " AND c.dni = :dni";
-            $params[':dni'] = $dni;
-        }
-
-        if (!empty($tipo)) {
-            $sql .= " AND p.tipo = :tipo";
-            $params[':tipo'] = $tipo;
-        }
-
-        // Ordenamiento
-        $sql .= " ORDER BY $sort_col $sort_dir";
-
-        // Paginación (si se usa)
-        if ($limit !== null && $offset !== null) {
-            $sql .= " LIMIT :limit OFFSET :offset";
-        }
-
-        // Preparar consulta
-        $stmt = $this->db->prepare($sql);
-
-        // Asignar parámetros dinámicamente
-        foreach ($params as $key => &$value) {
-            $stmt->bindParam($key, $value);
-        }
-
-        // Asignar paginación si aplica
-        if ($limit !== null && $offset !== null) {
-            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        }
-
-        // Ejecutar y devolver resultados
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
