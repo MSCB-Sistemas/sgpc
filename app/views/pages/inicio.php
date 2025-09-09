@@ -16,17 +16,18 @@
         <div class="col-md-12 mb-3">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-info text-white">📅 Reservas Programadas</div>
-                <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                <div class="card-body" style="max-height: 450px; overflow-y: auto;">
                     <?php if (!empty($datos['reservas_desde_hoy'])): ?>
                         <ul id="listaReservas" class="list-group list-group-flush">
                             <?php if (!empty($datos['reservas_desde_hoy'])): ?>
                                 <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
-                                    <li class="list-group-item" style="height:120px; ">
-                                        <strong> 🕜 <?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></strong>
+                                    <li class="list-group-item" style="height:90px; ">
+                                        <span style="font-size:1rem; font-weight:500; " style=> 🕜 <?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></span>
                                         <br><br>
-                                        <strong style="word-spacing: 20px; text-transform: uppercase;">
-                                        🏙 <?= $r['empresa']?> | 📍<?= $r['punto'] ?> |  🛣️<?= $r['calle'] ?> |  🔹<?= $r['tipo']?> | 🚌 <?= $r['dominio']?>
-                                        </strong>
+                                        <span style=" text-transform: capitalize; font-size:1rem; font-weight:500; letter-spacing: 0px; word-spacing: 10px;" >
+                                        🏙 <?= $r['empresa']?> | 📍 <?= $r['punto'] ?> |  🛣️ <?= $r['calle'] ?> |  🔹 <?= $r['tipo']?> 
+                                        </span> <span style="text-transform: uppercase; font-size:1rem; font-weight:500; letter-spacing: 0px; word-spacing: 10px;"> | 🚌 <?= $r['dominio']?></span>
+                                        
                                     </li>
                                 <?php endforeach; ?>
                             <?php else: ?>
