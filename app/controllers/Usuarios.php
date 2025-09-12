@@ -113,7 +113,23 @@ class Usuarios extends Control
                 if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
                 if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
                 if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
+                // CHECK: No se pueden asignar tipos de usuario Admin (1) ni Director (2)
+                $usuarioActual = $this->model->getUsuarioById($id);
+                if (!$usuarioActual) {
+                    $_SESSION['error_usuarios'] = "Usuario no encontrado.";
+                    
+                }
 
+                // Validar permisos especiales
+                $idTipoActual = $usuarioActual['id_tipo_usuario'];
+                $idTipoSesion = $tipoUsuario; // tipo del usuario que edita
+
+                // Nadie puede editar Admin (1)
+                // Director (tipo 2) solo puede editarse a sí mismo
+                if ($idTipoActual == 1 || ($idTipoActual == 2 && $id != $_SESSION['id_usuario'])) {
+                    $errores []= "No tiene permisos para editar este usuario.";
+                    
+                }
                 if (!empty($errores)) {
                     $usuario = [
                         'id_usuario' => $id,
@@ -175,6 +191,7 @@ class Usuarios extends Control
                 $contrasenia = trim($_POST["password"] );
                 $tipoUsuario = $_POST["tipo_usuario"];
 
+
                 // Validaciones simples
                 $errores = [];
                 if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
@@ -182,6 +199,9 @@ class Usuarios extends Control
                 if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
                 if (empty($contrasenia)) $errores[] = "El nombre es obligatorio.";
                 if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
+                if ($tipoUsuario == 1 ) {
+                    $errores[] = "No se pueden crear usuarios admin.";
+                }
 
                 if (!empty($errores)) {
                     $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
