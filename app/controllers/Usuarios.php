@@ -195,15 +195,30 @@ class Usuarios extends Control
                     ]);
                     return;
                 }
-                $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
+                
+                try {
+                    $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
+                    $this->model->insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario);
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                } catch (\PDOException $e) {
 
-                if ($this->model->insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario)) {
-                    header("Location: " . URL . "/usuarios");
-                    exit;
-                } else {
-                    $_SESSION['error_usuarios'] = "Error al guardar el usuario.";
-                    header("Location: " . URL . "/usuarios");
-                    exit;
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "El usuario " . $usuario . " ya existe.";
+                    } else {
+                        $_SESSION['error_usuarios'] = "Error al guardar el usuario.";
+                        header("Location: " . URL . "/usuarios");
+                        exit;
+                    }
+                    $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
+                    $this->load_view('usuarios/form', [
+                        'title' => 'Crear nuevo usuario',
+                        'action' => URL . '/usuarios/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                        'tipos' => $tipos,
+                        'update' => false
+                    ]);
                 }
             }
         }
