@@ -35,6 +35,7 @@ class Usuarios extends Control
                 $botones = '';
 
                 if ($fila['activo']) {
+                    
                     if ($this->tienePermiso('editar usuarios')) {
                         $botones .= '
                             <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
@@ -43,7 +44,8 @@ class Usuarios extends Control
                             if ($this->tienePermiso('eliminar usuarios') && $fila['tipo_usuario'] != 'admin') {
                             $botones .= '
                                 <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
-                            } else if ($fila['tipo_usuario'] == 'admin' && $this->tienePermiso('god')) {
+                            
+                            } else if ($fila['tipo_usuario'] == 'admin' && $this->tienePermiso('god') ) {
                                 $botones .= '
                                 <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
                             }
@@ -78,7 +80,7 @@ class Usuarios extends Control
                 header("Location: " . URL . "/usuarios");
                 exit;
             }
-
+           
             $this->load_view('usuarios/form', [
                 'title' => 'Editar usuario',
                 'action' => URL . '/usuarios/update/' . $id,
@@ -107,7 +109,7 @@ class Usuarios extends Control
                 $cargo = trim($_POST["cargo"] );
                 $sector = trim($_POST["sector"]  );
                 $tipoUsuario = $_POST["tipo_usuario"] ;
-
+                
                 $errores = [];
                 if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
                 if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
@@ -122,11 +124,10 @@ class Usuarios extends Control
 
                 // Validar permisos especiales
                 $idTipoActual = $usuarioActual['id_tipo_usuario'];
-                $idTipoSesion = $tipoUsuario; // tipo del usuario que edita
 
                 // Nadie puede editar Admin (1)
                 // Director (tipo 2) solo puede editarse a sí mismo
-                if ($idTipoActual == 1 || ($idTipoActual == 2 && $id != $_SESSION['id_usuario'])) {
+                if ($idTipoActual == 1 || ($idTipoActual == 2 && $id != $_SESSION['usuario_id'])) {
                     $errores []= "No tiene permisos para editar este usuario.";
                     
                 }
@@ -202,7 +203,10 @@ class Usuarios extends Control
                 if ($tipoUsuario == 1 ) {
                     $errores[] = "No se pueden crear usuarios admin.";
                 }
-
+                var_dump($_SESSION);
+                if ($_SESSION['id_tipo_usuario'] == 2 && $tipoUsuario <= 2) {
+                    $errores[] = "Un Director no puede crear Admins ni otros Directores.";
+                }
                 if (!empty($errores)) {
                     $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
                     $this->load_view('usuarios/form', [
@@ -246,6 +250,18 @@ class Usuarios extends Control
 
     public function delete($id){
         if ($this->tienePermiso('eliminar usuarios')) {
+        $tipoUsuario = (int)$this->model->getUsuarioById($id)['id_tipo_usuario'];
+        $tipoSesion  = (int)$_SESSION['usuario_tipo'];
+        $idSesion    = (int)$_SESSION['usuario'];
+
+        // Restricciones para Director
+        if ($tipoSesion === 2) {
+            if ($tipoUsuario === 1 || ($tipoUsuario === 2 && $id !== $idSesion)) {
+                header("Location: " . URL . "/usuarios");
+                exit;
+            }
+        }
+            
             if($this->model->deleteUsuario($id)) {
                 header(header: "Location: " . URL . "/usuarios");
                 exit;
@@ -259,6 +275,19 @@ class Usuarios extends Control
 
     public function activate($id){
         if ($this->tienePermiso("editar usuarios")) {
+
+            $usuarioObjetivo = $this->model->getUsuarioById($id);
+            $tipoUsuario = (int)$usuarioObjetivo['id_tipo_usuario']; 
+            $tipoSesion  = (int)$_SESSION['usuario_tipo'];           
+            $idSesion    = (int)$_SESSION['usuario'];                
+
+            // Restricciones para Director
+            if ($tipoSesion === 2) {
+                if ($tipoUsuario === 1 || ($tipoUsuario === 2 && $id !== $idSesion)) {
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                }
+            }
             if($this->model->activateUsuario($id)) {
                 header(header: "Location: " . URL . "/usuarios");
                 exit;
@@ -277,6 +306,7 @@ class Usuarios extends Control
                 'action' => URL . '/usuarios/savePass/' . $id,
                 'errores' => []
             ]);
+            
         }
     }
 
@@ -285,9 +315,29 @@ class Usuarios extends Control
         if ($this->tienePermiso("editar usuarios")) {
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $password = trim($_POST["password"] );
-
+                
                 $errores = [];
-                if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";
+                $usuarioObjetivo = $this->model->getUsuarioById($id);
+                $tipoObjetivo    = (int)$usuarioObjetivo['id_tipo_usuario'];
+            if (!$usuarioObjetivo) {
+                $errores[] = "Usuario no encontrado.";
+            } else {
+                $tipoObjetivo = (int)$usuarioObjetivo['id_tipo_usuario'];
+
+                // Usuario logueado (el que está haciendo la acción)
+                $tipoSesion = (int)$_SESSION['usuario_tipo'];
+                $idSesion   = (int)$_SESSION['usuario_id']; 
+
+                // Reglas de Director
+                if ($tipoSesion === 2) {
+                    if ($tipoObjetivo === 1) {
+                        $errores[] = "Un director no puede cambiar la clave de un Admin.";
+                    }
+                    if ($tipoObjetivo === 2 && $id !== $idSesion) {
+                        $errores[] = "Un director no puede cambiar la clave de otro Director.";
+                    }
+                }
+            }
 
                 if (!empty($errores)) {
                     $this->load_view('usuarios/formPass', [
@@ -311,3 +361,4 @@ class Usuarios extends Control
         }
     }
 }
+
