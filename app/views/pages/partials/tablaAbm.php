@@ -27,38 +27,34 @@
                     <?php endif; ?>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($datos['data'] as $fila): ?>
-                    <tr>
-                        <?php foreach ($datos['columnas_claves'] as $key): ?>
-                            <td class="text-truncate" style="max-width: 200px;"><?= ucfirst(htmlspecialchars($fila[$key])) ?></td>
-                        <?php endforeach ?>
-                        <?php if (!empty($datos['acciones'])): ?>
-                            <td><?= $datos['acciones']($fila) ?></td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endforeach ?>
-            </tbody>
         </table>
     </div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     $('#tablaABM').DataTable({
-        dom: 'Bfrtip', // B: botones, f: filtro, r: información, t: tabla, i: info, p: paginación
+        processing: true,
+        serverSide: true,
+        ajax: '<?= $datos['urlAjax'] ?>',
+        columns: [
+            <?php foreach ($datos['columnas_claves'] as $col): ?>
+                { data: '<?= $col ?>' },
+            <?php endforeach; ?>
+            <?php if (!empty($datos['acciones'])): ?>
+                { data: 'acciones', orderable: false, searchable: false }
+            <?php endif; ?>
+        ],
+        dom: 'Bfrtip',
         buttons: [
-            { extend: 'copy', text: 'Copiar', className: 'btn btn-secondary btn-sm', exportOptions: { columns: ':not(:last-child)' } },
-            { extend: 'csv', text: 'CSV', className: 'btn btn-primary btn-sm', bom: true, charset: 'UTF-8', exportOptions: { columns: ':not(:last-child)' } },
-            { extend: 'excel', text: 'Excel', className: 'btn btn-success btn-sm', exportOptions: { columns: ':not(:last-child)' } },
-            { extend: 'pdf', text: 'PDF', className: 'btn btn-danger btn-sm', exportOptions: { columns: ':not(:last-child)' } },
-            { extend: 'print', text: 'Imprimir', className: 'btn btn-info btn-sm', exportOptions: { columns: ':not(:last-child)' } }
+            { extend: 'copy', text: 'Copiar', className: 'btn btn-secondary btn-sm' },
+            { extend: 'csv', text: 'CSV', className: 'btn btn-primary btn-sm', bom: true, charset: 'UTF-8' },
+            { extend: 'excel', text: 'Excel', className: 'btn btn-success btn-sm' },
+            { extend: 'pdf', text: 'PDF', className: 'btn btn-danger btn-sm' },
+            { extend: 'print', text: 'Imprimir', className: 'btn btn-info btn-sm' }
         ],
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-        },
-        pageLength: 10,       // Número de filas por página
-        lengthMenu: [5, 10, 25, 50, 100], // Opciones para cambiar cantidad
-        order: []             // Sin orden inicial (para que el usuario elija)
+        }
     });
 });
 </script>

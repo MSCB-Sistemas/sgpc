@@ -2,8 +2,8 @@
 
 class Chofer extends Control
 {
-    private $modelo;
-    private $modeloNacionalidades;
+    private ChoferesModel $modelo;
+    private NacionalidadModel $modeloNacionalidades;
 
     public function __construct()
     {
@@ -20,25 +20,13 @@ class Chofer extends Control
                 $errores[] = $_SESSION['error_chofer'];
                 unset($_SESSION['error_chofer']); // Borramos el mensaje después de usarlo
             }
-            $choferes = $this->modelo->getAllChoferes();
             $datos = [
                 'title' => 'Listado de Choferes',
                 'urlCrear' => URL . '/chofer/create',
+                'urlAjax' => URL . '/chofer/ajaxList', // <--- lo nuevo
                 'columnas' => ['Nombre', 'Apellido', 'DNI', 'Nacionalidad'],
                 'columnas_claves' => ['nombre', 'apellido', 'dni', 'nacionalidad'],
-                'data' => $choferes,
-                'acciones' => function($fila) {
-                    $id = $fila['id_chofer'];
-                    $url = URL . '/chofer';
-                    $botones = '';
-                    if ($this->tienePermiso('editar abm')){
-                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>';
-                    }
-                    if ($this->tienePermiso('borrar abm')){
-                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este chofer?\');">Eliminar</a>';
-                    }
-                    return $botones;
-                },
+                'acciones' => true,
                 'errores' => $errores
             ];    
             $this->load_view('partials/tablaAbm', $datos);
@@ -269,6 +257,70 @@ class Chofer extends Control
                 echo json_encode(['success' => false, 'message' => 'Error al guardar chofer']);
             }
         }
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw   = $_GET['draw'] ?? 1;
+        $start  = $_GET['start'] ?? 0;
+        $length = $_GET['length'] ?? 10;
+        $searchValue = $_GET['search']['value'] ?? '';
+
+        // Orden
+        $orderColumnIndex = $_GET['order'][0]['column'] ?? 0;
+        $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
+
+        // Definí las columnas en el mismo orden que en tu JS
+        $columnas = ['nombre', 'apellido', 'dni', 'nacionalidad'];
+
+        $orderColumn = $columnas[$orderColumnIndex] ?? 'nombre';
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->modelo->contarChoferes();
+
+        // Registros filtrados y paginados
+        $choferes = $this->modelo->getChoferesServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+
+        // Total de registros filtrados
+        $recordsFiltered = $this->modelo->contarChoferesFiltrados($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($choferes as $fila) {
+            $acciones = '';
+            $id = $fila['id_chofer'];
+            $url = URL . '/chofer';
+            if ($this->tienePermiso('editar abm')) {
+                $acciones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a> ';
+            }
+            if ($this->tienePermiso('borrar abm')) {
+                $acciones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este chofer?\');">Eliminar</a>';
+            }
+
+            $data[] = [
+                'nombre' => ucfirst(htmlspecialchars($fila['nombre'])),
+                'apellido' => ucfirst(htmlspecialchars($fila['apellido'])),
+                'dni' => htmlspecialchars($fila['dni']),
+                'nacionalidad' => htmlspecialchars($fila['nacionalidad']),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 
 }
