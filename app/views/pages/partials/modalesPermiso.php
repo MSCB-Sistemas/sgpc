@@ -184,10 +184,12 @@
 
       if (!id) return;
 
-      if (document.querySelector('#tablaCallesModal tbody tr[data-id="' + id + '"]')) {
-          alert("Esa calle ya fue agregada.");
-          return;
-      }
+      document.querySelector('#tablaCallesModal tbody').addEventListener('click', function (e) {
+          if (e.target.classList.contains('removeCalle')) {
+              e.target.closest('tr').remove();
+          }
+      });
+
 
       const tbody = document.querySelector('#tablaCallesModal tbody');
       const tr = document.createElement('tr');

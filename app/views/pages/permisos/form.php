@@ -139,6 +139,7 @@
                         <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
                             <tr><th>Nombre</th></tr>
+                            
                         </thead>
                         <tbody>
                             <!-- Se cargan dinámicamente -->
