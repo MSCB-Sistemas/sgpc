@@ -1,0 +1,58 @@
+Auditorias = reimpresiones  y anulaciones
+
+Charter = Datos de los permisos de tipo charter
+
+CharterChofer = id chofer asociado a id charter
+
+[Contingente??] 
+[Coordinador??]
+{Tabla Configuracion y Configuracion-Original ???}
+{Consulta Linea ???}
+
+Chofer = Datos de choferes (Nombre, Apellido, DNI, id)
+
+Consulta Recibo = Datos (Tipo de servicio, ID servicio, ID recibo, Numero Recibo, Fecha)
+
+Copia de Reciboctacte = Datos (Fecha, ID jefeturno, ID empresa, Empresa, Dominio, interno, ID item, ConceptoItem, Activo[Anulado]) 
+nota: La hora se corresponde a otra fecha, incluye el importe, cantidad no se sabe a que se corresponde.
+
+copia de salvoconducto = Datos (ID Salvoconducto, numero, fecha, id recibo, id servicio, dominio, interno, destino, id hotel 1, id hotel 2, observaciones, tipo de servicio, id jefeturno, activo[anulado])
+NOTA: hay muchas columnas que no se sabe a que corresponden cehotel1, cehotel2, cpaxhotel1, cpaxhotel2, cshotel1, csfecha1, cshora1(vacio), cshotel2, csfecha2, cshora2(vacio tambien), observ2 redundante, serie vacio redundante. 
+
+Empresa = Datos (ID Empresa, Nombre empresa, linea)
+
+Hotel = Datos (ID hotel, Nombre hotel)
+
+Item = Datos (ID Item, Concepto) Correspondia al servicio, penalizacion, tarifa o cargo que se le aplica.
+
+Linea = Datos (ID linea, ID Empresa, horaestablecida, dominio, interno, fecha, id lugar, hora, pasajeros, arribosalida, activo[anulado])
+NOTA: Tiene una columna horaestablecida y hora, se tiene que ver a que se corresponde cada una y se asume que la fecha en la hora seria ignorada y tomada desde la columna fecha
+tambien tiene la columna infraccion es redundante.
+
+LineaChofer = asocia la ID de linea a ID chofer
+
+Lugar = Datos (ID Lugar, Nombre Lugar)
+NOTA: la columna abreviacion es redundante
+
+Recibo = Datos (ID recibo, TipoServicio, ID servicio, NumRecibo, Dominio, interno, fecha, ID jefeturno, activo[anulado], comentario)
+NOTA: Se tiene que ver cual es le id si CodRecibo o numRecibo, impreso es redundante, numerotalonario se asume que tambien es redundante,
+codrecibo2 no tiene ninguna relevancia, comentario se asume que corresponde a observacion.
+
+ReciboCtaCte = Datos ( fecha, hora, ID jefeturno, ID empresa, Nombre empresa, Dominio, interno, id item, concepto item, Activo[anulado])
+Nota: Cantidad no se sabe a que se corresponde, importe se asume que en este caso es redundante.
+
+ReciboItem = Datos ( ID item, ID recibo) Se asume que es para asociar los costos de los Conceptos asociados a los recibos.
+
+Salvoconducto = Datos (ID salvoconducto, numero, fecha, numrecibo, ID servicio, dominio, interno, destino, otroservicios, ID hotel1, IDhotel2, observaciones, tiposervicio, ID jefeturno, activo[anulado])
+NOTA: Se tiene que ver si numrecibo realmente corresponde al id de recibo, hay muchas columnas que no se terminan de entender como 
+serie, cshora2, csfecha2, cshotel2, cshora1, csfecha1, cshotel1, cpaxhotel2, cpaxhotel1.
+
+T_MOVPAX = Datos (Nombre empresa, cantidad de arribos, cantidad de salidas, Tdias, Tacum) Se asume que es un conteo incompleto de la 
+cantidad de pasajeros que mueve una empresa.
+
+T_RESUMEN = Datos (Concepto, cantidad o importe) Se asume que es un resumen de la cantidad, de arribos, 
+cantidad de salidas, cantidad de pasajero arribados, cantidad de pasajeros salidos, por tipo de servicio.
+
+Usuarios = Datos (ID usuario, jefedeturno[ nombre y apellido del usuario], password[clave], Usuario) 
+
+

@@ -100,7 +100,6 @@ class CalleModel
             $query,
             $params
         );
-        $result = $this->db->lastInsertId();
         if (!$result) {
             writeLog("❌ Error: No se pudo insertar la calle ".$nombre_calle." en la base de datos. Query: ".$query."parametros: ".$params);
         }

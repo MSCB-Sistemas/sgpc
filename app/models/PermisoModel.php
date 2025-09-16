@@ -78,11 +78,11 @@ class PermisoModel
         // Fechas
         $params = [];
         if ($fecha_desde) {
-            $sql .= " AND p.fecha_emision >= :desde";
+            $sql .= " AND DATE(p.fecha_emision) >= :desde";
             $params[':desde'] = $fecha_desde;
         }
         if ($fecha_hasta) {
-            $sql .= " AND p.fecha_emision <= :hasta";
+            $sql .= " AND DATE(p.fecha_emision) <= :hasta";
             $params[':hasta'] = $fecha_hasta;
         }
 

@@ -97,7 +97,6 @@ class EmpresaModel
             $query,
             $params
         );
-        $result = $this->db->lastInsertId();
         if (!$result) {
             writeLog("❌ Error: No se pudo insertar la empresa " . $nombre_empresa . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
         }

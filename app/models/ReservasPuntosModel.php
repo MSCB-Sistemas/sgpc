@@ -109,8 +109,6 @@ class ReservasPuntosModel {
             $query,
             $params
         );
-
-        $result = $this->db->lastInsertId();
         if (!$result) {
             writeLog("❌ Error: No se pudo insertar la reserva en el permiso ".$id_permiso."con hotel".$id_hotel."y punto de detencion".$id_punto_detencion." en la base de datos. Query: ".$query."parametros: ".$params);
         }
