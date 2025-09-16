@@ -184,12 +184,10 @@
 
       if (!id) return;
 
-      document.querySelector('#tablaCallesModal tbody').addEventListener('click', function (e) {
-          if (e.target.classList.contains('removeCalle')) {
-              e.target.closest('tr').remove();
-          }
-      });
-
+      if (document.querySelector('#tablaCallesModal tbody tr[data-id="' + id + '"]')) {
+          alert("Esa calle ya fue agregada.");
+          return;
+      }
 
       const tbody = document.querySelector('#tablaCallesModal tbody');
       const tr = document.createElement('tr');
@@ -202,6 +200,16 @@
           <input type="hidden" name="calles[]" value="${id}">
       `;
       tbody.appendChild(tr);
+  });
+    //* Funcion para eliminar una calle cuando se hace click en el boton eliminar en crear un recorrido
+    // al crear un permiso
+    /*
+    Se usa event delegation para que funcione en los elementos creados dinamicamente
+    */
+    document.querySelector('#tablaCallesModal tbody').addEventListener('click', function(e) {
+      if (e.target.classList.contains('removeCalle')) {
+          e.target.closest('tr').remove();
+      }
   });
   
   // capturar ENTER en el select

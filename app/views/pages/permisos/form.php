@@ -47,15 +47,32 @@
         <!-- Servicio -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="servicio" class="form-label">Servicio</label>
-                <select class="form-select" id="servicio" name="id_servicio" required>
-                    <option value="">Seleccione...</option>
+                <label for="servicio_search" class="form-label">Servicio</label>
+                <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
+                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." required>
+                <input type="hidden" name="id_servicio" id="id_servicio">
+                <datalist id="servicios">
                     <?php foreach ($datos['servicios'] as $s): ?>
-                        <option value="<?= $s['id_servicio'] ?>">
-                            <?= htmlspecialchars($s['interno'] . ' - ' . $s['dominio']) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($s['interno'] . ' - ' . $s['dominio']) ?>" data-id="<?= $s['id_servicio'] ?>">
                     <?php endforeach; ?>
-                </select>
+                </datalist>
+                <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                const servicioInput = document.getElementById('servicio_search');
+                const servicioHidden = document.getElementById('id_servicio');
+                const servicioOptions = document.querySelectorAll('#servicios option');
+
+                servicioInput.addEventListener('input', () => {
+                    const val = servicioInput.value.trim();
+                    servicioHidden.value = ''; // limpiar si no coincide
+                    servicioOptions.forEach(opt => {
+                        if(opt.value === val){
+                            servicioHidden.value = opt.dataset.id;
+                        }
+                    });
+                });
+                </script>
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalServicio">+</button>
         </div>
@@ -63,15 +80,33 @@
         <!-- Lugar -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="lugar" class="form-label">Origen/Destino</label>
-                <select class="form-select" data-live-search="true" id="lugar" name="id_lugar" required>
-                    <option value="">Seleccione...</option>
+                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
+                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <label for="lugar_search" class="form-label">Origen/Destino</label>
+                <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." required>
+                <input type="hidden" name="id_lugar" id="id_lugar">
+                <datalist id="lugares">
                     <?php foreach ($datos['lugares'] as $l): ?>
-                        <option value="<?= $l['id_lugar'] ?>">
-                            <?= htmlspecialchars($l['nombre']) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
                     <?php endforeach; ?>
-                </select>
+                </datalist>
+            <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                const lugarInput = document.getElementById('lugar_search');
+                const lugarHidden = document.getElementById('id_lugar');
+                const lugarOptions = document.querySelectorAll('#lugares option');
+
+                lugarInput.addEventListener('input', () => {
+                    const val = lugarInput.value.trim();
+                    lugarHidden.value = ''; // limpiar si no coincide
+                    lugarOptions.forEach(opt => {
+                        if(opt.value === val){
+                            lugarHidden.value = opt.dataset.id;
+                        }
+                    });
+                });
+                </script>
+
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
         </div>
@@ -80,15 +115,33 @@
         <!-- Chofer -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="chofer" class="form-label">Chofer</label>
-                <select class="form-select" data-live-search="true" id="chofer" name="id_chofer" required>
-                    <option value="">Seleccione...</option>
+                <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
+                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <label for="chofer_search" class="form-label">Chofer</label>
+                <input list="choferes" id="chofer_search" name="chofer_search" class="form-control" placeholder="Buscar chofer..." required>
+                <input type="hidden" name="id_chofer" id="id_chofer">
+
+                <datalist id="choferes">
                     <?php foreach ($datos['choferes'] as $c): ?>
-                        <option value="<?= $c['id_chofer'] ?>">
-                            <?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>" data-id="<?= $c['id_chofer'] ?>">
                     <?php endforeach; ?>
-                </select>
+                </datalist>
+                <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                const input = document.getElementById('chofer_search');
+                const hidden = document.getElementById('id_chofer');
+                const options = document.querySelectorAll('#choferes option');
+
+                input.addEventListener('input', () => {
+                    const val = input.value.trim();
+                    hidden.value = ''; // limpiar si no coincide
+                    options.forEach(opt => {
+                        if(opt.value === val){
+                            hidden.value = opt.dataset.id;
+                        }
+                    });
+                });
+                </script>
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
         </div>
