@@ -38,21 +38,10 @@ class Calle extends Control
             $datos = [
                 'title' => 'Listado de Calles',
                 'urlCrear' => URL . '/calle/create',
+                'urlAjax' => URL . '/calle/ajaxList',
                 'columnas' => ['Nombre'],
                 'columnas_claves' => ['nombre'],
-                'data' => $calles,
-                'acciones' => function($fila) {
-                    $id = $fila['id_calle'];
-                    $url = URL . '/calle';
-                    $botones = '';
-                    if ($this->tienePermiso('editar abm')){
-                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>' ;
-                    }
-                    if ($this->tienePermiso('borrar abm')){
-                        $botones .='<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>';
-                    }
-                    return $botones;
-                },
+                'acciones' => true,
                 'errores' => $errores
             ];    
             $this->load_view('partials/tablaAbm', $datos);
@@ -262,6 +251,87 @@ class Calle extends Control
         $calles = $this->model->getAllCalles();
         header('Content-Type: application/json');
         echo json_encode($calles);
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
+
+        // Orden
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'asc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
+
+        $columnas = ['nombre'];
+
+        $orderColumn = 'nombre';
+        if (isset($columnas[$orderColumnIndex])) {
+            $orderColumn = $columnas[$orderColumnIndex];
+        }
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->model->contarCalles();
+
+        // Registros filtrados y paginados
+        $records = $this->model->getCallesServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+
+        // Total de registros filtrados
+        $recordsFiltered = $this->model->contarCallesFiltradas($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($records as $fila) {
+            $acciones = '';
+            $id = $fila['id_calle'];
+            $url = URL . '/calle';
+            if ($this->tienePermiso('editar abm')){
+                $acciones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>' ;
+            }
+            if ($this->tienePermiso('borrar abm')){
+                $acciones .='<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta calle?\');">Eliminar</a>';
+            }
+
+            $data[] = [
+                'nombre' => ucfirst(htmlspecialchars($fila['nombre'])),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 }
 

@@ -220,5 +220,85 @@ class UsuariosModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getUsuariosServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT 
+            u.id_usuario,
+            u.usuario,
+            u.nombre,
+            u.apellido,
+            u.cargo,
+            u.sector,
+            tu.tipo_usuario,
+            u.activo
+        FROM 
+            usuarios u
+        JOIN 
+            tipos_usuarios tu ON u.id_tipo_usuario = tu.id_tipo_usuario";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE u.nombre LIKE :search 
+                    OR u.apellido LIKE :search 
+                    OR u.sector LIKE :search 
+                    OR u.usuario LIKE :search 
+                    OR u.cargo LIKE :search
+                    OR tu.tipo_usuario LIKE :search ";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarUsuariosFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM usuarios u 
+            inner JOIN tipos_usuarios tu ON u.id_tipo_usuario = tu.id_tipo_usuario;";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE u.nombre LIKE :search 
+                    OR u.apellido LIKE :search 
+                    OR u.sector LIKE :search 
+                    OR u.usuario LIKE :search 
+                    OR u.cargo LIKE :search
+                    OR tu.tipo_usuario LIKE :search ";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarUsuarios()
+    {
+        $sql = "SELECT COUNT(*) as total FROM usuarios";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
 } 
 ?>

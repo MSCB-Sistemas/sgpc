@@ -167,6 +167,69 @@ class PuntosDetencionModel {
             return false;
         }
     }
+
+    public function getPuntosDetencionServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT 
+            pd.id_punto_detencion,
+            pd.nombre AS nombre_punto,
+            c.nombre AS nombre_calle
+            FROM puntos_detencion pd inner join calles c on pd.id_calle = c.id_calle ";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE pd.nombre LIKE :search
+                    OR c.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarPuntosDetencionFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM puntos_detencion pd inner join calles c on pd.id_calle = c.id_calle";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE pd.nombre LIKE :search
+                    OR c.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarPuntosDetencion()
+    {
+        $sql = "SELECT COUNT(*) as total FROM puntos_detencion";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
 }
 
 ?>

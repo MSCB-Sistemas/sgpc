@@ -173,7 +173,7 @@ class Chofer extends Control
                 if (empty($nacionalidad)) $errores[] = "Debe seleccionar una nacionalidad.";
                 
                 if (!empty($errores)) {
-                    $nacionalidades = $this->modeloNacionalidades->getAll();
+                    $nacionalidades = $this->modeloNacionalidades->getAllNacionalidades();
                     $this->load_view('choferes/form', [
                         'title' => 'Crear nuevo chofer',
                         'action' => URL . '/chofer/save',
@@ -268,32 +268,52 @@ class Chofer extends Control
         }
 
         // Parámetros que envía DataTables
-        $draw   = $_GET['draw'] ?? 1;
-        $start  = $_GET['start'] ?? 0;
-        $length = $_GET['length'] ?? 10;
-        $searchValue = $_GET['search']['value'] ?? '';
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
 
         // Orden
-        $orderColumnIndex = $_GET['order'][0]['column'] ?? 0;
-        $orderDir = $_GET['order'][0]['dir'] ?? 'asc';
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'asc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
 
-        // Definí las columnas en el mismo orden que en tu JS
         $columnas = ['nombre', 'apellido', 'dni', 'nacionalidad'];
 
-        $orderColumn = $columnas[$orderColumnIndex] ?? 'nombre';
+        $orderColumn = 'nombre';
+        if (isset($columnas[$orderColumnIndex])) {
+            $orderColumn = $columnas[$orderColumnIndex];
+        }
 
         // Total de registros (sin filtro)
         $recordsTotal = $this->modelo->contarChoferes();
 
         // Registros filtrados y paginados
-        $choferes = $this->modelo->getChoferesServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+        $records = $this->modelo->getChoferesServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
 
         // Total de registros filtrados
         $recordsFiltered = $this->modelo->contarChoferesFiltrados($searchValue);
 
         // Preparar data con botones de acciones
         $data = [];
-        foreach ($choferes as $fila) {
+        foreach ($records as $fila) {
             $acciones = '';
             $id = $fila['id_chofer'];
             $url = URL . '/chofer';

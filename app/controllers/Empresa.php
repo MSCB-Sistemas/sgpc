@@ -21,25 +21,13 @@ class Empresa extends Control
                 $errores[] = $_SESSION['error_empresa'];
                 unset($_SESSION['error_empresa']); // Borramos el mensaje después de usarlo
             }
-            $empresas = $this->model->getAllEmpresas();
             $datos = [
                 'title' => 'Listado de Empresas',
                 'urlCrear' => URL . '/empresa/create',
+                'urlAjax' => URL . '/empresa/ajaxList',
                 'columnas' => ['Nombre de Empresa'],
                 'columnas_claves' => ['nombre'],
-                'data' => $empresas,
-                'acciones' => function($fila) {
-                    $id = $fila['id_empresa'];
-                    $url = URL . '/empresa';
-                    $botones = '';
-                    if ($this->tienePermiso('editar abm')){
-                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>';
-                    }
-                    if ($this->tienePermiso('borrar abm')){
-                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>';
-                    }
-                    return $botones;
-                },
+                'acciones' => true,
                 'errores' => $errores
             ];
             $this->load_view('partials/tablaAbm', $datos);
@@ -48,6 +36,7 @@ class Empresa extends Control
             exit;
         }
     }
+    
     public function edit($id)
     {
         if ($this->tienePermiso("editar abm")) {
@@ -209,5 +198,86 @@ class Empresa extends Control
             header("Location: " . URL);
             exit;
         }
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
+
+        // Orden
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'asc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
+
+        $columnas = ['nombre'];
+
+        $orderColumn = 'nombre';
+        if (isset($columnas[$orderColumnIndex])) {
+            $orderColumn = $columnas[$orderColumnIndex];
+        }
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->model->contarEmpresas();
+
+        // Registros filtrados y paginados
+        $records = $this->model->getEmpresasServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+
+        // Total de registros filtrados
+        $recordsFiltered = $this->model->contarEmpresasFiltradas($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($records as $fila) {
+            $acciones = '';
+            $id = $fila['id_empresa'];
+            $url = URL . '/empresa';
+            if ($this->tienePermiso('editar abm')){
+                $acciones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>';
+            }
+            if ($this->tienePermiso('borrar abm')){
+                $acciones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta Empresa?\');">Eliminar</a>';
+            }
+
+            $data[] = [
+                'nombre' => ucfirst(htmlspecialchars($fila['nombre'])),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 }
