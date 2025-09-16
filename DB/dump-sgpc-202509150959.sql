@@ -532,6 +532,7 @@ CREATE TABLE `usuarios` (
   `id_tipo_usuario` int NOT NULL,
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id_usuario`),
+  UNIQUE KEY `usuarios_unique` (`usuario`),
   KEY `usuarios_FK` (`id_tipo_usuario`),
   CONSTRAINT `usuarios_FK` FOREIGN KEY (`id_tipo_usuario`) REFERENCES `tipos_usuarios` (`id_tipo_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
