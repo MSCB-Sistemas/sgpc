@@ -201,6 +201,16 @@
       `;
       tbody.appendChild(tr);
   });
+    //* Funcion para eliminar una calle cuando se hace click en el boton eliminar en crear un recorrido
+    // al crear un permiso
+    /*
+    Se usa event delegation para que funcione en los elementos creados dinamicamente
+    */
+    document.querySelector('#tablaCallesModal tbody').addEventListener('click', function(e) {
+      if (e.target.classList.contains('removeCalle')) {
+          e.target.closest('tr').remove();
+      }
+  });
   
   // capturar ENTER en el select
   document.getElementById('selectCalle').addEventListener('keydown', function (e) {
