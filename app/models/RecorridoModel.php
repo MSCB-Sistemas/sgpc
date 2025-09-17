@@ -153,13 +153,20 @@ class RecorridoModel
 
     public function getRecorridosServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
     {
-        $sql = "SELECT * FROM recorridos where activo = 1";
+        $sql = "SELECT 
+            r.id_recorrido,
+            r.nombre AS nombre_recorrido,
+            GROUP_CONCAT(c.nombre SEPARATOR ', ') AS calles
+            FROM recorridos r
+            LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
+            LEFT JOIN calles c ON cr.id_calle = c.id_calle
+            WHERE r.activo = 1
+            GROUP BY r.id_recorrido, r.nombre";
         $params = [];
 
         // Si hay búsqueda
         if (!empty($searchValue)) {
-            $sql .= " AND pd.nombre LIKE :search
-                    OR c.nombre LIKE :search";
+            $sql .= " HAVING calles like :search or nombre_recorrido like :search";
             $params[':search'] = "%$searchValue%";
         }
 
@@ -182,21 +189,33 @@ class RecorridoModel
     
     public function contarRecorridosFiltrados($searchValue)
     {
-        $sql = "SELECT COUNT(*) as total FROM recorridos r where activo = 1";
+        $sql = "SELECT COUNT(*) as total FROM (
+                    SELECT 
+                        r.id_recorrido,
+                        r.nombre AS nombre_recorrido,
+                        GROUP_CONCAT(c.nombre SEPARATOR ', ') AS calles
+                    FROM recorridos r
+                    LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
+                    LEFT JOIN calles c ON cr.id_calle = c.id_calle
+                    WHERE r.activo = 1
+                    GROUP BY r.id_recorrido, r.nombre";
+
         $params = [];
 
+        // Si hay búsqueda
         if (!empty($searchValue)) {
-            $sql .= " AND pd.nombre LIKE :search
-                    OR c.nombre LIKE :search";
+            $sql .= " HAVING calles LIKE :search OR nombre_recorrido LIKE :search";
             $params[':search'] = "%$searchValue%";
         }
+
+        $sql .= ") as subquery"; // <- cerramos el subselect
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $key => $val) {
             $stmt->bindValue($key, $val, PDO::PARAM_STR);
         }
-        $stmt->execute();
 
+        $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
     

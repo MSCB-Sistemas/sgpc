@@ -173,6 +173,63 @@ class LugarModel
         $stmt->execute(['id_lugar' => $id_lugar]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getLugaresServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT * FROM lugares l where activo = 1";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " AND l.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarLugaresFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM lugares l where activo = 1";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " AND l.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarLugares()
+    {
+        $sql = "SELECT COUNT(*) as total FROM lugares where activo = 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
 }
 
   

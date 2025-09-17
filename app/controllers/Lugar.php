@@ -21,26 +21,14 @@ class Lugar extends Control
                 $errores[] = $_SESSION['error_lugar'];
                 unset($_SESSION['error_lugar']); // Borramos el mensaje después de usarlo
             }
-            $lugares = $this->model->getAllLugares();
             $datos = [
                 'title' => 'Listado de Lugares',
                 'urlCrear' => URL . '/lugar/create',
+                'urlAjax' => URL. '/lugar/ajaxList',
                 'columnas' => ['Nombre'],
                 'columnas_claves' => ['nombre'],
-                'data' => $lugares,
-                'acciones' => function($fila) {
-                    $id = $fila['id_lugar'];
-                    $url = URL . '/lugar';
-                    $botones = '';
-                    if ($this->tienePermiso('editar abm')){
-                        $botones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>';
-                    }
-                    if ($this->tienePermiso('borrar abm')){
-                        $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este Lugar?\');">Eliminar</a>';
-                    }
-                    return $botones;
-                }
-                ,'errores' => $errores
+                'acciones' => true,
+                'errores' => $errores
             ];    
             $this->load_view('partials/tablaAbm', $datos);
         } else {
@@ -236,5 +224,86 @@ class Lugar extends Control
                 echo json_encode(['success' => false, 'message' => 'Error al guardar el lugar']);
             }
         }
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
+
+        // Orden
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'asc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
+
+        $columnas = ['nombre'];
+
+        $orderColumn = 'nombre';
+        if (isset($columnas[$orderColumnIndex])) {
+            $orderColumn = $columnas[$orderColumnIndex];
+        }
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->model->contarLugares();
+
+        // Registros filtrados y paginados
+        $records = $this->model->getLugaresServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+
+        // Total de registros filtrados
+        $recordsFiltered = $this->model->contarLugaresFiltrados($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($records as $fila) {
+            $acciones = '';
+            $id = $fila['id_lugar'];
+            $url = URL . '/lugar';
+            if ($this->tienePermiso('editar abm')){
+                $acciones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>';
+            }
+            if ($this->tienePermiso('borrar abm')){
+                $acciones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este Lugar?\');">Eliminar</a>';
+            }
+
+            $data[] = [
+                'nombre' => ucfirst(htmlspecialchars($fila['nombre'])),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 }
