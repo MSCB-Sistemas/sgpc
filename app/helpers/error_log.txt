@@ -20,3 +20,10 @@
 [2025-09-05 13:45:09] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":"","offset":0,"limit":null}
 [2025-09-05 13:45:09] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":"","offset":0,"limit":null}
 [2025-09-05 13:45:10] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":"","offset":0,"limit":null}
+[2025-09-12 11:54:20] ❌ Error: Parámetros incorrectos para el método save del controlador Usuarios. Mensaje: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'admin' for key 'usuarios.usuarios_unique'
+[2025-09-12 11:56:45] ❌ Error: Parámetros incorrectos para el método save del controlador Usuarios. Mensaje: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'galochespirin' for key 'usuarios.usuarios_unique'
+[2025-09-12 14:17:02] ❌ Error: En inicio de sesión - Credenciales incorrectas
+[2025-09-12 14:17:02] ❌ Error: En inicio de sesión - Debe ingresar usuario y contraseña
+[2025-09-12 14:17:15] ❌ Error: En inicio de sesión - Credenciales incorrectas
+[2025-09-12 14:17:18] ❌ Error: En inicio de sesión - Credenciales incorrectas
+[2025-09-12 14:17:24] ❌ Error: En inicio de sesión - Credenciales incorrectas
