@@ -50,7 +50,7 @@ class Usuarios extends Control
                 header("Location: " . URL . "/usuarios");
                 exit;
             }
-
+           
             $this->load_view('usuarios/form', [
                 'title' => 'Editar usuario',
                 'action' => URL . '/usuarios/update/' . $id,
@@ -79,13 +79,28 @@ class Usuarios extends Control
                 $cargo = trim($_POST["cargo"] );
                 $sector = trim($_POST["sector"]  );
                 $tipoUsuario = $_POST["tipo_usuario"] ;
-
+                
                 $errores = [];
                 if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
                 if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
                 if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
                 if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
+                // CHECK: No se pueden asignar tipos de usuario Admin (1) ni Director (2)
+                $usuarioActual = $this->model->getUsuarioById($id);
+                if (!$usuarioActual) {
+                    $_SESSION['error_usuarios'] = "Usuario no encontrado.";
+                    
+                }
 
+                // Validar permisos especiales
+                $idTipoActual = $usuarioActual['id_tipo_usuario'];
+
+                // Nadie puede editar Admin (1)
+                // Director (tipo 2) solo puede editarse a sí mismo
+                if ($idTipoActual == 1 || ($idTipoActual == 2 && $id != $_SESSION['usuario_id'])) {
+                    $errores []= "No tiene permisos para editar este usuario.";
+                    
+                }
                 if (!empty($errores)) {
                     $usuario = [
                         'id_usuario' => $id,
@@ -147,6 +162,7 @@ class Usuarios extends Control
                 $contrasenia = trim($_POST["password"] );
                 $tipoUsuario = $_POST["tipo_usuario"];
 
+
                 // Validaciones simples
                 $errores = [];
                 if (empty($usuario)) $errores[] = "El usuario es obligatorio.";
@@ -154,7 +170,13 @@ class Usuarios extends Control
                 if (empty($apellido)) $errores[] = "El apellido es obligatorio.";
                 if (empty($contrasenia)) $errores[] = "El nombre es obligatorio.";
                 if (empty($tipoUsuario)) $errores[] = "Debe seleccionar un tipo de usuario.";
-
+                if ($tipoUsuario == 1 ) {
+                    $errores[] = "No se pueden crear usuarios admin.";
+                }
+                var_dump($_SESSION);
+                if ($_SESSION['id_tipo_usuario'] == 2 && $tipoUsuario <= 2) {
+                    $errores[] = "Un Director no puede crear Admins ni otros Directores.";
+                }
                 if (!empty($errores)) {
                     $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
                     $this->load_view('usuarios/form', [
@@ -167,15 +189,30 @@ class Usuarios extends Control
                     ]);
                     return;
                 }
-                $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
+                
+                try {
+                    $contrasenia = password_hash($contrasenia, PASSWORD_DEFAULT);
+                    $this->model->insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario);
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                } catch (\PDOException $e) {
 
-                if ($this->model->insertUsuario($usuario, $nombre, $apellido, $cargo, $sector, $contrasenia, $tipoUsuario)) {
-                    header("Location: " . URL . "/usuarios");
-                    exit;
-                } else {
-                    $_SESSION['error_usuarios'] = "Error al guardar el usuario.";
-                    header("Location: " . URL . "/usuarios");
-                    exit;
+                    if ($e->getCode() == 23000) {
+                        $errores[] = "El usuario " . $usuario . " ya existe.";
+                    } else {
+                        $_SESSION['error_usuarios'] = "Error al guardar el usuario.";
+                        header("Location: " . URL . "/usuarios");
+                        exit;
+                    }
+                    $tipos = $this->modelTipoUsuario->getAllTiposUsuarios();
+                    $this->load_view('usuarios/form', [
+                        'title' => 'Crear nuevo usuario',
+                        'action' => URL . '/usuarios/save',
+                        'values' => $_POST,
+                        'errores' => $errores,
+                        'tipos' => $tipos,
+                        'update' => false
+                    ]);
                 }
             }
         }
@@ -183,6 +220,18 @@ class Usuarios extends Control
 
     public function delete($id){
         if ($this->tienePermiso('eliminar usuarios')) {
+        $tipoUsuario = (int)$this->model->getUsuarioById($id)['id_tipo_usuario'];
+        $tipoSesion  = (int)$_SESSION['usuario_tipo'];
+        $idSesion    = (int)$_SESSION['usuario'];
+
+        // Restricciones para Director
+        if ($tipoSesion === 2) {
+            if ($tipoUsuario === 1 || ($tipoUsuario === 2 && $id !== $idSesion)) {
+                header("Location: " . URL . "/usuarios");
+                exit;
+            }
+        }
+            
             if($this->model->deleteUsuario($id)) {
                 header(header: "Location: " . URL . "/usuarios");
                 exit;
@@ -196,6 +245,19 @@ class Usuarios extends Control
 
     public function activate($id){
         if ($this->tienePermiso("editar usuarios")) {
+
+            $usuarioObjetivo = $this->model->getUsuarioById($id);
+            $tipoUsuario = (int)$usuarioObjetivo['id_tipo_usuario']; 
+            $tipoSesion  = (int)$_SESSION['usuario_tipo'];           
+            $idSesion    = (int)$_SESSION['usuario'];                
+
+            // Restricciones para Director
+            if ($tipoSesion === 2) {
+                if ($tipoUsuario === 1 || ($tipoUsuario === 2 && $id !== $idSesion)) {
+                    header("Location: " . URL . "/usuarios");
+                    exit;
+                }
+            }
             if($this->model->activateUsuario($id)) {
                 header(header: "Location: " . URL . "/usuarios");
                 exit;
@@ -214,6 +276,7 @@ class Usuarios extends Control
                 'action' => URL . '/usuarios/savePass/' . $id,
                 'errores' => []
             ]);
+            
         }
     }
 
@@ -222,9 +285,29 @@ class Usuarios extends Control
         if ($this->tienePermiso("editar usuarios")) {
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $password = trim($_POST["password"] );
-
+                
                 $errores = [];
-                if (empty($password)) $errores[] = "El campo nueva contraseña es obligatorio.";
+                $usuarioObjetivo = $this->model->getUsuarioById($id);
+                $tipoObjetivo    = (int)$usuarioObjetivo['id_tipo_usuario'];
+            if (!$usuarioObjetivo) {
+                $errores[] = "Usuario no encontrado.";
+            } else {
+                $tipoObjetivo = (int)$usuarioObjetivo['id_tipo_usuario'];
+
+                // Usuario logueado (el que está haciendo la acción)
+                $tipoSesion = (int)$_SESSION['usuario_tipo'];
+                $idSesion   = (int)$_SESSION['usuario_id']; 
+
+                // Reglas de Director
+                if ($tipoSesion === 2) {
+                    if ($tipoObjetivo === 1) {
+                        $errores[] = "Un director no puede cambiar la clave de un Admin.";
+                    }
+                    if ($tipoObjetivo === 2 && $id !== $idSesion) {
+                        $errores[] = "Un director no puede cambiar la clave de otro Director.";
+                    }
+                }
+            }
 
                 if (!empty($errores)) {
                     $this->load_view('usuarios/formPass', [
@@ -352,3 +435,4 @@ class Usuarios extends Control
         exit;
     }
 }
+

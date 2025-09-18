@@ -75,6 +75,7 @@
                     <option value="">Seleccione...</option>
                     <?php foreach ($datos['tipos'] as $n): ?>
                         <?php
+                             if ($n['id_tipo_usuario'] == 1 || ($_SESSION['usuario_tipo'] == 2 && $n['id_tipo_usuario'] == 2)) continue;
                             $selected = '';
                             if (isset($datos['values']['id_tipo_usuario']) && $datos['values']['id_tipo_usuario'] == $n['id_tipo_usuario']) {
                                 $selected = 'selected';
