@@ -1,316 +1,287 @@
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('JUNIN',1),
-	 ('MAR DEL PLATA',1),
-	 ('SAN CARLOS DE BARILOCHE',1),
-	 ('BUENOS AIRES',1),
-	 ('ROSARIO',1),
-	 ('SALTA',1),
-	 ('CHILE',1),
-	 ('CORRIENTES',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CAPITAL FEDERAL',1),
-	 ('VILLA TRAFUL',1),
-	 ('EL BOLSON',1),
-	 ('EL DORADO (MISIONES)',1),
-	 ('MENDOZA',1),
-	 ('CHIMPAY',1),
-	 ('ESQUEL',1),
-	 ('SAN MARTIN DE LOS ANDES',1),
-	 ('LAGO PUELO',1),
-	 ('LA PLATA',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CORDOBA',1),
-	 ('PARANA',1),
-	 ('COMODORO RIVADAVIA',1),
-	 ('VIEDMA',1),
-	 ('BAHIA BLANCA',1),
-	 ('LAS GRUTAS',1),
-	 ('SANTA FE',1),
-	 ('PUERTO MADRYN',1),
-	 ('BRASIL',1),
-	 ('VILLA REGINA',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('NEUQUEN',1),
-	 ('POSADAS (MISIONES)',1),
-	 ('TUCUMAN',1),
-	 ('RAMOS MEJIA',1),
-	 ('TRES ARROYOS',1),
-	 ('TRELLEW',1),
-	 ('COMALLO',1),
-	 ('JACOBACCI',1),
-	 ('CHACABUCO',1),
-	 ('CHACO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('ING. JACOBACCI',1),
-	 ('SANTA CRUZ',1),
-	 ('GENERAL ROCA',1),
-	 ('SANTA ROSA (LA PAMPA)',1),
-	 ('EL  VALLE',1),
-	 ('URUGUAY',1),
-	 ('RESISTENCIA',1),
-	 ('VENADO TUERTO',1),
-	 ('TRAFUL',1),
-	 ('SAN JUAN',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CIPOLETTI',1),
-	 ('PARAGUAY',1),
-	 ('LA PAMPA',1),
-	 ('LA RIOJA',1),
-	 ('JUJUY',1),
-	 ('FORMOSA',1),
-	 ('MISIONES',1),
-	 ('SANTIAGO  DEL  ESTERO',1),
-	 ('PUERTO  BELGRANO',1),
-	 ('DESCONOCIDO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('RAWSON',1),
-	 ('CUTRAL CO',1),
-	 ('LLANQUIN',1),
-	 ('MARQUINCHAO',1),
-	 ('CALETA OLIVIA',1),
-	 ('CATAMARCA',1),
-	 ('SAN LUIS',1),
-	 ('CINCO SALTOS',1),
-	 ('ROCA',1),
-	 ('UNIVERSIDAD DE CORDOBA',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('PINAMAR',1),
-	 ('LAMARQUE',1),
-	 ('CHOELE CHOEL',1),
-	 ('BELTRAN',1),
-	 ('CERVANTES',1),
-	 ('CHUBUT',1),
-	 ('ZAPALA',1),
-	 ('AUSTRALIA',1),
-	 ('MADRIN',1),
-	 ('EL HOYO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('COPAHUE',1),
-	 ('FUERA DE SERVICIO',1),
-	 ('VILLA GESELL',1),
-	 ('NECOCHEA',1),
-	 ('ALLEN',1),
-	 ('CENTENARIO',1),
-	 ('RIO CUARTO',1),
-	 ('CASILLA RODANTE',1),
-	 ('PERITO MORENO',1),
-	 ('LOS MENUCO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('PILCANIYEU',1),
-	 ('MENCUE',1),
-	 ('CATARATAS DEL  IGUAZU',1),
-	 ('RIO COLORADO',1),
-	 ('PUNTA ARENA (CHILE)',1),
-	 ('MENUCO',1),
-	 ('AEROPUERTO',1),
-	 ('CIRCUITO CHICO',1),
-	 ('IGUAZU',1),
-	 ('GUALEGUAY',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('RIO GRANDE',1),
-	 ('TIERRA DEL FUEGO',1),
-	 ('PIEDRA DEL AGUILA',1),
-	 ('MASCARDI',1),
-	 ('MOTORHOME',1),
-	 ('CONFLUENCIA',1),
-	 ('SAN NICOLAS',1),
-	 ('PUENTE DEL RIO LIMAY',1),
-	 ('CHAPADMALAL',1),
-	 ('SIERRAS COLORADAS',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('TRENQUE LAUQUEN',1),
-	 ('C V S',1),
-	 ('BALLESTERO',1),
-	 ('BOMBAI',1),
-	 ('CALAFATE',1),
-	 ('ARROYITO',1),
-	 ('CUZCO PERU',1),
-	 ('CERRO CATEDRAL',1),
-	 ('CRUCE CAMINERO',1),
-	 ('EL CHOCON',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CHOCON',1),
-	 ('RIO LIMAY',1),
-	 ('MASTER BUS',1),
-	 ('CATRIEL',1),
-	 ('SANTA TERESITA',1),
-	 ('VILLA DEL ROSARIO',1),
-	 ('ARROYO CABRAL',1),
-	 ('CAÑADA DE GOMEZ',1),
-	 ('LAGUNA LARGA',1),
-	 ('CONCORDIA',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('USHUAIA',1),
-	 ('LIMAY',1),
-	 ('ENTRE RIOS',1),
-	 ('GENERAL PICO',1),
-	 ('CAMBORIU',1),
-	 ('RIOS GALLEGOS',1),
-	 ('PUERTO IGUAZU',1),
-	 ('CORONEL DORREGO',1),
-	 ('MARCOS LAURI',1),
-	 ('EL CUY',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('BUENOS AIRES LA PLATA',1),
-	 ('GENERAL ACHA',1),
-	 ('CLORINDA',1),
-	 ('AEROPUERTO ESQUEL ',1),
-	 ('PEUAJO',1),
-	 ('AEROPUERTO NQN',1),
-	 ('TRANSTUR',1),
-	 ('AVELLANEDA PROV, BS.AS.',1),
-	 ('PUERTO MONTT  ',1),
-	 ('VALDIVIA',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('GONZA TOUR',1),
-	 ('RADA TILLY',1),
-	 ('LLAO LLAO',1),
-	 ('TANDIL',1),
-	 ('PERGAMINO PROV. BS. AS.',1),
-	 ('SALIQUELO',1),
-	 ('GAIMAN',1),
-	 ('MAR DE AJO',1),
-	 ('RAFAELA PCIA SANTA FE',1),
-	 ('SAN ANTONIO DE ARECO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('LUIS BELTRAN',1),
-	 ('CONESA',1),
-	 ('DINA HUAPI',1),
-	 ('CHAJARI',1),
-	 ('GONZALEZ CATAN ',1),
-	 ('RAMALLOS PCIA ,BS AS, ',1),
-	 ('ANILLACO',1),
-	 ('MONTEVIDEO URUGUAY',1),
-	 ('GODOY',1),
-	 ('OLABARRIA PCIA DE BS, AS.',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('MAQUINCHAO',1),
-	 ('EL MANSO',1),
-	 ('MANSO',1),
-	 ('ARRECIFES ',1),
-	 ('CHIVILCOY',1),
-	 ('GENERAL ALVEAR',1),
-	 ('PIGUE',1),
-	 ('SENILLOSA',1),
-	 ('SANTIAGO DE CHILE',1),
-	 ('MIRAMAR',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('BRAGADO',1),
-	 ('CAMPANA PCI DE BS. AS.',1),
-	 ('GOYA',1),
-	 ('REGINA',1),
-	 ('ING. HUERGO',1),
-	 ('PEHUAJO PCIA . BS, AS.',1),
-	 ('CHINCHINALES',1),
-	 ('COLON PCIA BS ,AS.',1),
-	 ('ADUANA ARGENTINA',1),
-	 ('CAÑUELAS',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('BUSES ILOMAR',1),
-	 ('FLORENCIO VARELA',1),
-	 ('LAVALLOL',1),
-	 ('TEMUCO',1),
-	 ('LUCERO',1),
-	 ('TARTAGAL',1),
-	 ('VILLA MANZANO',1),
-	 ('RINCON DE LOS SAUCES',1),
-	 ('BOLIVIA',1),
-	 ('RAFTING',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('PUCON',1),
-	 ('BURZACO PROV, BS, AS',1),
-	 ('LUJAN PROV. BS,AS,',1),
-	 ('PLOTIER',1),
-	 ('CERRO VALLO',1),
-	 ('QUILMES ',1),
-	 ('AEROPUERTO - EL BOLSON',1),
-	 ('PAEZ',1),
-	 ('PRINCESA  DEL NORTE',1),
-	 ('AEROPUERTO - VILLA LA ANGOSTURA',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('RIO NEGRO  BELISLE',1),
-	 ('TALCA ',1),
-	 ('BLANTOUR',1),
-	 ('BOLICHE CEREBRO',1),
-	 ('ESTADIO MUNICIPAL ',1),
-	 ('HOTEL',1),
-	 ('CANCHAS ADEFUL',1),
-	 ('CLUB ESTUDIANTES UNIDOS',1),
-	 ('TERMINAL',1),
-	 ('EXCURCION',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('PUNTA ALTA',1),
-	 ('RGA SANTA ROSA TURISMO',1),
-	 ('ALDEA RUTA 23',1),
-	 ('LOS CEREZOS',1),
-	 ('VALCHETA',1),
-	 ('TANGO INN 12 DE OCT--1939',1),
-	 ('DON ORIONE KM1505',1),
-	 ('VILLA MARIA',1),
-	 ('INVAP',1),
-	 ('CAMPANARIO KM 16200 BUSTILLO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CENTRO CIVICO',1),
-	 ('EPUYEN',1),
-	 ('VALLE DEL SOL KM 23',1),
-	 ('RANCHO W',1),
-	 ('DISCO GRISU',1),
-	 ('BOWLING ',1),
-	 ('CARLOS PAZ',1),
-	 ('CERRO CAMPANARIO',1),
-	 ('TERMAS',1),
-	 ('ALEMANIA 275 GIMNACIO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CANCHA PUERTO MORENO',1),
-	 ('MONTE CLARO',1),
-	 ('CLUB PEHUENES ',1),
-	 ('GIMNASIO N1',1),
-	 ('GIMNASIO 3',1),
-	 ('DO SANTOS ',1),
-	 ('CERRO OTTO',1),
-	 ('QUINCHO BESCHTED Y DOS DE AGOSTO    COPELO     ',1),
-	 ('CANCHA CRUZ DEL SUR',1),
-	 ('TOM WESLEY',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CLUB NEWENCHE',1),
-	 ('CIRCULO CHILENO',1),
-	 ('BYPASS',1),
-	 ('CERRO BALLO',1),
-	 ('INSTITUTO BALSEIRO',1),
-	 ('SHOPPING',1),
-	 ('COLONIA SUIZA',1),
-	 ('POMONA',1),
-	 ('PUERTO PAÑUELO',1),
-	 ('DORREGO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('CASTELLI PCIA BS AS',1),
-	 ('ESTANCIA SAN RAMON',1),
-	 ('ESTADIO ESTUDIANTES BARILOCHE',1),
-	 ('CANOPY',1),
-	 ('CERRO VIEJO',1),
-	 ('BASSIA',1),
-	 ('LOS VAQUEANOS',1),
-	 ('LAGO GUTIERREZ',1),
-	 ('TAMBO VIEJO',1),
-	 ('PISTA HIELO',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('MONTAIN',1),
-	 ('CABRERA BUSES',1),
-	 ('ECO SKY',1),
-	 ('LOS ANTIGUOS',1),
-	 ('KAYAK',1),
-	 ('PARQUE INDUSTRIAL',1),
-	 ('MAÑIO',1),
-	 ('PLAZA UNO',1),
-	 ('ESCAPE ROOM',1),
-	 ('MAINQUE',1);
-INSERT INTO sgpc.lugares (nombre,activo) VALUES
-	 ('GRISU',1),
-	 ('GENUX',1),
-	 ('ROCKETS',1),
-	 ('PUNTA ALTA',1),
-	 ('PILETAS',1),
-	 ('PUERTO MORENO 10',1),
-	 ('CERVECERIA PATAGONIA',1),
-	 ('BOLICHE',1),
-	 ('CAMINERA',1);
+insert into lugares (nombre) values ('ADUANA ARGENTINA');
+insert into lugares (nombre) values ('AEROPUERTO');
+insert into lugares (nombre) values ('AEROPUERTO - EL BOLSON');
+insert into lugares (nombre) values ('AEROPUERTO - VILLA LA ANGOSTURA');
+insert into lugares (nombre) values ('AEROPUERTO ESQUEL');
+insert into lugares (nombre) values ('AEROPUERTO NQN');
+insert into lugares (nombre) values ('ALDEA RUTA 23');
+insert into lugares (nombre) values ('ALEMANIA 275 GIMNACIO');
+insert into lugares (nombre) values ('ALLEN');
+insert into lugares (nombre) values ('ANILLACO');
+insert into lugares (nombre) values ('ARRECIFES');
+insert into lugares (nombre) values ('ARROYITO');
+insert into lugares (nombre) values ('ARROYO CABRAL');
+insert into lugares (nombre) values ('AUSTRALIA');
+insert into lugares (nombre) values ('AVELLANEDA PROV, BS.AS.');
+insert into lugares (nombre) values ('BAHIA BLANCA');
+insert into lugares (nombre) values ('BALLESTERO');
+insert into lugares (nombre) values ('BASSIA');
+insert into lugares (nombre) values ('BELTRAN');
+insert into lugares (nombre) values ('BLANTOUR');
+insert into lugares (nombre) values ('BOLICHE');
+insert into lugares (nombre) values ('BOLICHE CEREBRO');
+insert into lugares (nombre) values ('BOLIVIA');
+insert into lugares (nombre) values ('BOMBAI');
+insert into lugares (nombre) values ('BOWLING');
+insert into lugares (nombre) values ('BRAGADO');
+insert into lugares (nombre) values ('BRASIL');
+insert into lugares (nombre) values ('BUENOS AIRES');
+insert into lugares (nombre) values ('BUENOS AIRES LA PLATA');
+insert into lugares (nombre) values ('BURZACO PROV, BS, AS');
+insert into lugares (nombre) values ('BUSES ILOMAR');
+insert into lugares (nombre) values ('BYPASS');
+insert into lugares (nombre) values ('C V S');
+insert into lugares (nombre) values ('CABRERA BUSES');
+insert into lugares (nombre) values ('CALAFATE');
+insert into lugares (nombre) values ('CALETA OLIVIA');
+insert into lugares (nombre) values ('CAMBORIU');
+insert into lugares (nombre) values ('CAMINERA');
+insert into lugares (nombre) values ('CAMPANA PCI DE BS. AS.');
+insert into lugares (nombre) values ('CAMPANARIO KM 16200 BUSTILLO');
+insert into lugares (nombre) values ('CANCHA CRUZ DEL SUR');
+insert into lugares (nombre) values ('CANCHA PUERTO MORENO');
+insert into lugares (nombre) values ('CANCHAS ADEFUL');
+insert into lugares (nombre) values ('CANOPY');
+insert into lugares (nombre) values ('CAÑADA DE GOMEZ');
+insert into lugares (nombre) values ('CAÑUELAS');
+insert into lugares (nombre) values ('CAPITAL FEDERAL');
+insert into lugares (nombre) values ('CARLOS PAZ');
+insert into lugares (nombre) values ('CASILLA RODANTE');
+insert into lugares (nombre) values ('CASTELLI PCIA BS AS');
+insert into lugares (nombre) values ('CATAMARCA');
+insert into lugares (nombre) values ('CATARATAS DEL  IGUAZU');
+insert into lugares (nombre) values ('CATRIEL');
+insert into lugares (nombre) values ('CENTENARIO');
+insert into lugares (nombre) values ('CENTRO CIVICO');
+insert into lugares (nombre) values ('CERRO BALLO');
+insert into lugares (nombre) values ('CERRO CAMPANARIO');
+insert into lugares (nombre) values ('CERRO CATEDRAL');
+insert into lugares (nombre) values ('CERRO OTTO');
+insert into lugares (nombre) values ('CERRO VALLO');
+insert into lugares (nombre) values ('CERRO VIEJO');
+insert into lugares (nombre) values ('CERVANTES');
+insert into lugares (nombre) values ('CERVECERIA PATAGONIA');
+insert into lugares (nombre) values ('CHACABUCO');
+insert into lugares (nombre) values ('CHACO');
+insert into lugares (nombre) values ('CHAJARI');
+insert into lugares (nombre) values ('CHAPADMALAL');
+insert into lugares (nombre) values ('CHILE');
+insert into lugares (nombre) values ('CHIMPAY');
+insert into lugares (nombre) values ('CHINCHINALES');
+insert into lugares (nombre) values ('CHIVILCOY');
+insert into lugares (nombre) values ('CHOCON');
+insert into lugares (nombre) values ('CHOELE CHOEL');
+insert into lugares (nombre) values ('CHUBUT');
+insert into lugares (nombre) values ('CINCO SALTOS');
+insert into lugares (nombre) values ('CIPOLETTI');
+insert into lugares (nombre) values ('CIRCUITO CHICO');
+insert into lugares (nombre) values ('CIRCULO CHILENO');
+insert into lugares (nombre) values ('CLORINDA');
+insert into lugares (nombre) values ('CLUB ESTUDIANTES UNIDOS');
+insert into lugares (nombre) values ('CLUB NEWENCHE');
+insert into lugares (nombre) values ('CLUB PEHUENES');
+insert into lugares (nombre) values ('COLON PCIA BS ,AS.');
+insert into lugares (nombre) values ('COLONIA SUIZA');
+insert into lugares (nombre) values ('COMALLO');
+insert into lugares (nombre) values ('COMODORO RIVADAVIA');
+insert into lugares (nombre) values ('CONCORDIA');
+insert into lugares (nombre) values ('CONESA');
+insert into lugares (nombre) values ('CONFLUENCIA');
+insert into lugares (nombre) values ('COPAHUE');
+insert into lugares (nombre) values ('CORDOBA');
+insert into lugares (nombre) values ('CORONEL DORREGO');
+insert into lugares (nombre) values ('CORRIENTES');
+insert into lugares (nombre) values ('CRUCE CAMINERO');
+insert into lugares (nombre) values ('CUTRAL CO');
+insert into lugares (nombre) values ('CUZCO PERU');
+insert into lugares (nombre) values ('DESCONOCIDO');
+insert into lugares (nombre) values ('DINA HUAPI');
+insert into lugares (nombre) values ('DISCO GRISU');
+insert into lugares (nombre) values ('DO SANTOS');
+insert into lugares (nombre) values ('DON ORIONE KM1505');
+insert into lugares (nombre) values ('DORREGO');
+insert into lugares (nombre) values ('ECO SKY');
+insert into lugares (nombre) values ('EL  VALLE');
+insert into lugares (nombre) values ('EL BOLSON');
+insert into lugares (nombre) values ('EL CHOCON');
+insert into lugares (nombre) values ('EL CUY');
+insert into lugares (nombre) values ('EL DORADO (MISIONES)');
+insert into lugares (nombre) values ('EL HOYO');
+insert into lugares (nombre) values ('EL MANSO');
+insert into lugares (nombre) values ('ENTRE RIOS');
+insert into lugares (nombre) values ('EPUYEN');
+insert into lugares (nombre) values ('ESCAPE ROOM');
+insert into lugares (nombre) values ('ESQUEL');
+insert into lugares (nombre) values ('ESTADIO ESTUDIANTES BARILOCHE');
+insert into lugares (nombre) values ('ESTADIO MUNICIPAL');
+insert into lugares (nombre) values ('ESTANCIA SAN RAMON');
+insert into lugares (nombre) values ('EXCURCION');
+insert into lugares (nombre) values ('FLORENCIO VARELA');
+insert into lugares (nombre) values ('FORMOSA');
+insert into lugares (nombre) values ('FUERA DE SERVICIO');
+insert into lugares (nombre) values ('GAIMAN');
+insert into lugares (nombre) values ('GENERAL ACHA');
+insert into lugares (nombre) values ('GENERAL ALVEAR');
+insert into lugares (nombre) values ('GENERAL PICO');
+insert into lugares (nombre) values ('GENERAL ROCA');
+insert into lugares (nombre) values ('GENUX');
+insert into lugares (nombre) values ('GIMNASIO 3');
+insert into lugares (nombre) values ('GIMNASIO N1');
+insert into lugares (nombre) values ('GODOY');
+insert into lugares (nombre) values ('GONZA TOUR');
+insert into lugares (nombre) values ('GONZALEZ CATAN');
+insert into lugares (nombre) values ('GOYA');
+insert into lugares (nombre) values ('GRISU');
+insert into lugares (nombre) values ('GUALEGUAY');
+insert into lugares (nombre) values ('HOTEL');
+insert into lugares (nombre) values ('IGUAZU');
+insert into lugares (nombre) values ('ING. HUERGO');
+insert into lugares (nombre) values ('ING. JACOBACCI');
+insert into lugares (nombre) values ('INSTITUTO BALSEIRO');
+insert into lugares (nombre) values ('INVAP');
+insert into lugares (nombre) values ('JACOBACCI');
+insert into lugares (nombre) values ('JUJUY');
+insert into lugares (nombre) values ('JUNIN');
+insert into lugares (nombre) values ('KAYAK');
+insert into lugares (nombre) values ('LA PAMPA');
+insert into lugares (nombre) values ('LA PLATA');
+insert into lugares (nombre) values ('LA RIOJA');
+insert into lugares (nombre) values ('LAGO GUTIERREZ');
+insert into lugares (nombre) values ('LAGO PUELO');
+insert into lugares (nombre) values ('LAGUNA LARGA');
+insert into lugares (nombre) values ('LAMARQUE');
+insert into lugares (nombre) values ('LAS GRUTAS');
+insert into lugares (nombre) values ('LAVALLOL');
+insert into lugares (nombre) values ('LIMAY');
+insert into lugares (nombre) values ('LLANQUIN');
+insert into lugares (nombre) values ('LLAO LLAO');
+insert into lugares (nombre) values ('LOS ANTIGUOS');
+insert into lugares (nombre) values ('LOS CEREZOS');
+insert into lugares (nombre) values ('LOS MENUCO');
+insert into lugares (nombre) values ('LOS VAQUEANOS');
+insert into lugares (nombre) values ('LUCERO');
+insert into lugares (nombre) values ('LUIS BELTRAN');
+insert into lugares (nombre) values ('LUJAN PROV. BS,AS,');
+insert into lugares (nombre) values ('MADRIN');
+insert into lugares (nombre) values ('MAINQUE');
+insert into lugares (nombre) values ('MANSO');
+insert into lugares (nombre) values ('MAÑIO');
+insert into lugares (nombre) values ('MAQUINCHAO');
+insert into lugares (nombre) values ('MAR DE AJO');
+insert into lugares (nombre) values ('MAR DEL PLATA');
+insert into lugares (nombre) values ('MARCOS LAURI');
+insert into lugares (nombre) values ('MARQUINCHAO');
+insert into lugares (nombre) values ('MASCARDI');
+insert into lugares (nombre) values ('MASTER BUS');
+insert into lugares (nombre) values ('MENCUE');
+insert into lugares (nombre) values ('MENDOZA');
+insert into lugares (nombre) values ('MENUCO');
+insert into lugares (nombre) values ('MIRAMAR');
+insert into lugares (nombre) values ('MISIONES');
+insert into lugares (nombre) values ('MONTAIN');
+insert into lugares (nombre) values ('MONTE CLARO');
+insert into lugares (nombre) values ('MONTEVIDEO URUGUAY');
+insert into lugares (nombre) values ('MOTORHOME');
+insert into lugares (nombre) values ('NECOCHEA');
+insert into lugares (nombre) values ('NEUQUEN');
+insert into lugares (nombre) values ('OLABARRIA PCIA DE BS, AS.');
+insert into lugares (nombre) values ('PAEZ');
+insert into lugares (nombre) values ('PARAGUAY');
+insert into lugares (nombre) values ('PARANA');
+insert into lugares (nombre) values ('PARQUE INDUSTRIAL');
+insert into lugares (nombre) values ('PEHUAJO PCIA . BS, AS.');
+insert into lugares (nombre) values ('PERGAMINO PROV. BS. AS.');
+insert into lugares (nombre) values ('PERITO MORENO');
+insert into lugares (nombre) values ('PEUAJO');
+insert into lugares (nombre) values ('PIEDRA DEL AGUILA');
+insert into lugares (nombre) values ('PIGUE');
+insert into lugares (nombre) values ('PILCANIYEU');
+insert into lugares (nombre) values ('PILETAS');
+insert into lugares (nombre) values ('PINAMAR');
+insert into lugares (nombre) values ('PISTA HIELO');
+insert into lugares (nombre) values ('PLAZA UNO');
+insert into lugares (nombre) values ('PLOTIER');
+insert into lugares (nombre) values ('POMONA');
+insert into lugares (nombre) values ('POSADAS (MISIONES)');
+insert into lugares (nombre) values ('PRINCESA  DEL NORTE');
+insert into lugares (nombre) values ('PUCON');
+insert into lugares (nombre) values ('PUENTE DEL RIO LIMAY');
+insert into lugares (nombre) values ('PUERTO  BELGRANO');
+insert into lugares (nombre) values ('PUERTO IGUAZU');
+insert into lugares (nombre) values ('PUERTO MADRYN');
+insert into lugares (nombre) values ('PUERTO MONTT');
+insert into lugares (nombre) values ('PUERTO MORENO 10');
+insert into lugares (nombre) values ('PUERTO PAÑUELO');
+insert into lugares (nombre) values ('PUNTA ALTA');
+insert into lugares (nombre) values ('PUNTA ALTA');
+insert into lugares (nombre) values ('PUNTA ARENA (CHILE)');
+insert into lugares (nombre) values ('QUILMES');
+insert into lugares (nombre) values ('QUINCHO BESCHTED Y DOS DE AGOSTO    COPELO');
+insert into lugares (nombre) values ('RADA TILLY');
+insert into lugares (nombre) values ('RAFAELA PCIA SANTA FE');
+insert into lugares (nombre) values ('RAFTING');
+insert into lugares (nombre) values ('RAMALLOS PCIA ,BS AS,');
+insert into lugares (nombre) values ('RAMOS MEJIA');
+insert into lugares (nombre) values ('RANCHO W');
+insert into lugares (nombre) values ('RAWSON');
+insert into lugares (nombre) values ('REGINA');
+insert into lugares (nombre) values ('RESISTENCIA');
+insert into lugares (nombre) values ('RGA SANTA ROSA TURISMO');
+insert into lugares (nombre) values ('RINCON DE LOS SAUCES');
+insert into lugares (nombre) values ('RIO COLORADO');
+insert into lugares (nombre) values ('RIO CUARTO');
+insert into lugares (nombre) values ('RIO GRANDE');
+insert into lugares (nombre) values ('RIO LIMAY');
+insert into lugares (nombre) values ('RIO NEGRO  BELISLE');
+insert into lugares (nombre) values ('RIOS GALLEGOS');
+insert into lugares (nombre) values ('ROCA');
+insert into lugares (nombre) values ('ROCKETS');
+insert into lugares (nombre) values ('ROSARIO');
+insert into lugares (nombre) values ('SALIQUELO');
+insert into lugares (nombre) values ('SALTA');
+insert into lugares (nombre) values ('SAN ANTONIO DE ARECO');
+insert into lugares (nombre) values ('SAN CARLOS DE BARILOCHE');
+insert into lugares (nombre) values ('SAN JUAN');
+insert into lugares (nombre) values ('SAN LUIS');
+insert into lugares (nombre) values ('SAN MARTIN DE LOS ANDES');
+insert into lugares (nombre) values ('SAN NICOLAS');
+insert into lugares (nombre) values ('SANTA CRUZ');
+insert into lugares (nombre) values ('SANTA FE');
+insert into lugares (nombre) values ('SANTA ROSA (LA PAMPA)');
+insert into lugares (nombre) values ('SANTA TERESITA');
+insert into lugares (nombre) values ('SANTIAGO  DEL  ESTERO');
+insert into lugares (nombre) values ('SANTIAGO DE CHILE');
+insert into lugares (nombre) values ('SENILLOSA');
+insert into lugares (nombre) values ('SHOPPING');
+insert into lugares (nombre) values ('SIERRAS COLORADAS');
+insert into lugares (nombre) values ('TALCA');
+insert into lugares (nombre) values ('TAMBO VIEJO');
+insert into lugares (nombre) values ('TANDIL');
+insert into lugares (nombre) values ('TANGO INN 12 DE OCT--1939');
+insert into lugares (nombre) values ('TARTAGAL');
+insert into lugares (nombre) values ('TEMUCO');
+insert into lugares (nombre) values ('TERMAS');
+insert into lugares (nombre) values ('TERMINAL');
+insert into lugares (nombre) values ('TIERRA DEL FUEGO');
+insert into lugares (nombre) values ('TOM WESLEY');
+insert into lugares (nombre) values ('TRAFUL');
+insert into lugares (nombre) values ('TRANSTUR');
+insert into lugares (nombre) values ('TRELLEW');
+insert into lugares (nombre) values ('TRENQUE LAUQUEN');
+insert into lugares (nombre) values ('TRES ARROYOS');
+insert into lugares (nombre) values ('TUCUMAN');
+insert into lugares (nombre) values ('UNIVERSIDAD DE CORDOBA');
+insert into lugares (nombre) values ('URUGUAY');
+insert into lugares (nombre) values ('USHUAIA');
+insert into lugares (nombre) values ('VALCHETA');
+insert into lugares (nombre) values ('VALDIVIA');
+insert into lugares (nombre) values ('VALLE DEL SOL KM 23');
+insert into lugares (nombre) values ('VENADO TUERTO');
+insert into lugares (nombre) values ('VIEDMA');
+insert into lugares (nombre) values ('VILLA DEL ROSARIO');
+insert into lugares (nombre) values ('VILLA GESELL');
+insert into lugares (nombre) values ('VILLA MANZANO');
+insert into lugares (nombre) values ('VILLA MARIA');
+insert into lugares (nombre) values ('VILLA REGINA');
+insert into lugares (nombre) values ('VILLA TRAFUL');
+insert into lugares (nombre) values ('ZAPALA');

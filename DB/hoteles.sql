@@ -1,689 +1,287 @@
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('EDELWEIS ','SAN MARTIN 202',1),
-	 ('TRES REYES','',1),
-	 ('EL VIEJO ALJIBE','',1),
-	 ('GUEMES','',1),
-	 ('LA DANESA','',1),
-	 ('LA POSADA DE LA FLOR','',1),
-	 ('LAS AMAPOLAS','',1),
-	 ('LONQUIMAY','',1),
-	 ('PIUKE','',1),
-	 ('PUYEHUE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('QUIMELEN','',1),
-	 ('SOL BARILOCHE ','POR COSTANERA',1),
-	 ('SUR','',1),
-	 ('AREQUEPAY','',1),
-	 ('CALVU LEUVU','',1),
-	 ('CARI HUE','',1),
-	 ('DEL CUORE','',1),
-	 ('DEL LAGO GUTIERREZ','',1),
-	 ('IVALU','',1),
-	 ('KATY','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LAGO AZUL','',1),
-	 ('LANDING','',1),
-	 ('ALUN NEHUEN','',1),
-	 ('LAS CARTAS','',1),
-	 ('LOS ALPES','',1),
-	 ('LOS ANDES','',1),
-	 ('LOS NOTROS','',1),
-	 ('PAJARO AZUL','',1),
-	 ('PLAZA','',1),
-	 ('PORTOFINO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('POSADA DEL SOL','',1),
-	 ('POSADA RUCA LAUFQUEN','',1),
-	 ('RUCA CHELI','',1),
-	 ('CARLOS V','',1),
-	 ('SELVA NEGRA','',1),
-	 ('VILLA SOKOL','',1),
-	 ('AYEN HUE','',1),
-	 ('TORRES','',1),
-	 ('HOSPEDAJE TORRES','',1),
-	 ('ESQUEL','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('GRAN BARILOCHE','',1),
-	 ('BARILOCHE SKY','',1),
-	 ('CRISTAL','',1),
-	 ('ARAUCO','',1),
-	 ('SUPER RISORT','',1),
-	 ('ALBERGUE  EL GAUCHO','',1),
-	 ('ROMA ','SAN MARTIN 102',1),
-	 ('CAMPING PETUNIA','',1),
-	 ('PATAGONIA SUR ','ELFLEIN 346',1),
-	 ('CAMPING EL YETY','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CARDENAL CAGLIERO','',1),
-	 ('CANDIL ','',1),
-	 ('DEL LAGO SKI','',1),
-	 ('PIEDRAS   1','',1),
-	 ('PIEDRAS 2','',1),
-	 ('PLAYON DE COSTANERA','',1),
-	 ('MONTANA','',1),
-	 ('AGUAS DEL SUR','MORENO ESQUINA PALACIOS',1),
-	 ('DEL TURISTA','',1),
-	 ('EJERCITO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('GRAN HOTEL PANAMERICANO','',1),
-	 ('TIVOLI','',1),
-	 ('AYELEN','',1),
-	 ('FLAMINGO','',1),
-	 ('RODEO SKY','',1),
-	 ('SAFARILANS','',1),
-	 ('HOSTERIA SUR','',1),
-	 ('ARRAYANES','',1),
-	 ('HUEMUL','',1),
-	 ('CATEDRAL','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('INTERLAKEN','',1),
-	 ('PUNTA ARENAS','',1),
-	 ('AUSONIA SKY','',1),
-	 ('BONARIA','',1),
-	 ('DEL BOSQUE','',1),
-	 ('BELLA VISTA','',1),
-	 ('CINCO ZONAS','',1),
-	 ('INFANTE DE LARA ','DIAGONAL MORENO SAN MARTIN',1),
-	 ('MIRA LAGO','',1),
-	 ('DEL   SOL  Y  PAZ','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOSTERIA PUDU PUDU','',1),
-	 ('TRES LAGOS','',1),
-	 ('TERMINAL','',1),
-	 ('PATAGONIA','',1),
-	 ('RANCHO W','',1),
-	 ('VILLA MARISTA','',1),
-	 ('LAGO GUTIERREZ','',1),
-	 ('POSTAL DEL LAGO','',1),
-	 ('ALPES SKATE','',1),
-	 ('CHALHUACO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ACONCAGUA','',1),
-	 ('LAS CEBRAS','',1),
-	 ('DON ORIONE','',1),
-	 ('ESC HOTELERIA','',1),
-	 ('LLAO LLAO HOTEL & RESORT','',1),
-	 ('SOL Y SKI','',1),
-	 ('RIOS DEL SUR','',1),
-	 ('COLONIA SUIZA','',1),
-	 ('EL YETI','',1),
-	 ('SIETE DE FEBRERO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LA CEBRAS','',1),
-	 ('MORALEZ VICTOR','',1),
-	 ('INST BALSEIRO ','',1),
-	 ('HUNEY RUCCA','',1),
-	 ('LAS PIEDRAS','',1),
-	 ('CLUB DEPORTIVO GIRASOL','',1),
-	 ('CRANS-MONTANA ','',1),
-	 ('MASCARDI','',1),
-	 ('MUNICIPAL 2','',1),
-	 ('VILLA LOS COIHUES','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LIBERTADOR','',1),
-	 ('FUERA DE SERVICIO','',1),
-	 ('CERRO NEVADO','',1),
-	 ('CAMPING LOS BAQUEANOS','',1),
-	 ('INTERNACIONAL','',1),
-	 ('DAZZLER','',1),
-	 ('KENTON PALAZ','',1),
-	 ('LAS MOIRAS','',1),
-	 ('HOTEL CASCADA','',1),
-	 ('QUIME QUIPAN','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('BOLSON','',1),
-	 ('PILCRIN','',1),
-	 ('LOS ARCOS','',1),
-	 ('KILTON','POR ELFLEIN',1),
-	 ('CAMPIN  SUYAI','',1),
-	 ('CONTINENTAL','',1),
-	 ('RUCA  PEHUEN','',1),
-	 ('CLUB PRADO ','PIONEROS KM.4',1),
-	 ('EL PRADO','',1),
-	 ('TORRE SOL','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('MARCO POLO','',1),
-	 ('KINGS','',1),
-	 ('MONASTERIO ','KM 4',1),
-	 ('ELEDIL','',1),
-	 ('CASA DEL DEPORTE','',1),
-	 ('LAS ROCAS','',1),
-	 ('CAMPING  CIRSE ','',1),
-	 ('NEUQUEN Y SARMIENTO','',1),
-	 ('ESTACIONAMIENTO MUNICIPAL','',1),
-	 ('PEUMAYEN','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CAMPIN LAS PETUNIAS','',1),
-	 ('DON MARTIN','',1),
-	 ('LAGUNA EL TREBOL','',1),
-	 ('PLAYA SERENA','',1),
-	 ('EL GAUCHO','',1),
-	 ('MUNICIPAL 1','',1),
-	 ('TUCAPEL','',1),
-	 ('EL BOLSON','',1),
-	 ('LAGO GUILLELMO','',1),
-	 ('CASA  DEL  LAGO  ',' KM  18',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('REENCUENTRO ','KM 2,500',1),
-	 ('LOS ALERCE','',1),
-	 ('MILAN','',1),
-	 ('C E F  NÂº 8','',1),
-	 ('REFUGIO PATAGONIA ','MITRE.1.338',1),
-	 ('ESCUADRON DE GENDARMERIA','',1),
-	 ('BOSQUE','',1),
-	 ('NUEVO RUMBO DEL SUR','',1),
-	 ('TRANS MONTANA','',1),
-	 ('MORENO Y ONELLI','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('AQUINTUE','',1),
-	 ('MILLARAY','',1),
-	 ('REMO','',1),
-	 ('PLAYON MUNICIPAL','',1),
-	 ('BRISAS DEL LAGO','',1),
-	 ('ESCUELA N.16','',1),
-	 ('HOSPEDAJE RIO DEL SUR','',1),
-	 ('ROCA DOS','',1),
-	 ('COSTA DEL SOL','',1),
-	 ('PREMIER','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CLUB HOTEL AYELEN ','CINCO ZONAS',1),
-	 ('VILLA WUNIL','',1),
-	 ('DESCARGA DE WC','',1),
-	 ('GENTE DEL SUR','',1),
-	 ('HOSTERIA LA LUNA','',1),
-	 ('HOTEL ANDINO','',1),
-	 ('IGLESIA ADVENTISTA','',1),
-	 ('A. WC','',1),
-	 ('SAN REMO','',1),
-	 ('VILLA DON ORIONE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('NIDO DEL CONDOR','',1),
-	 ('HOSTERIA ADQUINTUE','',1),
-	 ('BAHIA LOPEZ','',1),
-	 ('ALBERGUE PARQUES NACINALES','',1),
-	 ('VARADERO PARQUES NACINALES','',1),
-	 ('NEVADA SERENA','',1),
-	 ('SUNSET ','6 de Noviembre',1),
-	 ('CLUB HOUSE IDEAL HOTEL','',1),
-	 ('ALASKA','',1),
-	 ('LOS DUENDES','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOSTERIA IVALU','',1),
-	 ('ESC EL MALLIN','',1),
-	 ('ALBERGUE MUNICIPAL','',1),
-	 ('INACAYAL','',1),
-	 ('IGLESIA','',1),
-	 ('ASPEN SKI','',1),
-	 ('CAMPAMENTO VILLA MASCADI','',1),
-	 ('COLEGIO DON BOSCO','',1),
-	 ('UPCN','',1),
-	 ('EL DUENDE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('INTA','',1),
-	 ('NEW ANDINO','',1),
-	 ('LE BOUQUET','',1),
-	 ('VAL GARDEN','ROLANDO 197',1),
-	 ('SAN JORGE','',1),
-	 ('SIN WC','',1),
-	 ('CHOCOLATERIA EL TURISTA','',1),
-	 ('BLUE TREE HOTEL','',1),
-	 ('CAMPING LOS MARISTA','',1),
-	 ('VURILOCHE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('PANAMERICANO RESORT S CASINO','',1),
-	 ('EL MOLINO','',1),
-	 ('ESSO ESTACION DE SERVICIO ','9 DE JULIO',1),
-	 ('ESCUELA 298 ','MELIPAL',1),
-	 ('CALLE SALTA','',1),
-	 ('HOSTERIA PALETA DEL PINTOR','',1),
-	 ('COSTA DEL NAHUEL','',1),
-	 ('NAHUEL WILLI    ','ALBARRACIN 568',1),
-	 ('INALEN','',1),
-	 ('HOSTERIA PUYEHUE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('DE BLU TRI ','SAN MARTI N417',1),
-	 ('HOSPEDAJE GAUCHO LIHUE','',1),
-	 ('ESTANCIA LERA','',1),
-	 ('JUAN MANUEL DE ROSAS','',1),
-	 ('FRANTON','',1),
-	 ('HOSTERIA LA ROSA','',1),
-	 ('ANTARTIDA','',1),
-	 ('PAMI','',1),
-	 ('HOSTAL DEL LAGO','',1),
-	 ('LAGOS ANDINOS','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOSTEL LA BARRACA','',1),
-	 ('SOL Y PAZ ','KM 10',1),
-	 ('ARKO','',1),
-	 ('CHOCOLATES FRANTON','',1),
-	 ('ALTAMIRA DEL LAGO','',1),
-	 ('CAMPING SUIZO','',1),
-	 ('LA PONDEROSA','',1),
-	 ('VILLA SOFIA','',1),
-	 ('LA QUERENCIA','',1),
-	 ('CLUB NAUTICO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ARGENTINO DEL SUR','',1),
-	 ('MERIDIANO SUR','',1),
-	 ('EMPRESA VIA BCHE','',1),
-	 ('LA BARRACA ','ELFLEIN 419',1),
-	 ('MUNICIPAL 3','',1),
-	 ('HOTEL LUZ Y FUERZA','',1),
-	 ('NOGARAE','',1),
-	 ('PLAYON DE ALGARROBAL','',1),
-	 ('MARISTA','',1),
-	 ('U.T.A','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CLUB HOUSE','',1),
-	 ('CLUB DE CAZA Y PESCA','',1),
-	 ('GALPON DE FLECHA','',1),
-	 ('COSTAL DEL LAGO','',1),
-	 ('NATANIA','',1),
-	 ('CASA Y PESCA DE COSTANERA','',1),
-	 ('BOLSA DEL DEPORTE','',1),
-	 ('ESCUELA 321','',1),
-	 ('UNTER ELFLEIN 735','',1),
-	 ('CONDOR DE LOS ANDES','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOTEL  CENTER','',1),
-	 ('NAHUEL HUE','',1),
-	 ('PUERTO PIREO ','KM 17',1),
-	 ('20 DE FEBRERO','',1),
-	 ('CAMPING LAGO GUTIERREZ','',1),
-	 ('PARROQUIA ','',1),
-	 ('LA CASCADA','',1),
-	 ('LAS ROSAS.','',1),
-	 ('GIMNASIO NÂº 1','',1),
-	 ('SALON COMUNITARIO  CALFU  RUCA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('YPF','',1),
-	 ('HOTEL MONTE CERVINO','',1),
-	 ('MONTE CERVINO','',1),
-	 ('SINDICATO DE COMIONEROS','',1),
-	 ('EL QUIJOTE','',1),
-	 ('HOSTEL PERICOS','',1),
-	 ('LA IDEAL','',1),
-	 ('FREEDOM','',1),
-	 ('CEM 138','',1),
-	 ('PATANUK','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CAMBRIA',' ELFLEIN 183 ',1),
-	 ('CEM 51','',1),
-	 ('ESCUELA 325','',1),
-	 ('ESCUELA 71','',1),
-	 ('ESCUELA 328','',1),
-	 ('ESCUELA 273','',1),
-	 ('VELODROMO MUNICIPAL','',1),
-	 ('ESCUELA 311 ','BÂº  S FRANSISCO',1),
-	 ('CARANTANIA ',' SAN MARTIN 496',1),
-	 ('UTGRA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('TEATRO LA BAITA','',1),
-	 ('SOFT BARILOCHE','VICE ALTE OCONOR Y JHON OCONOR',1),
-	 ('LAS QUINTAS','',1),
-	 ('CAMPING CIRSE','',1),
-	 ('PLAYA BRONDO','',1),
-	 ('ESTANCIA EL  CARMEN','',1),
-	 ('COPAHUE','SAN MARTIN 280',1),
-	 ('ESC DE POLICIA ','',1),
-	 ('MUSEO DEL CHOCOLATE ','KM 1',1),
-	 ('HOSTEL GENTE DEL SUR','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ANTU MAHUIDA','',1),
-	 ('HOSTEL LOS TRONCOS','',1),
-	 ('ESTADIO MUNICIPAL ','9 DE JULIO Y GALLARDO',1),
-	 ('CAMPING LAS PIERDITAS','',1),
-	 ('UTEDYC','',1),
-	 ('COSTA DEL LAGO','',1),
-	 ('HOSTEL PATAGONIA','',1),
-	 ('HOTEL POLI ','',1),
-	 ('HOSPITAL ZONAL ','',1),
-	 ('BARILOCHE SWIT ','MORENO ESQUINA ROLANDO',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('EMP VIA BCHE','',1),
-	 ('SUITE WINTER ','',1),
-	 ('EL CANDIL','',1),
-	 ('MONTE CARLO','MORENO ESQUINA PALACIOS',1),
-	 ('HOTEL COTTBUS','',1),
-	 ('ESPEJO DEL LAGO EX CANDIL','',1),
-	 ('WINTER ','SAN MARTIN 441',1),
-	 ('FANTUL','',1),
-	 ('SINDICATO GASTRONOMICO','',1),
-	 ('SAC','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('GALP, VIA BARILOCHE','',1),
-	 ('DON JUSTO ','KM 5',1),
-	 ('COMPLEJO DE ATE','',1),
-	 ('ESCUELA ANTU RUCA','',1),
-	 ('ESC ANTU RUCA','',1),
-	 ('HOSP, ESTACION SUR ','GALLARDO 273',1),
-	 ('AMEC','',1),
-	 ('GIMNASIO NÂº 3 ','',1),
-	 ('GRAND HOTEL BARILOCHE','',1),
-	 ('CLUB ESTUDIANTES','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('MONTE CLARO ','MORENO ESQUINA PALACIO',1),
-	 ('HOSTEL LOS COHIUES ','',1),
-	 ('7 LAGOS','',1),
-	 ('PUERTO SAN CARLOS','',1),
-	 ('LEDELIL','',1),
-	 ('HOSTEL INN ','SALTA 391',1),
-	 ('ALBERGUE LOS COHIUES','',1),
-	 ('TALLER FLECHA','',1),
-	 ('SWIT','',1),
-	 ('HOTEL LLAO LLAO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CAMPING FELLEY','',1),
-	 ('SOL DEL VALLE ','KM 20 CIRC CHICO',1),
-	 ('ELUNEY','',1),
-	 ('LOS TRONCOS','',1),
-	 ('LOS ROBLES ','KM 4,5',1),
-	 ('TUNQUELEN','',1),
-	 ('LAS PIEDRAS I','',1),
-	 ('ESPEJO DEL LAGO ','JUAN MANUEL D ROSAS AL LADO GRISU',1),
-	 ('GIMNASIO LAS QUINTAS','',1),
-	 ('HOTEL ANTUE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LOS PIONEROS ','',1),
-	 ('NUEVO COLONIAL HOTEL','',1),
-	 ('HOTEL CITY','',1),
-	 ('JUAN DOMINGO PERON','',1),
-	 ('COSTA BRAVA ','KM 22 BUSTILLO',1),
-	 ('DARCENA COSTANERA ','',1),
-	 ('HOSTAL HOME PATAGONIA','',1),
-	 ('LOS BAQUEANOS','',1),
-	 ('PANORAMICO','',1),
-	 ('ESCUELA 185 ','BESCHET ANASAGASTI ',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('TALLER VIA BCHE','',1),
-	 ('ESCUELA ISLAS MALVINAS','',1),
-	 ('HOSTAL TIERRA DE GAUCHO','',1),
-	 ('HOTEL FLAY','',1),
-	 ('CEM 44','',1),
-	 ('CANCHA MUNICIPAL','',1),
-	 ('ALMA DEL LAGO   ','KM 1 BUSTILLO',1),
-	 ('CAMPING GOYE','',1),
-	 ('CENTRO ADMINISTRATIVO ','ONELLI 1400',1),
-	 ('ESCUELA 266','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ESTUDIANTES','',1),
-	 ('CASCADA DEL SUR ','KM 5',1),
-	 ('HOSTEL THE HOUSE ','ONELLI158',1),
-	 ('FACULTAD DE RIO NEGRO','',1),
-	 ('ESTADIO BRUNO TARRINI','',1),
-	 ('PEHUEN DEL LAGO','',1),
-	 ('CREARTE','',1),
-	 ('ECO SKY  ','QUAGLIA ',1),
-	 ('ESCUELA 374','ESANDI',1),
-	 ('DARCENA CATEDRAL COSTANERA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('MUTUAL POLICIAL','',1),
-	 ('BAREKO HOTEL','',1),
-	 ('ASIMRA','',1),
-	 ('FLAT','',1),
-	 ('PIONEROS','',1),
-	 ('CAMPING SER','',1),
-	 ('HOSTEL SOFI ','DIAGONAL CAPRARO 1345',1),
-	 ('RINCON PATAGONICO','',1),
-	 ('LA ESMERALDA','',1),
-	 ('QUILLEN','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('DESING SWIT ','',1),
-	 ('CAPILLA INMACULADA CONCEPCION','',1),
-	 ('APART DEL LAGO ','KM 7,5',1),
-	 ('COLONOS DEL AHUEL','',1),
-	 ('COLONOS DEL NAHUEL','',1),
-	 ('AIRES DEL NAHUEL','',1),
-	 ('CIRCULO CHILENO','',1),
-	 ('SAN FRANCISCO','',1),
-	 ('HOSTAL LASD MOIRAS LIBERTAD 90 ','',1),
-	 ('TRAVEL ROK','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('MANTAIN','',1),
-	 ('BARILOCHE MOUNTAIN','',1),
-	 ('MIZU','',1),
-	 ('ASAMBLEA CRISTIANA ','BÂº LA CUMBRE',1),
-	 ('SLALOM','',1),
-	 ('GIMNACIO SOYEM','',1),
-	 ('BARILOCHE LAKE','',1),
-	 ('RESIDENCIAL TORRES','',1),
-	 ('TANGO IN ITALIA','',1),
-	 ('LAKE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('RODINIA','',1),
-	 ('ALBERGUE ','KM 3',1),
-	 ('RUCE HUENEY','',1),
-	 ('CAMPING LLAOLLAO','',1),
-	 ('KOSHKI HOSTEL GALLARDO Y QUAGLIA','',1),
-	 ('GALP BRONDO','',1),
-	 ('HOSTAL DEL  CERRO ','',1),
-	 ('MONTAN','',1),
-	 ('HOSTEL LA PLAZA ','FRENTE PLAZA BELGRANO',1),
-	 ('HOTEL MONTE CLARO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ACA DE MARSCADI','',1),
-	 ('UNTER ii','',1),
-	 ('INVAP','',1),
-	 ('PRIMO CAPRARO','',1),
-	 ('TATTO','',1),
-	 ('HOSTEL WOOD HOUSE ','PALACIOS 405',1),
-	 ('CEM NÂº 99 ','BROWM ROLANDO',1),
-	 ('ESCUELA187 ','MORALES Y TACUARI',1),
-	 ('COMPLEJO VIEJO CIPRES','',1),
-	 ('CAMPING MUSICAL BARILOCHE  ','KM 25 BUSTILLO ',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOSTEL CARRU LEUFU','',1),
-	 ('AGUILA MORA','',1),
-	 ('VENEZIA','',1),
-	 ('AMAPOLA','',1),
-	 ('BARILOCHE GARDEN','',1),
-	 ('PATAGONICO','',1),
-	 ('ECOMAX','',1),
-	 ('HOSTEL KOSH ','GALLARDO 136',1),
-	 ('RUPO PEHUEN','',1),
-	 ('FASENDA CARIOCA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CHESA ENGALINA ','BARRIO LAS VICTORIAS ',1),
-	 ('HOSTEL NOMAS','',1),
-	 ('MERIDIAN','',1),
-	 ('HOTEL LE MONCHE','',1),
-	 ('VILLA CATEDRAL','',1),
-	 ('MOUNTAIN BARILOCHE','',1),
-	 ('CONCEPT BARILOCHE  ','MORENO 136',1),
-	 ('NATURAL  ','CALLE ESPAÃ‘A',1),
-	 ('SUN','',1),
-	 ('AMANCAY','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('TIERRA GAUCHA','QUAGLIA 402',1),
-	 ('BARILOCHE FLAT ','JUAN MANUEL DE ROSAS 499',1),
-	 ('HORMIGANEGRA','',1),
-	 ('HOSTEL BERKANA','',1),
-	 ('CELINA ','',1),
-	 ('HOSTEL CINERAMA ','',1),
-	 ('HAMPTON  BY HILTON','',1),
-	 ('ARGENTINA LIBRE','',1),
-	 ('PLAYON MUNICIPAL TRANS PROVISORIO','',1),
-	 ('AMERICAN SUIT','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('EX HOGAR GUTIERREZ','',1),
-	 ('GARDEN','',1),
-	 ('CAMPAMENTO ECOLOGICO CARIHUE','',1),
-	 ('CHAMONIX','',1),
-	 ('ITALIA HINCH','',1),
-	 ('JESICA ABURTO','',1),
-	 ('CURU LEUYU','',1),
-	 ('COMPLEJA CARIHUE','',1),
-	 ('CAMPING CEF ','',1),
-	 ('HABANNA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOTERI LAS LILAS ','',1),
-	 ('HOSTEL ACHALAY ','',1),
-	 ('LOS CEREZOS','',1),
-	 ('COLEGIO WOODVILLE','',1),
-	 ('VALLE HERMOSO','',1),
-	 ('HOSTEL VALLE DEL SOL','',1),
-	 ('BARILOCHE  ','MITRE383',1),
-	 ('EL VIEJO MOLINO','',1),
-	 ('MINILOFT','SAN MARTIN 496',1),
-	 ('RICON DE CRIS','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('BARRIO PILAR','',1),
-	 ('ESRN 45','',1),
-	 ('COSTA AZUL','',1),
-	 ('PRESIDENTE PERON','',1),
-	 ('COMPLEJO 41 ','',1),
-	 ('LAS MARIANA','',1),
-	 ('GINMASIO NÂª 2','',1),
-	 ('EL CAGLIERO ','',1),
-	 ('COLEGIO AMUYEN VIRGEN MISIONERA','',1),
-	 ('ESCUELA ANGEL GALLARDO ',' 12 DE OCT',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ESCUELA 320','ONELLI Y SOBRAL',1),
-	 ('JARDIN INFANTE NÂª39','MALDISOVI 39 BÂª MALLIN',1),
-	 ('JARDIN NÂª 78 ','KM 1,239',1),
-	 ('ESC 154 ','EL FRUTILLAR',1),
-	 ('ISLAS MALVINAS','',1),
-	 ('CEM 104','',1),
-	 ('ESC 104','',1),
-	 ('SRN 97 ','RUTA 40 AV BELGRANO',1),
-	 ('SRN 36','',1),
-	 ('ESC 315  ','MALVINAS',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('ESC 343','',1),
-	 ('ESC 154  ','',1),
-	 ('ESC284 Y 343 ','',1),
-	 ('ESC 44 ','AV BUSTILLO KM10',1),
-	 ('GIMNASIO NÂº4 ','',1),
-	 ('LA PALETA DEL PINTOR','',1),
-	 ('ESC-201 RAMON GIMENEZ','',1),
-	 ('LAS LILAS ','',1),
-	 ('HOSTEL VALHALLA','',1),
-	 ('QUIMEY HUE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('HOTEL BASIA ','PIONEROS BRASIL KM 2,8',1),
-	 ('HALL HALL','',1),
-	 ('LAGO MASCARDI','',1),
-	 ('VIEJO MOLINO','',1),
-	 ('BARILOCHE PARK','',1),
-	 ('SURPRISE','',1),
-	 ('GRISU','',1),
-	 ('BACIA ','',1),
-	 ('DISCO CEREBRO','',1),
-	 ('DUENDES','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LAGO MORENO','',1),
-	 ('HOTEL PLAZA','',1),
-	 ('CERRO CAMPANARIO','',1),
-	 ('CACIQUE INCAYAL ','',1),
-	 ('GIMANCIO','',1),
-	 ('CANCHA PUERTO MORENO','',1),
-	 ('HOTEL CRISTAL','',1),
-	 ('NOMAD ','',1),
-	 ('CLUB PEHUENES','',1),
-	 ('KENTON','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LA ALDEA','',1),
-	 ('PALETA DEL PINTOR','',1),
-	 ('TRIP BARILOCHE','',1),
-	 ('LAS MALVINAS','',1),
-	 ('ACHALAY HOSTERIA','',1),
-	 ('POLBAIRES','',1),
-	 ('LEJANO NAHUEL APART','',1),
-	 ('CANCHA CRUZ DEL SUR','',1),
-	 ('SCHERATON','',1),
-	 ('CIRCUITO CHICO','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('VILLA HUINID','',1),
-	 ('OTTO HOUS','',1),
-	 ('CAPILLA ASIS','',1),
-	 ('6 DE NOVIEMBRE','',1),
-	 ('LOS PERICOS','',1),
-	 ('CERRO VALLO','',1),
-	 ('BARECCO','',1),
-	 ('SANTA SOFIA APART HOTEL','',1),
-	 ('HOSTAL BARILOCHE','',1),
-	 ('PARQUE CARIHUE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CENTRO BARILOCHE','',1),
-	 ('TAMBO VIEJO','DINA HUAPI',1),
-	 ('7 DE FEBRERO','',1),
-	 ('BARILOCHE SUITES','',1),
-	 ('NORDICO ','',1),
-	 ('EL SOL ','',1),
-	 ('BASIA','',1),
-	 ('PUNTO PATAGONICO ','SAN MARTIN 86',1),
-	 ('COLEGIO PRIMO CAPRARO','',1),
-	 ('PILETA DEL NAHUEL','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LA BAITA','',1),
-	 ('HOSTEL ARRAYAN','',1),
-	 ('HOSTAL LAS ROSAS ','',1),
-	 ('SHERATON ','',1),
-	 ('DEL LAGO DHL CONDOMINIUM','',1),
-	 ('DEL VIEJO MOLINO','',1),
-	 ('NAHUEL HUAPI','',1),
-	 ('EL CONDADO','',1),
-	 ('EL RETORNO','',1),
-	 ('LA PASTORELLA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('LAS VERTIENTES','',1),
-	 ('NONTUE','',1),
-	 ('POSADA DEL ANGEL','',1),
-	 ('PACIFICO','',1),
-	 ('SANTA RITA','',1),
-	 ('TIROL','',1),
-	 ('VALLE DEL SOL','',1),
-	 ('WONDERLAND','',1),
-	 ('AITUE','',1),
-	 ('BELLO HORIZONTE','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CASITA SUIZA','',1),
-	 ('DE LA LUNA','',1),
-	 ('EL CIERVO ROJO','',1),
-	 ('PINAR','',1),
-	 ('EL ÑIRE','',1),
-	 ('LA SUREÑA','',1),
-	 ('CABAÑAS ROSAS AMARILLAS','',1),
-	 ('LAS PETUÑA','',1),
-	 ('CABAÑAS LEUFU','',1),
-	 ('CABAÑAS LOS ALERCES','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CABAÑAS SOL Y PAZ','',1),
-	 ('CABAÑAS LOS ARCOS','',1),
-	 ('CABAÑAS CASA AZUL','',1),
-	 ('CABAÑAS COUWER','',1),
-	 ('CABAÑAS PEUMAÑI','',1),
-	 ('ALBERGUE LAS PETUÑAS','',1),
-	 ('CABAÑAS AMULEN','',1),
-	 ('CABAÑAS BRISAS DEL LAGO','',1),
-	 ('CABAÑAS LAS GAVIOTAS','',1),
-	 ('CABAÑAS LOS TORLASTENGUER','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CABAÑAS LOS ARRAYANES','',1),
-	 ('CABAÑAS CAMINERO','',1),
-	 ('CABAÑ. RAYEN TRAY','',1),
-	 ('CABAÑAS RAYEN TRY','',1),
-	 ('ÑIRE','',1),
-	 ('HOSTEL RODIÑA','',1),
-	 ('CABAÑAS TOM WUESLEY','',1),
-	 ('PEÑA LOS CERRILLOS','',1),
-	 ('CAMPAMENTO PETUÑA','',1),
-	 ('CABAÑA LA HOJARASCA','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CABAÑA PATAGONIA SIN FRONTERAS','',1),
-	 ('CABAÑAS PINOTEA','',1),
-	 ('ESCUELA MILITAR DE MONTAÑA ','KM9 BUSTILLO',1),
-	 ('PETROBRAS ÑIRECO','',1),
-	 (' CABAÑAS PAILAHE','',1),
-	 ('CABAÑAS NAHUEL MAPU ','BUSTILLO KM 10',1),
-	 ('POSADA DEL ÑIRECO','',1),
-	 ('CABAÑAS LAS AGUSTINAS','',1),
-	 ('ÑIRIHUAU','',1),
-	 ('CABAÑAS ANTUE ','',1);
-INSERT INTO sgpc.hoteles (nombre,direccion,activo) VALUES
-	 ('CABAÑAS ','KM 22,8 BUSTILLO',1),
-	 ('8 CABAÑAS  ','BARRIO LAS VICTORIAS ',1),
-	 ('CABAÑA DEL DEL BOSQUE','',1),
-	 (' CABAÑAS EL VIEJO MOLINO','',1),
-	 ('CABAÑAS LA DONOSA','',1),
-	 ('ANDURIÑA','',1);
+insert into lugares (nombre) values ('ADUANA ARGENTINA');
+insert into lugares (nombre) values ('AEROPUERTO');
+insert into lugares (nombre) values ('AEROPUERTO - EL BOLSON');
+insert into lugares (nombre) values ('AEROPUERTO - VILLA LA ANGOSTURA');
+insert into lugares (nombre) values ('AEROPUERTO ESQUEL');
+insert into lugares (nombre) values ('AEROPUERTO NQN');
+insert into lugares (nombre) values ('ALDEA RUTA 23');
+insert into lugares (nombre) values ('ALEMANIA 275 GIMNACIO');
+insert into lugares (nombre) values ('ALLEN');
+insert into lugares (nombre) values ('ANILLACO');
+insert into lugares (nombre) values ('ARRECIFES');
+insert into lugares (nombre) values ('ARROYITO');
+insert into lugares (nombre) values ('ARROYO CABRAL');
+insert into lugares (nombre) values ('AUSTRALIA');
+insert into lugares (nombre) values ('AVELLANEDA PROV, BS.AS.');
+insert into lugares (nombre) values ('BAHIA BLANCA');
+insert into lugares (nombre) values ('BALLESTERO');
+insert into lugares (nombre) values ('BASSIA');
+insert into lugares (nombre) values ('BELTRAN');
+insert into lugares (nombre) values ('BLANTOUR');
+insert into lugares (nombre) values ('BOLICHE');
+insert into lugares (nombre) values ('BOLICHE CEREBRO');
+insert into lugares (nombre) values ('BOLIVIA');
+insert into lugares (nombre) values ('BOMBAI');
+insert into lugares (nombre) values ('BOWLING');
+insert into lugares (nombre) values ('BRAGADO');
+insert into lugares (nombre) values ('BRASIL');
+insert into lugares (nombre) values ('BUENOS AIRES');
+insert into lugares (nombre) values ('BUENOS AIRES LA PLATA');
+insert into lugares (nombre) values ('BURZACO PROV, BS, AS');
+insert into lugares (nombre) values ('BUSES ILOMAR');
+insert into lugares (nombre) values ('BYPASS');
+insert into lugares (nombre) values ('C V S');
+insert into lugares (nombre) values ('CABRERA BUSES');
+insert into lugares (nombre) values ('CALAFATE');
+insert into lugares (nombre) values ('CALETA OLIVIA');
+insert into lugares (nombre) values ('CAMBORIU');
+insert into lugares (nombre) values ('CAMINERA');
+insert into lugares (nombre) values ('CAMPANA PCI DE BS. AS.');
+insert into lugares (nombre) values ('CAMPANARIO KM 16200 BUSTILLO');
+insert into lugares (nombre) values ('CANCHA CRUZ DEL SUR');
+insert into lugares (nombre) values ('CANCHA PUERTO MORENO');
+insert into lugares (nombre) values ('CANCHAS ADEFUL');
+insert into lugares (nombre) values ('CANOPY');
+insert into lugares (nombre) values ('CAÑADA DE GOMEZ');
+insert into lugares (nombre) values ('CAÑUELAS');
+insert into lugares (nombre) values ('CAPITAL FEDERAL');
+insert into lugares (nombre) values ('CARLOS PAZ');
+insert into lugares (nombre) values ('CASILLA RODANTE');
+insert into lugares (nombre) values ('CASTELLI PCIA BS AS');
+insert into lugares (nombre) values ('CATAMARCA');
+insert into lugares (nombre) values ('CATARATAS DEL  IGUAZU');
+insert into lugares (nombre) values ('CATRIEL');
+insert into lugares (nombre) values ('CENTENARIO');
+insert into lugares (nombre) values ('CENTRO CIVICO');
+insert into lugares (nombre) values ('CERRO BALLO');
+insert into lugares (nombre) values ('CERRO CAMPANARIO');
+insert into lugares (nombre) values ('CERRO CATEDRAL');
+insert into lugares (nombre) values ('CERRO OTTO');
+insert into lugares (nombre) values ('CERRO VALLO');
+insert into lugares (nombre) values ('CERRO VIEJO');
+insert into lugares (nombre) values ('CERVANTES');
+insert into lugares (nombre) values ('CERVECERIA PATAGONIA');
+insert into lugares (nombre) values ('CHACABUCO');
+insert into lugares (nombre) values ('CHACO');
+insert into lugares (nombre) values ('CHAJARI');
+insert into lugares (nombre) values ('CHAPADMALAL');
+insert into lugares (nombre) values ('CHILE');
+insert into lugares (nombre) values ('CHIMPAY');
+insert into lugares (nombre) values ('CHINCHINALES');
+insert into lugares (nombre) values ('CHIVILCOY');
+insert into lugares (nombre) values ('CHOCON');
+insert into lugares (nombre) values ('CHOELE CHOEL');
+insert into lugares (nombre) values ('CHUBUT');
+insert into lugares (nombre) values ('CINCO SALTOS');
+insert into lugares (nombre) values ('CIPOLETTI');
+insert into lugares (nombre) values ('CIRCUITO CHICO');
+insert into lugares (nombre) values ('CIRCULO CHILENO');
+insert into lugares (nombre) values ('CLORINDA');
+insert into lugares (nombre) values ('CLUB ESTUDIANTES UNIDOS');
+insert into lugares (nombre) values ('CLUB NEWENCHE');
+insert into lugares (nombre) values ('CLUB PEHUENES');
+insert into lugares (nombre) values ('COLON PCIA BS ,AS.');
+insert into lugares (nombre) values ('COLONIA SUIZA');
+insert into lugares (nombre) values ('COMALLO');
+insert into lugares (nombre) values ('COMODORO RIVADAVIA');
+insert into lugares (nombre) values ('CONCORDIA');
+insert into lugares (nombre) values ('CONESA');
+insert into lugares (nombre) values ('CONFLUENCIA');
+insert into lugares (nombre) values ('COPAHUE');
+insert into lugares (nombre) values ('CORDOBA');
+insert into lugares (nombre) values ('CORONEL DORREGO');
+insert into lugares (nombre) values ('CORRIENTES');
+insert into lugares (nombre) values ('CRUCE CAMINERO');
+insert into lugares (nombre) values ('CUTRAL CO');
+insert into lugares (nombre) values ('CUZCO PERU');
+insert into lugares (nombre) values ('DESCONOCIDO');
+insert into lugares (nombre) values ('DINA HUAPI');
+insert into lugares (nombre) values ('DISCO GRISU');
+insert into lugares (nombre) values ('DO SANTOS');
+insert into lugares (nombre) values ('DON ORIONE KM1505');
+insert into lugares (nombre) values ('DORREGO');
+insert into lugares (nombre) values ('ECO SKY');
+insert into lugares (nombre) values ('EL  VALLE');
+insert into lugares (nombre) values ('EL BOLSON');
+insert into lugares (nombre) values ('EL CHOCON');
+insert into lugares (nombre) values ('EL CUY');
+insert into lugares (nombre) values ('EL DORADO (MISIONES)');
+insert into lugares (nombre) values ('EL HOYO');
+insert into lugares (nombre) values ('EL MANSO');
+insert into lugares (nombre) values ('ENTRE RIOS');
+insert into lugares (nombre) values ('EPUYEN');
+insert into lugares (nombre) values ('ESCAPE ROOM');
+insert into lugares (nombre) values ('ESQUEL');
+insert into lugares (nombre) values ('ESTADIO ESTUDIANTES BARILOCHE');
+insert into lugares (nombre) values ('ESTADIO MUNICIPAL');
+insert into lugares (nombre) values ('ESTANCIA SAN RAMON');
+insert into lugares (nombre) values ('EXCURCION');
+insert into lugares (nombre) values ('FLORENCIO VARELA');
+insert into lugares (nombre) values ('FORMOSA');
+insert into lugares (nombre) values ('FUERA DE SERVICIO');
+insert into lugares (nombre) values ('GAIMAN');
+insert into lugares (nombre) values ('GENERAL ACHA');
+insert into lugares (nombre) values ('GENERAL ALVEAR');
+insert into lugares (nombre) values ('GENERAL PICO');
+insert into lugares (nombre) values ('GENERAL ROCA');
+insert into lugares (nombre) values ('GENUX');
+insert into lugares (nombre) values ('GIMNASIO 3');
+insert into lugares (nombre) values ('GIMNASIO N1');
+insert into lugares (nombre) values ('GODOY');
+insert into lugares (nombre) values ('GONZA TOUR');
+insert into lugares (nombre) values ('GONZALEZ CATAN');
+insert into lugares (nombre) values ('GOYA');
+insert into lugares (nombre) values ('GRISU');
+insert into lugares (nombre) values ('GUALEGUAY');
+insert into lugares (nombre) values ('HOTEL');
+insert into lugares (nombre) values ('IGUAZU');
+insert into lugares (nombre) values ('ING. HUERGO');
+insert into lugares (nombre) values ('ING. JACOBACCI');
+insert into lugares (nombre) values ('INSTITUTO BALSEIRO');
+insert into lugares (nombre) values ('INVAP');
+insert into lugares (nombre) values ('JACOBACCI');
+insert into lugares (nombre) values ('JUJUY');
+insert into lugares (nombre) values ('JUNIN');
+insert into lugares (nombre) values ('KAYAK');
+insert into lugares (nombre) values ('LA PAMPA');
+insert into lugares (nombre) values ('LA PLATA');
+insert into lugares (nombre) values ('LA RIOJA');
+insert into lugares (nombre) values ('LAGO GUTIERREZ');
+insert into lugares (nombre) values ('LAGO PUELO');
+insert into lugares (nombre) values ('LAGUNA LARGA');
+insert into lugares (nombre) values ('LAMARQUE');
+insert into lugares (nombre) values ('LAS GRUTAS');
+insert into lugares (nombre) values ('LAVALLOL');
+insert into lugares (nombre) values ('LIMAY');
+insert into lugares (nombre) values ('LLANQUIN');
+insert into lugares (nombre) values ('LLAO LLAO');
+insert into lugares (nombre) values ('LOS ANTIGUOS');
+insert into lugares (nombre) values ('LOS CEREZOS');
+insert into lugares (nombre) values ('LOS MENUCO');
+insert into lugares (nombre) values ('LOS VAQUEANOS');
+insert into lugares (nombre) values ('LUCERO');
+insert into lugares (nombre) values ('LUIS BELTRAN');
+insert into lugares (nombre) values ('LUJAN PROV. BS,AS,');
+insert into lugares (nombre) values ('MADRIN');
+insert into lugares (nombre) values ('MAINQUE');
+insert into lugares (nombre) values ('MANSO');
+insert into lugares (nombre) values ('MAÑIO');
+insert into lugares (nombre) values ('MAQUINCHAO');
+insert into lugares (nombre) values ('MAR DE AJO');
+insert into lugares (nombre) values ('MAR DEL PLATA');
+insert into lugares (nombre) values ('MARCOS LAURI');
+insert into lugares (nombre) values ('MARQUINCHAO');
+insert into lugares (nombre) values ('MASCARDI');
+insert into lugares (nombre) values ('MASTER BUS');
+insert into lugares (nombre) values ('MENCUE');
+insert into lugares (nombre) values ('MENDOZA');
+insert into lugares (nombre) values ('MENUCO');
+insert into lugares (nombre) values ('MIRAMAR');
+insert into lugares (nombre) values ('MISIONES');
+insert into lugares (nombre) values ('MONTAIN');
+insert into lugares (nombre) values ('MONTE CLARO');
+insert into lugares (nombre) values ('MONTEVIDEO URUGUAY');
+insert into lugares (nombre) values ('MOTORHOME');
+insert into lugares (nombre) values ('NECOCHEA');
+insert into lugares (nombre) values ('NEUQUEN');
+insert into lugares (nombre) values ('OLABARRIA PCIA DE BS, AS.');
+insert into lugares (nombre) values ('PAEZ');
+insert into lugares (nombre) values ('PARAGUAY');
+insert into lugares (nombre) values ('PARANA');
+insert into lugares (nombre) values ('PARQUE INDUSTRIAL');
+insert into lugares (nombre) values ('PEHUAJO PCIA . BS, AS.');
+insert into lugares (nombre) values ('PERGAMINO PROV. BS. AS.');
+insert into lugares (nombre) values ('PERITO MORENO');
+insert into lugares (nombre) values ('PEUAJO');
+insert into lugares (nombre) values ('PIEDRA DEL AGUILA');
+insert into lugares (nombre) values ('PIGUE');
+insert into lugares (nombre) values ('PILCANIYEU');
+insert into lugares (nombre) values ('PILETAS');
+insert into lugares (nombre) values ('PINAMAR');
+insert into lugares (nombre) values ('PISTA HIELO');
+insert into lugares (nombre) values ('PLAZA UNO');
+insert into lugares (nombre) values ('PLOTIER');
+insert into lugares (nombre) values ('POMONA');
+insert into lugares (nombre) values ('POSADAS (MISIONES)');
+insert into lugares (nombre) values ('PRINCESA  DEL NORTE');
+insert into lugares (nombre) values ('PUCON');
+insert into lugares (nombre) values ('PUENTE DEL RIO LIMAY');
+insert into lugares (nombre) values ('PUERTO  BELGRANO');
+insert into lugares (nombre) values ('PUERTO IGUAZU');
+insert into lugares (nombre) values ('PUERTO MADRYN');
+insert into lugares (nombre) values ('PUERTO MONTT');
+insert into lugares (nombre) values ('PUERTO MORENO 10');
+insert into lugares (nombre) values ('PUERTO PAÑUELO');
+insert into lugares (nombre) values ('PUNTA ALTA');
+insert into lugares (nombre) values ('PUNTA ALTA');
+insert into lugares (nombre) values ('PUNTA ARENA (CHILE)');
+insert into lugares (nombre) values ('QUILMES');
+insert into lugares (nombre) values ('QUINCHO BESCHTED Y DOS DE AGOSTO    COPELO');
+insert into lugares (nombre) values ('RADA TILLY');
+insert into lugares (nombre) values ('RAFAELA PCIA SANTA FE');
+insert into lugares (nombre) values ('RAFTING');
+insert into lugares (nombre) values ('RAMALLOS PCIA ,BS AS,');
+insert into lugares (nombre) values ('RAMOS MEJIA');
+insert into lugares (nombre) values ('RANCHO W');
+insert into lugares (nombre) values ('RAWSON');
+insert into lugares (nombre) values ('REGINA');
+insert into lugares (nombre) values ('RESISTENCIA');
+insert into lugares (nombre) values ('RGA SANTA ROSA TURISMO');
+insert into lugares (nombre) values ('RINCON DE LOS SAUCES');
+insert into lugares (nombre) values ('RIO COLORADO');
+insert into lugares (nombre) values ('RIO CUARTO');
+insert into lugares (nombre) values ('RIO GRANDE');
+insert into lugares (nombre) values ('RIO LIMAY');
+insert into lugares (nombre) values ('RIO NEGRO  BELISLE');
+insert into lugares (nombre) values ('RIOS GALLEGOS');
+insert into lugares (nombre) values ('ROCA');
+insert into lugares (nombre) values ('ROCKETS');
+insert into lugares (nombre) values ('ROSARIO');
+insert into lugares (nombre) values ('SALIQUELO');
+insert into lugares (nombre) values ('SALTA');
+insert into lugares (nombre) values ('SAN ANTONIO DE ARECO');
+insert into lugares (nombre) values ('SAN CARLOS DE BARILOCHE');
+insert into lugares (nombre) values ('SAN JUAN');
+insert into lugares (nombre) values ('SAN LUIS');
+insert into lugares (nombre) values ('SAN MARTIN DE LOS ANDES');
+insert into lugares (nombre) values ('SAN NICOLAS');
+insert into lugares (nombre) values ('SANTA CRUZ');
+insert into lugares (nombre) values ('SANTA FE');
+insert into lugares (nombre) values ('SANTA ROSA (LA PAMPA)');
+insert into lugares (nombre) values ('SANTA TERESITA');
+insert into lugares (nombre) values ('SANTIAGO  DEL  ESTERO');
+insert into lugares (nombre) values ('SANTIAGO DE CHILE');
+insert into lugares (nombre) values ('SENILLOSA');
+insert into lugares (nombre) values ('SHOPPING');
+insert into lugares (nombre) values ('SIERRAS COLORADAS');
+insert into lugares (nombre) values ('TALCA');
+insert into lugares (nombre) values ('TAMBO VIEJO');
+insert into lugares (nombre) values ('TANDIL');
+insert into lugares (nombre) values ('TANGO INN 12 DE OCT--1939');
+insert into lugares (nombre) values ('TARTAGAL');
+insert into lugares (nombre) values ('TEMUCO');
+insert into lugares (nombre) values ('TERMAS');
+insert into lugares (nombre) values ('TERMINAL');
+insert into lugares (nombre) values ('TIERRA DEL FUEGO');
+insert into lugares (nombre) values ('TOM WESLEY');
+insert into lugares (nombre) values ('TRAFUL');
+insert into lugares (nombre) values ('TRANSTUR');
+insert into lugares (nombre) values ('TRELLEW');
+insert into lugares (nombre) values ('TRENQUE LAUQUEN');
+insert into lugares (nombre) values ('TRES ARROYOS');
+insert into lugares (nombre) values ('TUCUMAN');
+insert into lugares (nombre) values ('UNIVERSIDAD DE CORDOBA');
+insert into lugares (nombre) values ('URUGUAY');
+insert into lugares (nombre) values ('USHUAIA');
+insert into lugares (nombre) values ('VALCHETA');
+insert into lugares (nombre) values ('VALDIVIA');
+insert into lugares (nombre) values ('VALLE DEL SOL KM 23');
+insert into lugares (nombre) values ('VENADO TUERTO');
+insert into lugares (nombre) values ('VIEDMA');
+insert into lugares (nombre) values ('VILLA DEL ROSARIO');
+insert into lugares (nombre) values ('VILLA GESELL');
+insert into lugares (nombre) values ('VILLA MANZANO');
+insert into lugares (nombre) values ('VILLA MARIA');
+insert into lugares (nombre) values ('VILLA REGINA');
+insert into lugares (nombre) values ('VILLA TRAFUL');
+insert into lugares (nombre) values ('ZAPALA');
