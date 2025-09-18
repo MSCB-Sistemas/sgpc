@@ -159,4 +159,67 @@ class ServicioModel
 
         return $stmt->rowCount() > 0;
     }
+
+    public function getServiciosServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT s.*, e.nombre as nombre_empresa 
+                FROM servicios s 
+                JOIN empresas e ON s.id_empresa = e.id_empresa";
+        $params = [];
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE e.nombre LIKE :search 
+                    OR s.interno LIKE :search 
+                    OR s.dominio LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarServiciosFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM servicios s 
+                JOIN empresas e ON s.id_empresa = e.id_empresa";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE e.nombre LIKE :search 
+                    OR s.interno LIKE :search 
+                    OR s.dominio LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarServicios()
+    {
+        $sql = "SELECT COUNT(*) as total FROM servicios";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
 }

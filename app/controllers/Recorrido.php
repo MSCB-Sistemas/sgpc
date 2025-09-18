@@ -25,40 +25,14 @@ class Recorrido extends Control
                 $errores[] = $_SESSION['error_recorrido'];
                 unset($_SESSION['error_recorrido']); // Borramos el mensaje después de usarlo
             }
-            $recorridos = $this->model->getAllRecorridos();
-            foreach ($recorridos as &$recorrido) {
-                $calles = $this->calleRecorridoModel->getCallesByRecorrido($recorrido['id_recorrido']);
-                $nombres = $calles ? array_column($calles, 'nombre') : [];
-                $recorrido['calles'] = $nombres ? implode(', ', $nombres) : 'Sin calles';
-            }
-
-            unSet($recorrido);
 
             $datos = [
                 'title' => 'Listado de Recorridos',
                 'urlCrear' => URL . '/recorrido/create',
+                'urlAjax' => URL . '/recorrido/ajaxList',
                 'columnas' => ['ID', 'Nombre', 'Calles'],
-                'columnas_claves' => ['id_recorrido','nombre','calles'],
-                'data' => $recorridos,
-                'acciones' => function($fila) {
-                    $id = $fila['id_recorrido'];
-                    $url = URL . '/recorrido';
-                    $botones = '';
-
-                    if ($this->tienePermiso('editar abm')) {
-                        $botones .= '
-                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
-                        ';
-                    }
-
-                    if ($this->tienePermiso('borrar abm')) {
-                        $botones .= '
-                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
-                        ';
-                    }
-
-                    return $botones;
-                },
+                'columnas_claves' => ['id_recorrido','nombre_recorrido','calles'],
+                'acciones' => true,
                 'errores' => $errores
             ];
             $this->load_view('partials/tablaAbm', $datos);
@@ -356,5 +330,94 @@ class Recorrido extends Control
             }
         } else {
         }
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
+
+        // Orden
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'asc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
+
+        $columnas = ['id_recorrido','nombre_recorrido','calles'];
+
+        $orderColumn = 'nombre_recorrido';
+        if (isset($columnas[$orderColumnIndex])) {
+             $orderColumn = $columnas[$orderColumnIndex];
+        }
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->model->contarRecorridos();
+
+        // Registros filtrados y paginados
+        $records = $this->model->getRecorridosServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+        
+        // Total de registros filtrados
+        $recordsFiltered = $this->model->contarRecorridosFiltrados($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($records as $fila) {
+            $acciones = '';
+            $id = $fila['id_recorrido'];
+            $url = URL . '/recorrido';
+
+            if ($this->tienePermiso('editar abm')) {
+                $acciones .= '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
+                ';
+            }
+
+            if ($this->tienePermiso('borrar abm')) {
+                $acciones .= '
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este recorrido?\');">Eliminar</a>
+                ';
+            }
+
+            $data[] = [
+                'id_recorrido' => ucfirst(htmlspecialchars($fila['id_recorrido'])),
+                'nombre_recorrido' => ucfirst(htmlspecialchars($fila['nombre_recorrido'])),
+                'calles' => htmlspecialchars($fila['calles']),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 }

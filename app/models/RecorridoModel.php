@@ -150,4 +150,82 @@ class RecorridoModel
             return false;
         }
     }
+
+    public function getRecorridosServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT 
+            r.id_recorrido,
+            r.nombre AS nombre_recorrido,
+            GROUP_CONCAT(c.nombre SEPARATOR ', ') AS calles
+            FROM recorridos r
+            LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
+            LEFT JOIN calles c ON cr.id_calle = c.id_calle
+            WHERE r.activo = 1
+            GROUP BY r.id_recorrido, r.nombre";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " HAVING calles like :search or nombre_recorrido like :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarRecorridosFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM (
+                    SELECT 
+                        r.id_recorrido,
+                        r.nombre AS nombre_recorrido,
+                        GROUP_CONCAT(c.nombre SEPARATOR ', ') AS calles
+                    FROM recorridos r
+                    LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
+                    LEFT JOIN calles c ON cr.id_calle = c.id_calle
+                    WHERE r.activo = 1
+                    GROUP BY r.id_recorrido, r.nombre";
+
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " HAVING calles LIKE :search OR nombre_recorrido LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $sql .= ") as subquery"; // <- cerramos el subselect
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarRecorridos()
+    {
+        $sql = "SELECT COUNT(*) as total FROM recorridos";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
 }

@@ -4,8 +4,8 @@
  */
 class Servicio extends Control
 {
-    private $model;
-    private $empresaModel;
+    private ServicioModel $model;
+    private EmpresaModel $empresaModel;
 
     public function __construct()
     {
@@ -23,32 +23,13 @@ class Servicio extends Control
                 $errores[] = $_SESSION['error_servicio'];
                 unset($_SESSION['error_servicio']); // Borramos el mensaje después de usarlo
             }
-            $servicios = $this->model->getAllServicios();
             $datos = [
                 'title' => 'Listado de Servicios',
                 'urlCrear' => URL . '/servicio/create',
+                'urlAjax' => URL . '/servicio/ajaxList',
                 'columnas' => ['Nro Servicio', 'Empresa', 'Interno', 'Dominio'],
                 'columnas_claves' => ['id_servicio', 'nombre_empresa', 'interno', 'dominio'],
-                'data' => $servicios,
-                'acciones' => function ($fila) {
-                    $id = $fila['id_servicio'];
-                    $url = URL . '/servicio';
-                    $botones = '';
-
-                    if ($this->tienePermiso('editar abm') && $this->tienePermiso('borrar abm')) {
-                        $botones .= '
-                            <a href="' . $url . '/edit/' . $id . '" class="btn btn-sm btn-primary">Editar</a>
-                        ';
-                    }
-
-                    if ($this->tienePermiso('borrar abm')) {
-                        $botones .= '
-                            <a href="' . $url . '/delete/' . $id . '" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
-                        ';
-                    }
-
-                    return $botones;
-                },
+                'acciones' => true,
                 'errores' => $errores
             ];
             $this->load_view('partials/tablaAbm', $datos);
@@ -292,6 +273,97 @@ class Servicio extends Control
                 echo json_encode(['success' => false, 'message' => 'Error al guardar servicio']);
             }
         }
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
+
+        // Orden
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'dsc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
+
+        $columnas = ['id_servicio', 'nombre_empresa', 'interno', 'dominio'];
+
+        $orderColumn = 'id_servicio';
+        if (isset($columnas[$orderColumnIndex])) {
+            $orderColumn = $columnas[$orderColumnIndex];
+        }
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->model->contarServicios();
+
+        // Registros filtrados y paginados
+        $records = $this->model->getServiciosServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+
+        // Total de registros filtrados
+        $recordsFiltered = $this->model->contarServiciosFiltrados($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($records as $fila) {
+            $acciones = '';
+            $id = $fila['id_servicio'];
+            $url = URL . '/servicio';
+
+            if ($this->tienePermiso('editar abm') && $this->tienePermiso('borrar abm')) {
+                $acciones .= '
+                    <a href="' . $url . '/edit/' . $id . '" class="btn btn-sm btn-primary">Editar</a>
+                ';
+            }
+
+            if ($this->tienePermiso('borrar abm')) {
+                $acciones .= '
+                    <a href="' . $url . '/delete/' . $id . '" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este servicio?\');">Eliminar</a>
+                ';
+            }
+
+
+            $data[] = [
+                'id_servicio' => $fila['id_servicio'],
+                'nombre_empresa' => ucfirst(htmlspecialchars($fila['nombre_empresa'])),
+                'interno' => $fila['interno'],
+                'dominio' => htmlspecialchars($fila['dominio']),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 
 }

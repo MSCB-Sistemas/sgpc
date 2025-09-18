@@ -23,32 +23,13 @@ class PuntosDetencion extends Control
                 $errores[] = $_SESSION['error_pd'];
                 unset($_SESSION['error_pd']); // Borramos el mensaje después de usarlo
             }
-            $puntos = $this->model->getAllPuntosDetencion();
             $datos = [
                 'title' => 'Listado de Puntos de Detencion',
                 'urlCrear' => URL . '/puntosDetencion/create',
+                'urlAjax' => URL . '/puntosDetencion/ajaxList',
                 'columnas' => ['Punto', 'Calle'],  
-                'columnas_claves' => ['nombre_punto', 'nombre_calle'], 
-                'data' => $puntos,
-                'acciones' => function($fila) {
-                    $id = $fila['id_punto_detencion'];
-                    $url = URL . '/puntosDetencion';
-                    $botones = '';
-
-                    if ($this->tienePermiso('editar abm')) {
-                        $botones .= '
-                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
-                        '; 
-                    }
-
-                    if ($this->tienePermiso('borrar abm')) {
-                        $botones .= '
-                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este punto?\');">Eliminar</a>
-                        ';
-                    }
-
-                    return $botones;
-                },
+                'columnas_claves' => ['nombre_punto', 'nombre_calle'],
+                'acciones' => true,
                 'errores' => $errores
             ];
 
@@ -228,5 +209,93 @@ class PuntosDetencion extends Control
             header("Location: " . URL . "/PuntosDetencion");
             exit;
         }
+    }
+
+    public function ajaxList()
+    {
+        // Solo permitir acceso con permisos
+        if (!$this->tienePermiso("ver abm")) {
+            header("Location: " . URL);
+            exit;
+        }
+
+        // Parámetros que envía DataTables
+        $draw = 1;
+        if (isset($_GET['draw'])) {
+            $draw = $_GET['draw'];
+        }
+        $start = 0;
+        if (isset($_GET['start'])) {
+            $start = $_GET['start'];
+        }
+        $length = 10;
+        if (isset($_GET['length'])) {
+            $length = $_GET['length'];
+        }
+        $searchValue = '';
+        if (isset($_GET['search']['value'])) {
+            $searchValue = $_GET['search']['value'];
+        }
+
+        // Orden
+        $orderColumnIndex = 0;
+        if (isset($_GET['order'][0]['column'])) {
+            $orderColumnIndex = $_GET['order'][0]['column'];
+        }
+        $orderDir = 'asc';
+        if (isset($_GET['order'][0]['dir'])) {
+            $orderDir = $_GET['order'][0]['dir'];
+        }
+
+        $columnas = ['nombre_punto', 'nombre_calle'];
+
+        $orderColumn = 'nombre';
+        if (isset($columnas[$orderColumnIndex])) {
+            $orderColumn = $columnas[$orderColumnIndex];
+        }
+
+        // Total de registros (sin filtro)
+        $recordsTotal = $this->model->contarPuntosDetencion();
+
+        // Registros filtrados y paginados
+        $records = $this->model->getPuntosDetencionServerSide($start, $length, $searchValue, $orderColumn, $orderDir);
+
+        // Total de registros filtrados
+        $recordsFiltered = $this->model->contarPuntosDetencionFiltrados($searchValue);
+
+        // Preparar data con botones de acciones
+        $data = [];
+        foreach ($records as $fila) {
+            $acciones = '';
+            $id = $fila['id_punto_detencion'];
+            $url = URL . '/puntosDetencion';
+
+            if ($this->tienePermiso('editar abm')) {
+                $acciones .= '
+                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
+                '; 
+            }
+
+            if ($this->tienePermiso('borrar abm')) {
+                $acciones .= '
+                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar este punto?\');">Eliminar</a>
+                ';
+            }
+
+            $data[] = [
+                'nombre_punto' => ucfirst(htmlspecialchars($fila['nombre_punto'])),
+                'nombre_calle' => ucfirst(htmlspecialchars($fila['nombre_calle'])),
+                'acciones' => $acciones
+            ];
+        }
+
+        // Respuesta en JSON
+        echo json_encode([
+            "draw" => intval($draw),
+            "recordsTotal" => intval($recordsTotal),
+            "recordsFiltered" => intval($recordsFiltered),
+            "data" => $data
+        ]);
+        exit;
     }
 }

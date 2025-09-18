@@ -20,10 +20,17 @@
 [2025-09-05 13:45:09] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":"","offset":0,"limit":null}
 [2025-09-05 13:45:09] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":"","offset":0,"limit":null}
 [2025-09-05 13:45:10] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2026-07-08","fecha_fin":"2027-10-05","dni":null,"tipo":"","offset":0,"limit":null}
-[2025-09-12 11:54:20] ❌ Error: Parámetros incorrectos para el método save del controlador Usuarios. Mensaje: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'admin' for key 'usuarios.usuarios_unique'
-[2025-09-12 11:56:45] ❌ Error: Parámetros incorrectos para el método save del controlador Usuarios. Mensaje: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'galochespirin' for key 'usuarios.usuarios_unique'
-[2025-09-12 14:17:02] ❌ Error: En inicio de sesión - Credenciales incorrectas
-[2025-09-12 14:17:02] ❌ Error: En inicio de sesión - Debe ingresar usuario y contraseña
-[2025-09-12 14:17:15] ❌ Error: En inicio de sesión - Credenciales incorrectas
-[2025-09-12 14:17:18] ❌ Error: En inicio de sesión - Credenciales incorrectas
-[2025-09-12 14:17:24] ❌ Error: En inicio de sesión - Credenciales incorrectas
+[2025-09-17 11:51:17] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'pd.nombre' in 'where clause'
+[2025-09-17 11:51:36] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'pd.nombre' in 'where clause'
+[2025-09-17 11:51:43] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'pd.nombre' in 'where clause'
+[2025-09-17 11:53:30] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'calles' in 'order clause'
+[2025-09-17 11:53:35] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'calles' in 'order clause'
+[2025-09-17 11:53:36] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'calles' in 'order clause'
+[2025-09-17 11:53:37] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'calles' in 'order clause'
+[2025-09-17 12:29:04] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Recorrido. Mensaje: SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'nombre' in order clause is ambiguous
+[2025-09-17 12:36:49] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2025-08-18","fecha_fin":"2025-09-17","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-17 12:36:53] getPermisosFiltradosChofer: No se encontraron resultados para los filtros: {"fecha_inicio":"2025-08-18","fecha_fin":"2025-09-17","dni":null,"tipo":null,"offset":10,"limit":0}
+[2025-09-17 13:09:10] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Lugar. Mensaje: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'sgpc.lugar' doesn't exist
+[2025-09-17 13:11:54] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Lugar. Mensaje: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'sgpc.lugar' doesn't exist
+[2025-09-17 13:12:53] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Lugar. Mensaje: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'sgpc.lugar' doesn't exist
+[2025-09-17 13:18:13] ❌ Error: Parámetros incorrectos para el método ajaxList del controlador Lugar. Mensaje: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'sgpc.lugar' doesn't exist
