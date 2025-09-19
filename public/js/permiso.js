@@ -1,5 +1,5 @@
 // Función auxiliar para enviar formulario por AJAX y actualizar select
-async function handleModalForm(formId, url, selectId, valueField, textField) {
+async function handleModalForm(formId, url, selectId, valueField, textField, type, inputID=null) {
   const form = document.getElementById(formId);
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -14,15 +14,30 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
       const data = await res.json();
 
       if (data.success) {
-        // agregar nueva opción al select
-        const select = document.getElementById(selectId);
-        const option = document.createElement("option");
-        option.value = data[valueField];
-        option.textContent = data[textField];
-        option.selected = true;
-        select.appendChild(option);
-        select.dispatchEvent(new Event('change'));
+        if (type === "select"){
+          // agregar nueva opción al select
+          const select = document.getElementById(selectId);
+          const option = document.createElement("option");
+          option.value = data[valueField];
+          option.textContent = data[textField];
+          option.selected = true;
+          select.appendChild(option);
+          select.dispatchEvent(new Event('change'));
+        } else if (type === "datalist" && inputID) {
+          const datalist = document.getElementById(selectId);
+          const input = document.querySelector(`input[list="${selectId}"]`);
+          const hidden = document.getElementById(inputID); // ej: id_chofer
 
+          const option = document.createElement("option");
+          option.value = data[textField];
+          option.dataset.id = data[valueField];
+          option.selected = true;
+          datalist.appendChild(option);
+
+          // setear input y hidden directamente
+          input.value = data[textField];
+          hidden.value = data[valueField];
+        }
         // cerrar modal
         bootstrap.Modal.getInstance(form.closest(".modal")).hide();
         form.reset();
@@ -36,16 +51,16 @@ async function handleModalForm(formId, url, selectId, valueField, textField) {
 }
 
 // Chofer -> espera JSON: { success: true, id_chofer, nombre, apellido }
-handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "chofer", "id_chofer", "nombreCompleto");
+handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "choferes", "id_chofer", "nombreCompleto", "datalist", "id_chofer");
 
 // Servicio -> espera JSON: { success: true, id_servicio, interno, dominio }
-handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicio", "id_servicio", "internoDominio");
+handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicios", "id_servicio", "internoDominio", "datalist", "id_servicio");
 
 // Recorrido -> espera JSON: { success: true, id_recorrido, nombre }
-handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre");
+handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre", "select");
 
 // Lugar -> espera JSON: { success: true, id_recorrido, nombre }
-handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugar", "id_lugar", "nombre");
+handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugares", "id_lugar", "nombre", "datalist", "id_lugar");
 
 
 

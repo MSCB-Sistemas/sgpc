@@ -61,11 +61,11 @@
                 <script>
                 const servicioInput = document.getElementById('servicio_search');
                 const servicioHidden = document.getElementById('id_servicio');
-                const servicioOptions = document.querySelectorAll('#servicios option');
 
                 servicioInput.addEventListener('input', () => {
                     const val = servicioInput.value.trim();
                     servicioHidden.value = ''; // limpiar si no coincide
+                    const servicioOptions = document.querySelectorAll('#servicios option');
                     servicioOptions.forEach(opt => {
                         if(opt.value === val){
                             servicioHidden.value = opt.dataset.id;
@@ -94,11 +94,11 @@
                 <script>
                 const lugarInput = document.getElementById('lugar_search');
                 const lugarHidden = document.getElementById('id_lugar');
-                const lugarOptions = document.querySelectorAll('#lugares option');
 
                 lugarInput.addEventListener('input', () => {
                     const val = lugarInput.value.trim();
                     lugarHidden.value = ''; // limpiar si no coincide
+                    const lugarOptions = document.querySelectorAll('#lugares option');
                     lugarOptions.forEach(opt => {
                         if(opt.value === val){
                             lugarHidden.value = opt.dataset.id;
@@ -130,11 +130,11 @@
                 <script>
                 const input = document.getElementById('chofer_search');
                 const hidden = document.getElementById('id_chofer');
-                const options = document.querySelectorAll('#choferes option');
 
                 input.addEventListener('input', () => {
                     const val = input.value.trim();
                     hidden.value = ''; // limpiar si no coincide
+                    const options = document.querySelectorAll('#choferes option');
                     options.forEach(opt => {
                         if(opt.value === val){
                             hidden.value = opt.dataset.id;
