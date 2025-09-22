@@ -236,6 +236,7 @@ class Chofer extends Control
     public function saveAjax()
     {
         header('Content-Type: application/json');
+
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nombre = trim($_POST['nombre']);
             $apellido = trim($_POST['apellido']);
@@ -246,18 +247,26 @@ class Chofer extends Control
                 echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
                 return;
             }
+
             $idChofer = $this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad);
-            if ($idChofer) {
+
+            if ($idChofer > 0) {
+                // Insert correcto
                 echo json_encode([
                     'success' => true,
                     'id_chofer' => $idChofer,
                     'nombreCompleto' => $dni . ' - ' . $nombre . ' ' . $apellido
                 ]);
+            } elseif ($idChofer === 0) {
+                // Duplicado
+                echo json_encode(['success' => false, 'message' => "El chofer con DNI '{$dni}' ya está registrado."]);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Error al guardar chofer']);
+                // Error genérico
+                echo json_encode(['success' => false, 'message' => "Error inesperado al guardar chofer."]);
             }
         }
     }
+
 
     public function ajaxList()
     {
