@@ -59,57 +59,104 @@
                 </datalist>
                 <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
                 <script>
-                const servicioInput = document.getElementById('servicio_search');
-                const servicioHidden = document.getElementById('id_servicio');
-
-                servicioInput.addEventListener('input', () => {
-                    const val = servicioInput.value.trim();
-                    servicioHidden.value = ''; // limpiar si no coincide
+                    const servicioInput = document.getElementById('servicio_search');
+                    const servicioHidden = document.getElementById('id_servicio');
                     const servicioOptions = document.querySelectorAll('#servicios option');
-                    servicioOptions.forEach(opt => {
-                        if(opt.value === val){
-                            servicioHidden.value = opt.dataset.id;
+
+                    servicioInput.addEventListener('input', () => {
+                        const val = servicioInput.value.trim();
+                        servicioHidden.value = ''; // limpiar si no coincide
+                        let valid = false;
+
+                        servicioOptions.forEach(opt => {
+                            if(opt.value === val){
+                                servicioHidden.value = opt.dataset.id;
+                                valid = true;
+                            }
+                        });
+
+                        if (!valid) {
+                            servicioInput.setCustomValidity("Debe seleccionar un servicio de la lista");
+                        } else {
+                            servicioInput.setCustomValidity("");
                         }
                     });
-                });
-                </script>
+                    //Funcion para que tome la validacion del input si se agrega un nuevo servicio
+                    function agregarServicio(nombre, id) {
+                        const datalist = document.getElementById('servicios');
+                        const input = document.getElementById('servicio_search');
+                        const hidden = document.getElementById('id_servicio');
+
+                        const option = document.createElement('option');
+                        option.value = nombre;
+                        option.dataset.id = id;
+                        datalist.appendChild(option);
+
+                        hidden.value = id;
+                        input.value = nombre;
+                        input.setCustomValidity('');
+                    }
+                    </script>
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalServicio">+</button>
         </div>
 
         <!-- Lugar -->
         <div class="col-md-6 d-flex align-items-end">
-            <div class="flex-grow-1">
-                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
-                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
-                <label for="lugar_search" class="form-label">Origen/Destino</label>
-                <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." required>
-                <input type="hidden" name="id_lugar" id="id_lugar">
-                <datalist id="lugares">
-                    <?php foreach ($datos['lugares'] as $l): ?>
-                        <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
-                    <?php endforeach; ?>
-                </datalist>
-            <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
-                <script>
-                const lugarInput = document.getElementById('lugar_search');
-                const lugarHidden = document.getElementById('id_lugar');
-
-                lugarInput.addEventListener('input', () => {
-                    const val = lugarInput.value.trim();
-                    lugarHidden.value = ''; // limpiar si no coincide
-                    const lugarOptions = document.querySelectorAll('#lugares option');
-                    lugarOptions.forEach(opt => {
-                        if(opt.value === val){
-                            lugarHidden.value = opt.dataset.id;
-                        }
-                    });
-                });
-                </script>
-
-            </div>
-            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
+        <div class="flex-grow-1">
+            <label for="lugar_search" class="form-label">Origen/Destino</label>
+            <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." required>
+            <input type="hidden" name="id_lugar" id="id_lugar">
+            <datalist id="lugares">
+                <?php foreach ($datos['lugares'] as $l): ?>
+                    <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
+                <?php endforeach; ?>
+            </datalist>
         </div>
+        <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
+    </div>
+        <script>
+            const lugarInput = document.getElementById('lugar_search');
+            const lugarHidden = document.getElementById('id_lugar');
+            const lugarOptions = document.querySelectorAll('#lugares option');
+
+            lugarInput.addEventListener('input', () => {
+                const val = lugarInput.value.trim();
+                lugarHidden.value = ''; // limpiar si no coincide
+                let valid = false;
+
+                lugarOptions.forEach(opt => {
+                    if (opt.value === val) {
+                        lugarHidden.value = opt.dataset.id;
+                        valid = true;
+                    }
+                });
+
+                if (!valid) {
+                    lugarInput.setCustomValidity("Debe seleccionar un lugar de la lista");
+                } else {
+                    lugarInput.setCustomValidity(""); // válido
+                }
+            });
+            // función para agregar un nuevo lugar al datalist y al hidden
+            function agregarLugar(nombre, id) {
+                const datalist = document.getElementById('lugares');
+                const input = document.getElementById('lugar_search');
+                const hidden = document.getElementById('id_lugar');
+
+                // crear nueva opción
+                const option = document.createElement('option');
+                option.value = nombre;
+                option.dataset.id = id;
+                datalist.appendChild(option);
+
+                // actualizar hidden y marcar input como válido
+                hidden.value = id;
+                input.value = nombre;
+                input.setCustomValidity('');
+            }
+            </script>
+
     </div>
     <div class="row mb-3">
         <!-- Chofer -->
@@ -130,18 +177,27 @@
                 <script>
                 const input = document.getElementById('chofer_search');
                 const hidden = document.getElementById('id_chofer');
+                const options = document.querySelectorAll('#choferes option');
 
                 input.addEventListener('input', () => {
                     const val = input.value.trim();
                     hidden.value = ''; // limpiar si no coincide
-                    const options = document.querySelectorAll('#choferes option');
+                    let valid = false;
+
                     options.forEach(opt => {
-                        if(opt.value === val){
+                        if (opt.value === val) {
                             hidden.value = opt.dataset.id;
+                            valid = true;
                         }
                     });
+
+                    if (!valid) {
+                        input.setCustomValidity("Debe seleccionar un chofer de la lista");
+                    } else {
+                        input.setCustomValidity("");
+                    }
                 });
-                </script>
+            </script>
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
         </div>
