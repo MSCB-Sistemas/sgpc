@@ -34,9 +34,9 @@ class Permiso extends Control
                 $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta);
             }
             foreach ($permisos as &$permiso) {
-                $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
-                $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
-                $permiso['Recorrido'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
+                $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($permiso['Permiso Nro.']);
+                $nombres_calles = $calles_permiso ? array_column($calles_permiso, 'nombre') : [];
+                $permiso['Calles'] = $nombres_calles ? implode(', ', $nombres_calles) : 'Sin calles';
                 $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($permiso['Permiso Nro.']);
                 $paradasArray = [];
                 foreach ($paradas as $parada) {
