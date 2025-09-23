@@ -167,20 +167,23 @@ class Permiso extends Control
             $observacion = $_POST['observacion'];
             $puntos_detencion = $_POST['puntos_detencion'];
             $puntos_detencion = json_decode($puntos_detencion, true);
+            $calles = $_POST['calles_permiso'];
+            $calles = json_decode($calles, true);
             $pasajeros = $_POST['pasajeros'];
             $errores = [];
 
             $modelRecorridosPermisos = $this->load_model('RecorridosPermisosModel');
+            $modelPermisosCalles = $this->load_model('PermisosCallesModel');
             $modelReservasPuntos = $this->load_model('ReservasPuntosModel');
 
             if (!$id_chofer || !$id_usuario || !$id_servicio || $tipo === '' || $fecha_reserva === '' || $arribo_salida === '' || !$id_lugar) {
                 
-                var_dump($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion, $pasajeros, $id_lugar,$puntos_detencion,$id_recorrido);
+                var_dump($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion, $pasajeros, $id_lugar, $id_recorrido, $puntos_detencion, $calles);
                 
                 return;
             }
 
-        $idPermiso = $this->model->insertPermiso(
+            $idPermiso = $this->model->insertPermiso(
                 $id_chofer,
                 $id_usuario,
                 $id_servicio,
@@ -200,6 +203,16 @@ class Permiso extends Control
             $idPermisoRecorrido = $modelRecorridosPermisos->insertRecorrido($idPermiso, $id_recorrido);
             if (!$idPermisoRecorrido) {
                 $errores[] = 'Error al asociar el recorrido al permiso.';
+            }
+
+            if (!empty($calles)){
+                foreach ($calles as $calle){
+                    var_dump($calles,$calle);
+                    $idPermisoCalle = $modelPermisosCalles->insertPermisosCalles($idPermiso, $calle['id_calle']);
+                    if (!$idPermisoCalle) {
+                        $errores[] = "Error al asociar la calle {$calle['id_calle']} al permiso.";
+                    }
+                }
             }
 
             foreach ($puntos_detencion as $id_punto_detencion => $punto) {
@@ -249,8 +262,8 @@ class Permiso extends Control
     public function imprimir($idPermiso) {
         if ($this->tienePermiso("cargar permiso")) {
             $permiso = $this->model->getPermisoPdf($idPermiso);
-            $calles_recorrido = $this->load_model('CalleRecorridoModel')->getCallesByRecorrido($permiso['id_recorrido']);
-            $nombres_calles = $calles_recorrido ? array_column($calles_recorrido, 'nombre') : [];
+            $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($idPermiso);
+            $nombres_calles = $calles_permiso ? array_column($calles_permiso, 'nombre') : [];
             $paradas = $this->load_model('ReservasPuntosModel')->getReservasByPedidoPdf($idPermiso);
             $datos = [
                 'id_permiso' => $idPermiso,

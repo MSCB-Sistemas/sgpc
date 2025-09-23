@@ -29,6 +29,9 @@
                 <input type="radio" class="btn-check" name="tipo_permiso" id="linea" autocomplete="off" value="linea">
                 <label class="btn btn-outline-primary" for="linea">Línea</label>
 
+                <input type="radio" class="btn-check" name="tipo_permiso" id="convalidaciones" autocomplete="off" value="convalidaciones">
+                <label class="btn btn-outline-primary" for="convalidaciones">Convalidaciones</label>
+
                 <input type="radio" class="btn-check" name="tipo_permiso" id="otros" autocomplete="off" value="otros">
                 <label class="btn btn-outline-primary" for="otros">Otros</label>
             </div>

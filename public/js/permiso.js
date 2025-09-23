@@ -91,6 +91,25 @@ document.addEventListener("DOMContentLoaded", function () {
     hidden.value = JSON.stringify(puntosData);
     formPermiso.appendChild(hidden);
 
+    const calle_hidden = document.createElement("input");
+    calle_hidden.type = "hidden";
+    calle_hidden.name = "calles_permiso";
+
+    const filas = document.querySelectorAll('#tablaCalles tbody tr');
+    const datosCalles = [];
+
+    filas.forEach(fila => {
+      // Buscar el td que tiene el data-id
+      const td = fila.querySelector('td[data-id]');
+      if (td) {
+          const idCalle = td.getAttribute('data-id');
+          datosCalles.push({ id_calle: idCalle });
+      }
+    });
+    
+    calle_hidden.value = JSON.stringify(datosCalles);
+    formPermiso.appendChild(calle_hidden);
+
     formPermiso.submit(); // Ahora sí enviamos el formulario
   });
 
