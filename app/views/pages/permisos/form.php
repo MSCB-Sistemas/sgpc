@@ -53,7 +53,7 @@
                 <label for="servicio_search" class="form-label">Servicio</label>
                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
                  Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
-                <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." required>
+                <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." autocomplete="off" required>
                 <input type="hidden" name="id_servicio" id="id_servicio">
                 <datalist id="servicios">
                     <?php foreach ($datos['servicios'] as $s): ?>
@@ -86,7 +86,7 @@
                  <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
                  Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
                 <label for="lugar_search" class="form-label">Origen/Destino</label>
-                <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." required>
+                <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." autocomplete="off" required>
                 <input type="hidden" name="id_lugar" id="id_lugar">
                 <datalist id="lugares">
                     <?php foreach ($datos['lugares'] as $l): ?>
@@ -121,7 +121,7 @@
                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
                  Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
                 <label for="chofer_search" class="form-label">Chofer</label>
-                <input list="choferes" id="chofer_search" name="chofer_search" class="form-control" placeholder="Buscar chofer..." required>
+                <input list="choferes" id="chofer_search" name="chofer_search" class="form-control" placeholder="Buscar chofer..." autocomplete="off" required>
                 <input type="hidden" name="id_chofer" id="id_chofer">
 
                 <datalist id="choferes">
@@ -194,7 +194,7 @@
                         <h6>Calles del Recorrido</h6>
                         <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
-                            <tr><th>Nombre</th></tr>
+                            <tr><th>Nombre</th><th></th></tr>
                             
                         </thead>
                         <tbody>

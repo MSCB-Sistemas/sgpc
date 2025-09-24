@@ -138,7 +138,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       calles.forEach(calle => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td class="calle-item" data-id="${calle.id_calle}">${calle.nombre}</td>`;
+        tr.innerHTML = `<td class="calle-item" data-id="${calle.id_calle}">${calle.nombre}</td>
+          <td class="calle-item"><button type="button" class="btn btn-sm btn-danger removeCalle float-end">-</button></td>`;
         tablaCalles.appendChild(tr);
       });
 
