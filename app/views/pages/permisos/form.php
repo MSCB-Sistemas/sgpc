@@ -20,7 +20,7 @@
 <form action="<?= $datos['action'] ?>" method="POST" id="permisoForm">
 
     <div class="mb-3 row">
-        <div class="col-md-5">
+        <div class="col-md-10">
             <label class="form-label d-block">Tipo de Permiso</label>
             <div class="btn-group" role="group" aria-label="Tipo de permiso">
                 <input type="radio" class="btn-check" name="tipo_permiso" id="charter" autocomplete="off" value="charter" checked>
