@@ -85,23 +85,45 @@ class ChoferesModel {
      * @param string $nacionalidad Nacionalidad del chofer.
      * @return int|string ID del chofer insertado.
      */
-    public function insertChofer($dni, $nombre, $apellido, $nacionalidad) {
-        $query = "INSERT INTO choferes (dni, nombre, apellido, id_nacionalidad) VALUES (:dni, :nombre, :apellido, :nacionalidad)";
+   public function insertChofer($dni, $nombre, $apellido, $nacionalidad)
+{
+    try {
+        $query = "INSERT INTO choferes (dni, nombre, apellido, id_nacionalidad) 
+                  VALUES (:dni, :nombre, :apellido, :nacionalidad)";
         $stmt = $this->db->prepare($query);
 
-        $params = ['dni' => $dni, 'nombre' => $nombre, 'apellido' => $apellido, 'nacionalidad' => $nacionalidad];
+        $params = [
+            'dni' => $dni,
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'nacionalidad' => $nacionalidad
+        ];
+
         $stmt->execute($params);
         $result = $this->db->lastInsertId();
+
+        // Auditoría
         auditoriaHelper::log(
             $_SESSION['usuario_id'],
             $query,
             $params
         );
-        if (!$result) {
-            writeLog("❌ Error: No se pudo insertar el chofer " . $nombre . " " . $apellido . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
-        }
+
+
+        // Return the inserted ID (string as returned by lastInsertId)
         return $result;
+
+    } catch (PDOException $e) {
+        if ($e->getCode() == '23000' && $e->errorInfo[1] == 1062) {
+            writeLog("❌ Duplicado: intento de insertar chofer con DNI {$dni} y nacionalidad {$nacionalidad}");
+            return 0; // duplicado
+        }
+        writeLog("❌ Error inesperado: " . $e->getMessage());
+        return -1; // error genérico
     }
+
+    }
+
 
     /**
      * Elimina un chofer de la base de datos por su ID.

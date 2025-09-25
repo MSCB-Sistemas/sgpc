@@ -27,7 +27,7 @@
   </div>
 </div>
 
-<!-- Modal Chofer -->
+<!-- Modal Lugar -->
 <div class="modal fade" id="modalLugar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
