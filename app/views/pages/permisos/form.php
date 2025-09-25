@@ -192,6 +192,21 @@
                     <div class="row">
                     <div class="col-md-6">
                         <h6>Calles del Recorrido</h6>
+                        <!-- Selector de calles -->
+                        <div class="mb-3 d-flex gap-2 align-items-end">
+                            <div class="flex-grow-1">
+                                <label for="selectCalleForm" class="form-label">Agregar calle</label>
+                                <select id="selectCalleForm" class="form-select">
+                                    <option value="">-- Seleccionar calle --</option>
+                                    <?php foreach ($datos['calles'] as $c): ?>
+                                        <option value="<?= $c['id_calle'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <button type="button" id="addCalleForm" class="btn btn-primary">+</button>
+                            </div>
+                        </div>
                         <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
                             <tr><th>Nombre</th><th></th></tr>
@@ -242,6 +257,16 @@
             <i class="bi bi-x-circle"></i> Cancelar</a>
     </div>
 </form>
+<style>
+    #tablaCalles td button {
+        display: inline-block;
+    }
+
+    #tablaCalles td:last-child {
+        width: 1%;
+        white-space: nowrap;
+    }
+</style>
 
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>
 <?php if(!empty($datos['imprimir'])): ?>

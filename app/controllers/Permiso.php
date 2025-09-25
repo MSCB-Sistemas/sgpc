@@ -207,7 +207,6 @@ class Permiso extends Control
 
             if (!empty($calles)){
                 foreach ($calles as $calle){
-                    var_dump($calles,$calle);
                     $idPermisoCalle = $modelPermisosCalles->insertPermisosCalles($idPermiso, $calle['id_calle']);
                     if (!$idPermisoCalle) {
                         $errores[] = "Error al asociar la calle {$calle['id_calle']} al permiso.";
