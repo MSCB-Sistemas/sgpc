@@ -234,30 +234,40 @@ class Chofer extends Control
     }
 
     public function saveAjax()
-    {
-        header('Content-Type: application/json');
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $nombre = trim($_POST['nombre']);
-            $apellido = trim($_POST['apellido']);
-            $dni = trim($_POST['dni']);
-            $nacionalidad = $_POST['nacionalidad'];
+{
+    header('Content-Type: application/json');
 
-            if ($nombre === '' || $apellido === '' || $dni === '' || $nacionalidad === '') {
-                echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
-                return;
-            }
-            $idChofer = $this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad);
-            if ($idChofer) {
-                echo json_encode([
-                    'success' => true,
-                    'id_chofer' => $idChofer,
-                    'nombreCompleto' => $dni . ' - ' . $nombre . ' ' . $apellido
-                ]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Error al guardar chofer']);
-            }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $nombre = trim($_POST['nombre']);
+        $apellido = trim($_POST['apellido']);
+        $dni = trim($_POST['dni']);
+        $nacionalidad = $_POST['nacionalidad'];
+
+        if ($nombre === '' || $apellido === '' || $dni === '' || $nacionalidad === '') {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+            return;
+        }
+
+        $idChofer = $this->modelo->insertChofer($dni, $nombre, $apellido, $nacionalidad);
+
+        if ($idChofer > 0) {
+            // Insert correcto
+            echo json_encode([
+                'success' => true,
+                'id_chofer' => $idChofer,
+                'nombreCompleto' => $dni . ' - ' . $nombre . ' ' . $apellido
+            ]);
+        } elseif ($idChofer === 0) {
+            // Duplicado
+            echo json_encode(['success' => false, 'message' => "El chofer con DNI '{$dni}' ya está registrado."]);
+        } else {
+            // Error genérico
+            echo json_encode(['success' => false, 'message' => "Error inesperado al guardar chofer."]);
         }
     }
+}
+
+
 
     public function ajaxList()
     {
