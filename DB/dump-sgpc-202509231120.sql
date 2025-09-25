@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 9.3.0, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sgpc
 -- ------------------------------------------------------
@@ -262,7 +262,7 @@ CREATE TABLE `permisos` (
   `id_chofer` int NOT NULL,
   `id_usuario` int NOT NULL,
   `id_servicio` int NOT NULL,
-  `tipo` enum('charter','linea','otros') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `tipo` enum('charter','linea','otros','convalidaciones') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `fecha_reserva` timestamp NOT NULL,
   `fecha_emision` timestamp NOT NULL,
   `arribo_salida` enum('arribo','salida') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
@@ -289,6 +289,34 @@ CREATE TABLE `permisos` (
 LOCK TABLES `permisos` WRITE;
 /*!40000 ALTER TABLE `permisos` DISABLE KEYS */;
 /*!40000 ALTER TABLE `permisos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permisos_calles`
+--
+
+DROP TABLE IF EXISTS `permisos_calles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `permisos_calles` (
+  `id_permiso_calle` int NOT NULL AUTO_INCREMENT,
+  `id_permiso` int NOT NULL,
+  `id_calle` int NOT NULL,
+  PRIMARY KEY (`id_permiso_calle`),
+  KEY `permisos_calles_permisos_FK` (`id_permiso`),
+  KEY `permisos_calles_calles_FK` (`id_calle`),
+  CONSTRAINT `permisos_calles_calles_FK` FOREIGN KEY (`id_calle`) REFERENCES `calles` (`id_calle`),
+  CONSTRAINT `permisos_calles_permisos_FK` FOREIGN KEY (`id_permiso`) REFERENCES `permisos` (`id_permiso`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permisos_calles`
+--
+
+LOCK TABLES `permisos_calles` WRITE;
+/*!40000 ALTER TABLE `permisos_calles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `permisos_calles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -558,4 +586,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-18 10:31:17
+-- Dump completed on 2025-09-23 11:20:23

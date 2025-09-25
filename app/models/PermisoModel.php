@@ -52,10 +52,11 @@ class PermisoModel
             s.dominio AS 'Dominio',
             e.nombre AS 'Empresa',
             p.pasajeros as 'Pasajeros',
-            p.observacion as 'Observacion',
 
             -- Datos del usuario
             CONCAT(u.nombre,' ',u.apellido) AS Usuario,
+            p.observacion as 'Observacion',
+            r.nombre as 'Recorrido',
             rp.id_recorrido,
             p.activo
 
@@ -67,6 +68,7 @@ class PermisoModel
         JOIN empresas e ON s.id_empresa = e.id_empresa
         JOIN lugares l ON p.id_lugar = l.id_lugar
         JOIN recorridos_permisos rp ON p.id_permiso = rp.id_permiso
+        JOIN recorridos r ON rp.id_recorrido = r.id_recorrido
         WHERE 1=1
         ";
 

@@ -134,7 +134,7 @@ CREATE TABLE `permisos` (
   `id_chofer` int NOT NULL,
   `id_usuario` int NOT NULL,
   `id_servicio` int NOT NULL,
-  `tipo` enum('charter','linea','otros') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `tipo` enum('charter','linea','otros','convalidaciones') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `fecha_reserva` timestamp NOT NULL,
   `fecha_emision` timestamp NOT NULL,
   `arribo_salida` enum('arribo','salida') CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
@@ -151,7 +151,7 @@ CREATE TABLE `permisos` (
   CONSTRAINT `permisos_FK_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
   CONSTRAINT `permisos_FK_2` FOREIGN KEY (`id_servicio`) REFERENCES `servicios` (`id_servicio`),
   CONSTRAINT `permisos_lugares_FK` FOREIGN KEY (`id_lugar`) REFERENCES `lugares` (`id_lugar`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- sgpc.lugares definition
 
@@ -238,4 +238,17 @@ CREATE TABLE `auditoria` (
   PRIMARY KEY (`id_auditoria`),
   KEY `auditoria_FK` (`id_usuario`),
   CONSTRAINT `auditoria_FK` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+-- sgpc.permisos_calles definition
+
+CREATE TABLE `permisos_calles` (
+  `id_permiso_calle` int NOT NULL AUTO_INCREMENT,
+  `id_permiso` int NOT NULL,
+  `id_calle` int NOT NULL,
+  PRIMARY KEY (`id_permiso_calle`),
+  KEY `permisos_calles_permisos_FK` (`id_permiso`),
+  KEY `permisos_calles_calles_FK` (`id_calle`),
+  CONSTRAINT `permisos_calles_calles_FK` FOREIGN KEY (`id_calle`) REFERENCES `calles` (`id_calle`),
+  CONSTRAINT `permisos_calles_permisos_FK` FOREIGN KEY (`id_permiso`) REFERENCES `permisos` (`id_permiso`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;

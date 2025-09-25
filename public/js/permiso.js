@@ -1,11 +1,10 @@
 // Función auxiliar para enviar formulario por AJAX y actualizar select
-async function handleModalForm(formId, url, selectId, valueField, textField, type, inputID=null) {
+async function handleModalForm(formId, url, selectId, valueField, textField, type, inputID = null) {
   const form = document.getElementById(formId);
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const formData = new FormData(form);
-    console.log("URL:", url);
     try {
       const res = await fetch(url, {
         method: "POST",
@@ -14,7 +13,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField, typ
       const data = await res.json();
 
       if (data.success) {
-        if (type === "select"){
+        if (type === "select") {
           // agregar nueva opción al select
           const select = document.getElementById(selectId);
           const option = document.createElement("option");
@@ -62,8 +61,6 @@ handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido",
 // Lugar -> espera JSON: { success: true, id_recorrido, nombre }
 handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugares", "id_lugar", "nombre", "datalist", "id_lugar");
 
-
-
 // Cargar cales y puntos de detención al seleccionar un recorrido
 document.addEventListener("DOMContentLoaded", function () {
   const selectRecorrido = document.getElementById("recorrido");
@@ -91,10 +88,25 @@ document.addEventListener("DOMContentLoaded", function () {
     hidden.value = JSON.stringify(puntosData);
     formPermiso.appendChild(hidden);
 
+    const calle_hidden = document.createElement("input");
+    calle_hidden.type = "hidden";
+    calle_hidden.name = "calles_permiso";
+
+    const filas = document.querySelectorAll('#tablaCalles tbody tr');
+    const datosCalles = [];
+
+    filas.forEach(fila => {
+      const idCalle = fila.getAttribute('data-id');
+      datosCalles.push({ id_calle: idCalle });
+    });
+
+    calle_hidden.value = JSON.stringify(datosCalles);
+    formPermiso.appendChild(calle_hidden);
+
     formPermiso.submit(); // Ahora sí enviamos el formulario
   });
 
-  // clave = id_punto, valor = { hotel: X, horario: Y }
+  // clave = id_punto, valor = { hotel: X, horario: Y, calle: Z }
   let puntosData = {};
 
   const hoteles = window._HOTELES || [];
@@ -119,7 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       calles.forEach(calle => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td class="calle-item" data-id="${calle.id_calle}">${calle.nombre}</td>`;
+        tr.dataset.id = calle.id_calle; // <- id en la fila
+        tr.innerHTML = `
+          <td class="calle-item">${calle.nombre}</td>
+          <td><button type="button" class="btn btn-sm btn-danger removeCalle float-end">-</button></td>
+        `;
         tablaCalles.appendChild(tr);
       });
 
@@ -144,10 +160,10 @@ document.addEventListener("DOMContentLoaded", function () {
       tablaPuntos.innerHTML = "";
 
       for (const p of puntos) {
-        const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "" };
+        const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "", calle: ""};
 
         // Select de hoteles (lista local)
-        let hotelSelect = `<select class="form-select form-select-sm punto-hotel" data-id="${p.id_punto_detencion}">
+        let hotelSelect = `<select class="form-select form-select-sm punto-hotel" data-id="${p.id_punto_detencion}" data-calle="${idCalle}">
         <option value="">(ninguno)</option>`;
         hoteles.forEach(h => {
           const selected = (prev.hotel && String(prev.hotel) === String(h.id_hotel)) ? "selected" : "";
@@ -159,6 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectHorario = document.createElement("select");
         selectHorario.className = "form-select form-select-sm punto-horario";
         selectHorario.dataset.id = p.id_punto_detencion;
+        selectHorario.dataset.calle = idCalle;
 
         try {
           const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
@@ -215,21 +232,55 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Evento delegado al hacer click en una calle
-  document.querySelector("#tablaCalles").addEventListener("click", async function (e) {
+  tablaCalles.addEventListener("click", async function (e) {
+    // obtener idcalle de la fila
+    const idCalle = e.target.closest("tr")?.dataset?.id;
+    // 1) Si pinchaste el botón (o cualquier hijo del botón)
+    const removeBtn = e.target.closest(".removeCalle");
+    if (removeBtn) {
+      const row = removeBtn.closest("tr");
+      for (const id in puntosData) {
+        if (puntosData[id].calle === idCalle) {
+          delete puntosData[id];
+        }
+      }
+      if (row) row.remove();
+      tablaPuntos.innerHTML = "";
+      return;
+    }
     const td = e.target.closest("td.calle-item");
     if (!td) return;
 
-    // Marcar visualmente
-    document.querySelector("#tablaCalles")
-      .querySelectorAll("td.calle-item")
-      .forEach(el => el.classList.remove("table-active"));
+    // marcar visualmente
+    tablaCalles.querySelectorAll("td.calle-item").forEach(el => el.classList.remove("table-active"));
     td.classList.add("table-active");
 
-    const idCalle = td.dataset.id;
-    currentCalleId = idCalle;
+    if (!idCalle) return; // evita llamar a cargarPuntos(undefined)
 
+    currentCalleId = idCalle;
     await cargarPuntos(idCalle);
+  });
+
+  document.getElementById('addCalleForm').addEventListener('click', function () {
+    const select = document.getElementById('selectCalleForm');
+    const id = select.value;
+    const nombre = select.options[select.selectedIndex].text;
+
+    if (!id) return;
+
+    if (document.querySelector(`#tablaCalles tbody tr[data-id="${id}"]`)) {
+        alert("Esa calle ya fue agregada.");
+        return;
+    }
+
+    const tbody = document.querySelector('#tablaCalles tbody');
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-id', id);
+    tr.innerHTML = `
+      <td class="calle-item">${nombre}</td>
+      <td><button type="button" class="btn btn-sm btn-danger removeCalle float-end">-</button></td>
+    `;
+    tbody.appendChild(tr);
   });
 
   // Delegamos cambios en hotel/horario para actualizar puntosData
@@ -241,12 +292,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const id = select.getAttribute("data-id");
       puntosData[id] = puntosData[id] || {};
       puntosData[id].hotel = select.value;
+      puntosData[id].calle = select.getAttribute("data-calle");
     }
 
     if (input) {
       const id = input.getAttribute("data-id");
       puntosData[id] = puntosData[id] || {};
       puntosData[id].horario = input.value;
+      puntosData[id].calle = input.getAttribute("data-calle");
     }
   });
 });

@@ -20,7 +20,7 @@
 <form action="<?= $datos['action'] ?>" method="POST" id="permisoForm">
 
     <div class="mb-3 row">
-        <div class="col-md-5">
+        <div class="col-md-10">
             <label class="form-label d-block">Tipo de Permiso</label>
             <div class="btn-group" role="group" aria-label="Tipo de permiso">
                 <input type="radio" class="btn-check" name="tipo_permiso" id="charter" autocomplete="off" value="charter" checked>
@@ -28,6 +28,9 @@
 
                 <input type="radio" class="btn-check" name="tipo_permiso" id="linea" autocomplete="off" value="linea">
                 <label class="btn btn-outline-primary" for="linea">Línea</label>
+
+                <input type="radio" class="btn-check" name="tipo_permiso" id="convalidaciones" autocomplete="off" value="convalidaciones">
+                <label class="btn btn-outline-primary" for="convalidaciones">Convalidaciones</label>
 
                 <input type="radio" class="btn-check" name="tipo_permiso" id="otros" autocomplete="off" value="otros">
                 <label class="btn btn-outline-primary" for="otros">Otros</label>
@@ -50,7 +53,7 @@
                 <label for="servicio_search" class="form-label">Servicio</label>
                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
                  Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
-                <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." required>
+                <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." autocomplete="off" required>
                 <input type="hidden" name="id_servicio" id="id_servicio">
                 <datalist id="servicios">
                     <?php foreach ($datos['servicios'] as $s): ?>
@@ -103,33 +106,32 @@
 
         <!-- Lugar -->
         <div class="col-md-6 d-flex align-items-end">
-        <div class="flex-grow-1">
-            <label for="lugar_search" class="form-label">Origen/Destino</label>
-            <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." required>
-            <input type="hidden" name="id_lugar" id="id_lugar">
-            <datalist id="lugares">
-                <?php foreach ($datos['lugares'] as $l): ?>
-                    <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
-                <?php endforeach; ?>
-            </datalist>
-        </div>
-        <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
-    </div>
-        <script>
-            const lugarInput = document.getElementById('lugar_search');
-            const lugarHidden = document.getElementById('id_lugar');
-            const lugarOptions = document.querySelectorAll('#lugares option');
+            <div class="flex-grow-1">
+                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
+                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <label for="lugar_search" class="form-label">Origen/Destino</label>
+                <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." autocomplete="off" required>
+                <input type="hidden" name="id_lugar" id="id_lugar">
+                <datalist id="lugares">
+                    <?php foreach ($datos['lugares'] as $l): ?>
+                        <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
+                    <?php endforeach; ?>
+                </datalist>
+            <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                const lugarInput = document.getElementById('lugar_search');
+                const lugarHidden = document.getElementById('id_lugar');
 
-            lugarInput.addEventListener('input', () => {
-                const val = lugarInput.value.trim();
-                lugarHidden.value = ''; // limpiar si no coincide
-                let valid = false;
+                lugarInput.addEventListener('input', () => {
+                    const val = lugarInput.value.trim();
+                    lugarHidden.value = ''; // limpiar si no coincide
+                    const lugarOptions = document.querySelectorAll('#lugares option');
+                    lugarOptions.forEach(opt => {
+                        if(opt.value === val){
+                            lugarHidden.value = opt.dataset.id;
+                        }
+                    });
 
-                lugarOptions.forEach(opt => {
-                    if (opt.value === val) {
-                        lugarHidden.value = opt.dataset.id;
-                        valid = true;
-                    }
                 });
 
                 if (!valid) {
@@ -165,7 +167,7 @@
                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
                  Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
                 <label for="chofer_search" class="form-label">Chofer</label>
-                <input list="choferes" id="chofer_search" name="chofer_search" class="form-control" placeholder="Buscar chofer..." required>
+                <input list="choferes" id="chofer_search" name="chofer_search" class="form-control" placeholder="Buscar chofer..." autocomplete="off" required>
                 <input type="hidden" name="id_chofer" id="id_chofer">
 
                 <datalist id="choferes">
@@ -245,9 +247,24 @@
                     <div class="row">
                     <div class="col-md-6">
                         <h6>Calles del Recorrido</h6>
+                        <!-- Selector de calles -->
+                        <div class="mb-3 d-flex gap-2 align-items-end">
+                            <div class="flex-grow-1">
+                                <label for="selectCalleForm" class="form-label">Agregar calle</label>
+                                <select id="selectCalleForm" class="form-select">
+                                    <option value="">-- Seleccionar calle --</option>
+                                    <?php foreach ($datos['calles'] as $c): ?>
+                                        <option value="<?= $c['id_calle'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div>
+                                <button type="button" id="addCalleForm" class="btn btn-primary">+</button>
+                            </div>
+                        </div>
                         <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
-                            <tr><th>Nombre</th></tr>
+                            <tr><th>Nombre</th><th></th></tr>
                             
                         </thead>
                         <tbody>
@@ -295,6 +312,16 @@
             <i class="bi bi-x-circle"></i> Cancelar</a>
     </div>
 </form>
+<style>
+    #tablaCalles td button {
+        display: inline-block;
+    }
+
+    #tablaCalles td:last-child {
+        width: 1%;
+        white-space: nowrap;
+    }
+</style>
 
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>
 <?php if(!empty($datos['imprimir'])): ?>

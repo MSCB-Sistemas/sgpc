@@ -53,38 +53,6 @@ class RecorridosPermisosModel
         $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso]);
         return $stmt->fetch();
     }
-
-    /**
-        * 
-        * PRE: Funcion para modificar un recorrido_permiso ya existente en la tabla de la base de datos.
-        * @param int $id_recorrido_permiso es el id de la fila en la tabla recorridos_permisos.
-        * @param int $id_permiso es el id del permiso asignado que va a ser modificado.
-        * @param int $id_recorrido es el id del recorrido asignado que va a ser modificado.
-        * @return bool $stmt es un valor bool que indica el estado de ejecucion.
-        * POST: Devuelve el estado de ejecucion con un true en caso de ser exitoso, o false en caso de lo contrario.
-     */ 
-    public function updateRecorrido($id_recorrido_permiso, $id_permiso, $id_recorrido): bool
-    {
-        $query = "UPDATE recorridos SET id_recorrido = :id_recorrido, id_permiso = :id_permiso WHERE id_recorrido_permiso = :id_recorrido_permiso";
-        $stmt = $this->db->prepare($query);
-        $params = ['id_recorrido_permiso' => $id_recorrido_permiso,'id_permiso' => $id_permiso, 'id_recorrido' => $id_recorrido];
-        
-        auditoriaHelper::log(
-            $_SESSION['usuario_id'],
-            $query,
-            $params
-        );
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute($params);
-        if($stmt->execute($params)){
-            return true;
-        }else{
-            writeLog("❌ Error: No se pudo actualizar el recorrido del permiso con id ".$id_permiso." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
-
-            return false;
-        }
-    }
- 
     /**
          * Inserta un nuevo registro en la tabla `recorridos_permisos`.
          * PRE: Deben existir los IDs de permiso y recorrido en sus respectivas tablas.
