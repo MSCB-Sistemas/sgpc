@@ -117,21 +117,24 @@
                         <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
                     <?php endforeach; ?>
                 </datalist>
+        </div>
+        <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
+    </div>
             <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
                 <script>
                 const lugarInput = document.getElementById('lugar_search');
                 const lugarHidden = document.getElementById('id_lugar');
+                const lugarOptions = document.querySelectorAll('#lugares option');
 
                 lugarInput.addEventListener('input', () => {
                     const val = lugarInput.value.trim();
                     lugarHidden.value = ''; // limpiar si no coincide
-                    const lugarOptions = document.querySelectorAll('#lugares option');
+                    let valid = false;
                     lugarOptions.forEach(opt => {
                         if(opt.value === val){
                             lugarHidden.value = opt.dataset.id;
+                            valid = true;
                         }
-                    });
-
                 });
 
                 if (!valid) {
