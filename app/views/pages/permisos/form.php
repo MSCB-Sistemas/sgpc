@@ -253,18 +253,60 @@
                         <!-- Selector de calles -->
                         <div class="mb-3 d-flex gap-2 align-items-end">
                             <div class="flex-grow-1">
-                                <label for="selectCalleForm" class="form-label">Agregar calle</label>
-                                <select id="selectCalleForm" class="form-select">
-                                    <option value="">-- Seleccionar calle --</option>
-                                    <?php foreach ($datos['calles'] as $c): ?>
-                                        <option value="<?= $c['id_calle'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <input list="callesList" id="inputCalleForm" class="form-control" placeholder="Escriba para buscar una calle">
+                                <datalist id="callesList">
+                                <?php foreach ($datos['calles'] as $c): ?>
+                                    <option value="<?= htmlspecialchars($c['nombre']) ?>" data-id="<?= $c['id_calle'] ?>">
+                                <?php endforeach; ?>
+                                </datalist>
                             </div>
                             <div>
                                 <button type="button" id="addCalleForm" class="btn btn-primary">+</button>
                             </div>
                         </div>
+                        <!-- Script para agregar calles al recorrido con el boton + -->
+                        <script>
+                        document.getElementById('addCalleForm').addEventListener('click', function () {
+                            const input = document.getElementById('inputCalleForm');
+                            const nombre = input.value.trim();
+                            
+                            if (!nombre) return;
+
+                            // Buscar el option correspondiente para obtener el id
+                            const option = document.querySelector(`#callesList option[value="${nombre}"]`);
+                            const id = option ? option.dataset.id : null;
+
+                            if (!id) {
+                                alert("La calle no existe en la lista");
+                                return;
+                            }
+
+                            // Evitar duplicados
+                            if (document.querySelector(`#tablaCalles tbody tr[data-id="${id}"]`)) {
+                                alert("Esa calle ya fue agregada.");
+                                return;
+                            }
+
+                            // Crear fila
+                            const tbody = document.querySelector('#tablaCalles tbody');
+                            const tr = document.createElement('tr');
+                            tr.setAttribute('data-id', id);
+                            tr.innerHTML = `
+                            <td class="calle-item">${nombre}</td>
+                            <td><button type="button" class="btn btn-sm btn-danger removeCalle float-end">-</button></td>
+                            `;
+                            tbody.appendChild(tr);
+
+                            input.value = ""; // limpiar input
+                        });
+
+                        // Manejo del botón de eliminar
+                        document.querySelector('#tablaCalles tbody').addEventListener('click', function(e) {
+                        if(e.target.classList.contains('removeCalle')) {
+                            e.target.closest('tr').remove();
+                        }
+                        });
+                        </script>
                         <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
                             <tr><th>Nombre</th><th></th></tr>
