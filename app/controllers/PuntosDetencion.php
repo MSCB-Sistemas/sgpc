@@ -41,7 +41,7 @@ class PuntosDetencion extends Control
     }
 
     // Formulario para crear un nuevo punto
-    public function create()
+    public function create($id_calle = null)
     {
         if ($this->tienePermiso('cargar abm')) {
             $calles = $this->calleModel->getAllCalles();
@@ -50,6 +50,7 @@ class PuntosDetencion extends Control
                 'action' => URL . '/puntosDetencion/save',
                 'values' => [],
                 'errores' => [],
+                'calle' => $id_calle,
                 'calles' => $calles
             ];
             $this->load_view('puntos_detencion/form', $datos);

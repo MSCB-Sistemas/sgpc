@@ -31,7 +31,7 @@
                 <?php foreach ($datos['calles'] as $n): ?>
                     <?php
                         $selected = '';
-                        if (isset($datos['values']['calle']) && $datos['values']['calle'] == $n['id_calle']) {
+                        if (isset($datos['calle']) && $datos['calle'] == $n['id_calle']) {
                             $selected = 'selected';
                         }
                     ?>

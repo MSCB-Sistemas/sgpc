@@ -302,4 +302,18 @@ document.addEventListener("DOMContentLoaded", function () {
       puntosData[id].calle = input.getAttribute("data-calle");
     }
   });
+
+  document.getElementById("btnRefreshPuntos").addEventListener("click", async function () {
+    if (currentCalleId) {
+      await cargarPuntos(currentCalleId);
+    }
+  });
+
+  document.getElementById('btnNuevoPunto').addEventListener('click', function (e) {
+    e.preventDefault(); // evita que abra el href fijo
+    const baseUrl = this.getAttribute('href');
+    const url = `${baseUrl}/${currentCalleId}`;
+    window.open(url, '_blank'); // abre en nueva pestaña (igual que target="_blank")
+  });
+
 });
