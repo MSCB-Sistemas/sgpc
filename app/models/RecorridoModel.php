@@ -156,7 +156,7 @@ class RecorridoModel
         $sql = "SELECT 
             r.id_recorrido,
             r.nombre AS nombre_recorrido,
-            GROUP_CONCAT(c.nombre SEPARATOR ', ') AS calles
+            COALESCE(GROUP_CONCAT(c.nombre SEPARATOR ', '),'Sin calles') AS calles
             FROM recorridos r
             LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
             LEFT JOIN calles c ON cr.id_calle = c.id_calle
