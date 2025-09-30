@@ -117,9 +117,9 @@
                       <?php endforeach; ?>
                   </select>
               </div>
-              <div>
-                  <button type="button" id="addCalle" class="btn btn-primary">↓</button>
-                  <a href="<?= URL ?>/calle/create" target="_blank"><button type="button" id="newCalle" class="btn btn-primary">Nueva</button></a>
+              <div class="d-flex gap-2">
+                <button type="button" id="addCalle" class="btn btn-primary">↓</button>
+                <a href="<?= URL ?>/calle/create" target="_blank" class="btn btn-primary">Nueva</a>
               </div>
           </div>
 
