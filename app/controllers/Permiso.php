@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../helpers/logHelper.php';
 /**
  * Controlador para gestionar operaciones relacionadas con los permisos.
  */
@@ -306,6 +307,7 @@ class Permiso extends Control
 
             $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
         } else {
+            writeLog("⚠ Advertencia: usuario ".$_SESSION['usuario_nombre']."(id: ".$_SESSION['usuario_id'].") intentó imprimir sin permiso.");
             header("Location: " . URL);
             exit;
         }
