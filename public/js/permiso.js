@@ -159,61 +159,122 @@ document.addEventListener("DOMContentLoaded", function () {
       // Limpiar la tabla antes de reconstruirla
       tablaPuntos.innerHTML = "";
 
-      for (const p of puntos) {
-        const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "", calle: ""};
+    for (const p of puntos) {
+    const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "", calle: "" };
 
-        // Select de hoteles (lista local)
-        let hotelSelect = `<select class="form-select form-select-sm punto-hotel" data-id="${p.id_punto_detencion}" data-calle="${idCalle}">
-        <option value="">(ninguno)</option>`;
-        hoteles.forEach(h => {
-          const selected = (prev.hotel && String(prev.hotel) === String(h.id_hotel)) ? "selected" : "";
-          hotelSelect += `<option value="${h.id_hotel}" ${selected}>${h.nombre} - ${h.direccion}</option>`;
-        });
-        hotelSelect += `</select>`;
+    // Buscar nombre del hotel previo (si lo hubiera)
+    // Buscar nombre del hotel previo (si lo hubiera)
+    let prevHotel = hoteles.find(h => String(h.id_hotel) === String(prev.hotel));
+    let prevNombre = prevHotel ? `${prevHotel.nombre} - ${prevHotel.direccion}` : "";
 
-        // Select de horarios (depende de fecha)
-        const selectHorario = document.createElement("select");
-        selectHorario.className = "form-select form-select-sm punto-horario";
-        selectHorario.dataset.id = p.id_punto_detencion;
-        selectHorario.dataset.calle = idCalle;
+    let datalistId = `hoteles_${p.id_punto_detencion}`;
+    let hotelInput = `
+      <input type="text" 
+        class="form-control form-control-sm punto-hotel-input" 
+        list="${datalistId}" 
+        data-id="${p.id_punto_detencion}" 
+        data-calle="${idCalle}" 
+        value="${prevNombre}" 
+        placeholder="Seleccione o escriba un hotel...">
 
-        try {
-          const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
-          const horarios = await resHorarios.json();
+      <input type="hidden" 
+        name="hotel[${p.id_punto_detencion}]" 
+        class="punto-hotel" 
+        value="${prev.hotel || ""}">
 
-          if (!Array.isArray(horarios) || horarios.length === 0) {
-            selectHorario.innerHTML = `<option value="">No hay horarios disponibles</option>`;
-          } else {
-            selectHorario.innerHTML = `<option value="">Seleccione...</option>`;
-            horarios.forEach(h => {
-              const opt = document.createElement("option");
-              opt.value = h;
-              opt.textContent = h;
-              if (prev.horario && String(prev.horario) === String(h)) opt.selected = true;
-              selectHorario.appendChild(opt);
-            });
-          }
-        } catch (err) {
-          console.error("Error cargando horarios:", err);
-          selectHorario.innerHTML = `<option value="">Error cargando horarios</option>`;
+      <datalist id="${datalistId}">
+        ${hoteles.map(h => `<option data-id="${h.id_hotel}" value="${h.nombre} - ${h.direccion}">`).join("")}
+      </datalist>
+    `;
+
+
+      // Select de horarios (se mantiene igual)
+      const selectHorario = document.createElement("select");
+      selectHorario.className = "form-select form-select-sm punto-horario";
+      selectHorario.dataset.id = p.id_punto_detencion;
+      selectHorario.dataset.calle = idCalle;
+
+      try {
+        const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
+        const horarios = await resHorarios.json();
+
+        if (!Array.isArray(horarios) || horarios.length === 0) {
+          selectHorario.innerHTML = `<option value="">No hay horarios disponibles</option>`;
+        } else {
+          selectHorario.innerHTML = `<option value="">Seleccione...</option>`;
+          horarios.forEach(h => {
+            const opt = document.createElement("option");
+            opt.value = h;
+            opt.textContent = h;
+            if (prev.horario && String(prev.horario) === String(h)) opt.selected = true;
+            selectHorario.appendChild(opt);
+          });
         }
-
-        const tdHorario = document.createElement("td");
-        tdHorario.appendChild(selectHorario);
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-        <td>${p.nombre}</td>
-        <td>${hotelSelect}</td>
-      `;
-        tr.appendChild(tdHorario);
-        tablaPuntos.appendChild(tr);
+      } catch (err) {
+        console.error("Error cargando horarios:", err);
+        selectHorario.innerHTML = `<option value="">Error cargando horarios</option>`;
       }
+
+      // Construcción de la fila
+      const tdHorario = document.createElement("td");
+      tdHorario.appendChild(selectHorario);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${p.nombre}</td>
+        <td>${hotelInput}</td>
+      `;
+      tr.appendChild(tdHorario);
+      tablaPuntos.appendChild(tr);
+    }
+
 
     } catch (err) {
       console.error("Error cargando puntos de detención:", err);
     }
   }
+
+  // Escucha cualquier cambio en inputs de hotel
+  document.addEventListener("input", function(e) {
+    if (e.target.classList.contains("punto-hotel-input")) {
+      const datalistId = e.target.getAttribute("list");
+      const datalist = document.getElementById(datalistId);
+      const hidden = e.target.nextElementSibling; // el hidden está justo después
+
+      // IDs asociados al punto de detención
+      const puntoId = e.target.dataset.id;
+      const calleId = e.target.dataset.calle;
+
+      // Buscar si el texto coincide con alguna opción del datalist
+      const option = Array.from(datalist.options).find(opt => opt.value === e.target.value);
+
+      if (option) {
+        // Caso: seleccionó un hotel válido del datalist
+        hidden.value = option.dataset.id;
+
+        // Guardamos en puntosData
+        puntosData[puntoId] = {
+          ...(puntosData[puntoId] || {}),
+          hotel: option.dataset.id,   // ID del hotel
+          calle: calleId,
+          horario: puntosData[puntoId]?.horario || "" // preservamos horario si ya estaba
+        };
+      } else {
+        // Caso: escribió texto libre que no corresponde a ningún hotel
+        hidden.value = "";
+
+        // Guardamos en puntosData con hotel vacío
+        puntosData[puntoId] = {
+          ...(puntosData[puntoId] || {}),
+          hotel: "",
+          calle: calleId,
+          horario: puntosData[puntoId]?.horario || ""
+        };
+      }
+    }
+  });
+
+
 
   document.getElementById("fecha_reserva").addEventListener("change", async function () {
     // Limpia selects visibles (si ya hay algo cargado)
