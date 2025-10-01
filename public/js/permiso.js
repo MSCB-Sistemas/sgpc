@@ -22,6 +22,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField, typ
           option.selected = true;
           select.appendChild(option);
           select.dispatchEvent(new Event('change'));
+
         } else if (type === "datalist" && inputID) {
           const datalist = document.getElementById(selectId);
           const input = document.querySelector(`input[list="${selectId}"]`);
@@ -49,6 +50,13 @@ async function handleModalForm(formId, url, selectId, valueField, textField, typ
   });
 }
 
+
+
+/********************************************************************************
+  Manejo de formularios modales para agregar Chofer, Servicio, Recorrido y Lugar
+*********************************************************************************/
+
+
 // Chofer -> espera JSON: { success: true, id_chofer, nombre, apellido }
 handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "choferes", "id_chofer", "nombreCompleto", "datalist", "id_chofer");
 
@@ -61,6 +69,13 @@ handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido",
 // Lugar -> espera JSON: { success: true, id_recorrido, nombre }
 handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugares", "id_lugar", "nombre", "datalist", "id_lugar");
 
+
+/********************************************************************************
+                                      FIN
+*********************************************************************************/
+
+
+
 // Cargar cales y puntos de detención al seleccionar un recorrido
 document.addEventListener("DOMContentLoaded", function () {
   const selectRecorrido = document.getElementById("recorrido");
@@ -70,6 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const formPermiso = document.getElementById("permisoForm");
   let currentCalleId = null;
 
+  // Manejo del envío del formulario
   formPermiso.addEventListener("submit", function (event) {
     event.preventDefault(); // Evita el envío inmediato
 
@@ -82,12 +98,14 @@ document.addEventListener("DOMContentLoaded", function () {
       formPermiso.appendChild(input);
     }
 
+    // Antes de enviar, agregamos los datos de puntos y calles como inputs ocultos
     const hidden = document.createElement("input");
     hidden.type = "hidden";
     hidden.name = "puntos_detencion";
     hidden.value = JSON.stringify(puntosData);
     formPermiso.appendChild(hidden);
 
+    // Agregamos las calles del accordion al formulario antes de enviarlo
     const calle_hidden = document.createElement("input");
     calle_hidden.type = "hidden";
     calle_hidden.name = "calles_permiso";
@@ -103,17 +121,21 @@ document.addEventListener("DOMContentLoaded", function () {
     calle_hidden.value = JSON.stringify(datosCalles);
     formPermiso.appendChild(calle_hidden);
 
-    formPermiso.submit(); // Ahora sí enviamos el formulario
-  });
-
+    // Ahora sí enviamos el formulario
+    formPermiso.submit(); 
+  }); // FIN manejo del envío del formulario
+  
   // clave = id_punto, valor = { hotel: X, horario: Y, calle: Z }
   let puntosData = {};
 
+  // obtenemos hoteles del contexto
   const hoteles = window._HOTELES || [];
 
+  // Manejo evento cambio de recorrido (cargar calles)
   selectRecorrido.addEventListener("change", async function () {
     const idRecorrido = this.value;
 
+    // Si no hay recorrido seleccionado, ocultar acordeón y limpiar tablas
     if (!idRecorrido) {
       accordionRecorrido.classList.add("d-none");
       tablaCalles.innerHTML = "";
@@ -121,8 +143,10 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // Mostramos acordeón
     accordionRecorrido.classList.remove("d-none");
 
+    // Traemos las calles del recorrido y las cargamos en la tabla
     try {
       const res = await fetch(`${_URL}/recorrido/calles/${idRecorrido}`);
       const calles = await res.json();
@@ -143,8 +167,9 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (err) {
       console.error("Error cargando calles:", err);
     }
-  });
+  });// FIN Manejo evento cambio de recorrido (cargar calles)
 
+  // Función para cargar puntos de detención de una calle
   async function cargarPuntos(idCalle) {
     const fecha = document.getElementById("fecha_reserva").value;
     if (!fecha) {
@@ -153,86 +178,88 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
+      // Traemos los puntos de detención de la calle de forma asícrona
       const res = await fetch(`${_URL}/calle/puntos/${idCalle}`);
       const puntos = await res.json();
 
       // Limpiar la tabla antes de reconstruirla
       tablaPuntos.innerHTML = "";
 
-    for (const p of puntos) {
-    const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "", calle: "" };
+      for (const p of puntos) {
+        const prev = puntosData[p.id_punto_detencion] || { hotel: "", horario: "", calle: "" };
 
-    // Buscar nombre del hotel previo (si lo hubiera)
-    // Buscar nombre del hotel previo (si lo hubiera)
-    let prevHotel = hoteles.find(h => String(h.id_hotel) === String(prev.hotel));
-    let prevNombre = prevHotel ? `${prevHotel.nombre} - ${prevHotel.direccion}` : "";
+        // Buscar nombre del hotel previo (si lo hubiera)
+        let prevHotel = hoteles.find(h => String(h.id_hotel) === String(prev.hotel));
+        let prevNombre = prevHotel ? `${prevHotel.nombre} - ${prevHotel.direccion}` : "";
 
-    let datalistId = `hoteles_${p.id_punto_detencion}`;
-    let hotelInput = `
-      <input type="text" 
-        class="form-control form-control-sm punto-hotel-input" 
-        list="${datalistId}" 
-        data-id="${p.id_punto_detencion}" 
-        data-calle="${idCalle}" 
-        value="${prevNombre}" 
-        placeholder="Seleccione o escriba un hotel...">
+        // Armo un select de hoteles por cada punto de detención a cargar
+        let datalistId = `hoteles_${p.id_punto_detencion}`;
+        let hotelInput = `
+          <input type="text" 
+            class="form-control form-control-sm punto-hotel-input" 
+            list="${datalistId}" 
+            data-id="${p.id_punto_detencion}" 
+            data-calle="${idCalle}" 
+            value="${prevNombre}" 
+            placeholder="Seleccione o escriba un hotel...">
 
-      <input type="hidden" 
-        name="hotel[${p.id_punto_detencion}]" 
-        class="punto-hotel" 
-        value="${prev.hotel || ""}">
+          <input type="hidden" 
+            name="hotel[${p.id_punto_detencion}]" 
+            class="punto-hotel" 
+            value="${prev.hotel || ""}">
 
-      <datalist id="${datalistId}">
-        ${hoteles.map(h => `<option data-id="${h.id_hotel}" value="${h.nombre} - ${h.direccion}">`).join("")}
-      </datalist>
-    `;
+          <datalist id="${datalistId}">
+            ${hoteles.map(h => `<option data-id="${h.id_hotel}" value="${h.nombre} - ${h.direccion}">`).join("")}
+          </datalist>
+        `;
 
+        // Select de horarios
+        const selectHorario = document.createElement("select");
+        selectHorario.className = "form-select form-select-sm punto-horario";
+        selectHorario.dataset.id = p.id_punto_detencion;
+        selectHorario.dataset.calle = idCalle;
 
-      // Select de horarios (se mantiene igual)
-      const selectHorario = document.createElement("select");
-      selectHorario.className = "form-select form-select-sm punto-horario";
-      selectHorario.dataset.id = p.id_punto_detencion;
-      selectHorario.dataset.calle = idCalle;
+        try {
+          // Tragio los horarios disponibles para ese punto de detencion en la fecha seleccionada
+          const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
+          const horarios = await resHorarios.json();
 
-      try {
-        const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
-        const horarios = await resHorarios.json();
-
-        if (!Array.isArray(horarios) || horarios.length === 0) {
-          selectHorario.innerHTML = `<option value="">No hay horarios disponibles</option>`;
-        } else {
-          selectHorario.innerHTML = `<option value="">Seleccione...</option>`;
-          horarios.forEach(h => {
-            const opt = document.createElement("option");
-            opt.value = h;
-            opt.textContent = h;
-            if (prev.horario && String(prev.horario) === String(h)) opt.selected = true;
-            selectHorario.appendChild(opt);
-          });
+          if (!Array.isArray(horarios) || horarios.length === 0) {
+            selectHorario.innerHTML = `<option value="">No hay horarios disponibles</option>`;
+          } else {
+            // Armo un select con los horarios disponibles encontrados
+            selectHorario.innerHTML = `<option value="">Seleccione...</option>`;
+            horarios.forEach(h => {
+              const opt = document.createElement("option");
+              opt.value = h;
+              opt.textContent = h;
+              if (prev.horario && String(prev.horario) === String(h)) opt.selected = true;
+              selectHorario.appendChild(opt);
+            });
+          }
+        } catch (err) {
+          console.error("Error cargando horarios:", err);
+          selectHorario.innerHTML = `<option value="">Error cargando horarios</option>`;
         }
-      } catch (err) {
-        console.error("Error cargando horarios:", err);
-        selectHorario.innerHTML = `<option value="">Error cargando horarios</option>`;
+
+        // Construcción de la fila del punto, con el select de hotel y el de horario
+        const tdHorario = document.createElement("td");
+        tdHorario.appendChild(selectHorario);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.nombre}</td>
+          <td>${hotelInput}</td>
+        `;
+        tr.appendChild(tdHorario);
+        tablaPuntos.appendChild(tr);
       }
-
-      // Construcción de la fila
-      const tdHorario = document.createElement("td");
-      tdHorario.appendChild(selectHorario);
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${p.nombre}</td>
-        <td>${hotelInput}</td>
-      `;
-      tr.appendChild(tdHorario);
-      tablaPuntos.appendChild(tr);
-    }
 
 
     } catch (err) {
       console.error("Error cargando puntos de detención:", err);
     }
-  }
+  }//FIN cargarPuntos
 
   // Escucha cualquier cambio en inputs de hotel
   document.addEventListener("input", function(e) {
@@ -275,13 +302,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-
+  // Manejo evento cambio de fecha (recargar puntos si hay calle seleccionada)
   document.getElementById("fecha_reserva").addEventListener("change", async function () {
     // Limpia selects visibles (si ya hay algo cargado)
     document.querySelectorAll(".punto-horario").forEach(sel => {
       sel.innerHTML = `<option value="">Seleccione...</option>`;
     });
-    // Opcional: limpiar la tabla completa para evitar parpadeos de datos viejos
+    // Limpiar la tabla completa para evitar parpadeos de datos viejos
     tablaPuntos.innerHTML = "";
 
     // Limpiar asignaciones guardadas
@@ -291,12 +318,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (currentCalleId) {
       await cargarPuntos(currentCalleId);
     }
-  });
+  });// FIN Manejo evento cambio de fecha
 
+  // Manejo evento click en tabla de calles (seleccionar o eliminar)
   tablaCalles.addEventListener("click", async function (e) {
     // obtener idcalle de la fila
     const idCalle = e.target.closest("tr")?.dataset?.id;
-    // 1) Si pinchaste el botón (o cualquier hijo del botón)
+    // Opción 1) Si el clic es en el botón de remover calle (o cualquier hijo del botón)
     const removeBtn = e.target.closest(".removeCalle");
     if (removeBtn) {
       const row = removeBtn.closest("tr");
@@ -309,10 +337,11 @@ document.addEventListener("DOMContentLoaded", function () {
       tablaPuntos.innerHTML = "";
       return;
     }
+    // Opción 2) Si el clic es en la calle
     const td = e.target.closest("td.calle-item");
     if (!td) return;
 
-    // marcar visualmente
+    // Marcar visualmente
     tablaCalles.querySelectorAll("td.calle-item").forEach(el => el.classList.remove("table-active"));
     td.classList.add("table-active");
 
@@ -320,8 +349,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     currentCalleId = idCalle;
     await cargarPuntos(idCalle);
-  });
+  });// FIN Manejo evento click en tabla de calles
 
+  // Manejo evento click en botón Agregar calle (desde modal)
   document.getElementById('addCalleForm').addEventListener('click', function () {
     const select = document.getElementById('selectCalleForm');
     const id = select.value;
@@ -342,7 +372,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <td><button type="button" class="btn btn-sm btn-danger removeCalle float-end">-</button></td>
     `;
     tbody.appendChild(tr);
-  });
+  }); // FIN Manejo evento click en botón Agregar calle (desde modal)
 
   // Delegamos cambios en hotel/horario para actualizar puntosData
   tablaPuntos.addEventListener("change", function (e) {
@@ -364,12 +394,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Botón para refrescar puntos de detención por si se hizo un cambio por fuera del form
   document.getElementById("btnRefreshPuntos").addEventListener("click", async function () {
     if (currentCalleId) {
       await cargarPuntos(currentCalleId);
     }
   });
 
+  // Botón para abrir en nueva pestaña el formulario de nuevo punto de detención, pasando la calle actual
   document.getElementById('btnNuevoPunto').addEventListener('click', function (e) {
     e.preventDefault(); // evita que abra el href fijo
     const baseUrl = this.getAttribute('href');
