@@ -303,6 +303,12 @@ class Permiso extends Control
 
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
             $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+            // salto de página
+            $mpdf->AddPage();
+
+            // insertar el mapa en la página nueva
+            $mpdf->Image(APP . '/../public/img/mapa.jpg', 0, 0, 210, 297, 'jpg', '', true, false);
+            
 
             $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
         } else {
