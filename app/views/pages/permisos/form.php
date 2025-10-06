@@ -180,29 +180,46 @@
                 </datalist>
                 <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
                 <script>
-                const input = document.getElementById('chofer_search');
-                const hidden = document.getElementById('id_chofer');
-                const options = document.querySelectorAll('#choferes option');
+                    const input = document.getElementById('chofer_search');
+                    const hidden = document.getElementById('id_chofer');
+                    const options = document.querySelectorAll('#choferes option');
 
-                input.addEventListener('input', () => {
-                    const val = input.value.trim();
-                    hidden.value = ''; // limpiar si no coincide
-                    let valid = false;
+                    let lastValidValue = ''; // texto del último chofer válido
+                    let lastValidId = '';    // id del último chofer válido
 
-                    options.forEach(opt => {
-                        if (opt.value === val) {
-                            hidden.value = opt.dataset.id;
-                            valid = true;
+                    input.addEventListener('input', () => {
+                        const val = input.value.trim();
+                        let valid = false;
+                        let newId = '';
+
+                        options.forEach(opt => {
+                            if (opt.value === val) {
+                                valid = true;
+                                newId = opt.dataset.id;
+                            }
+                        });
+
+                        if (valid) {
+                            // Si Coincide con un chofer válido → actualizar id y guardar como última selección
+                            hidden.value = newId;
+                            lastValidId = newId;
+                            lastValidValue = val;
+                            input.setCustomValidity("");
+                        } else {
+                            // ❌ No coincide, mantener el último id válido
+                            hidden.value = lastValidId;
+                            input.setCustomValidity("Debe seleccionar un chofer de la lista");
+
+                            // Vuelve a mostrar el ultimo valor seleccionado
+                            input.addEventListener('blur', () => {
+                                if (input.value.trim() === '' || !Array.from(options).some(o => o.value === input.value.trim())) {
+                                    input.value = lastValidValue;
+                                    input.setCustomValidity("");
+                                }
+                            }, { once: true });
                         }
                     });
-
-                    if (!valid) {
-                        input.setCustomValidity("Debe seleccionar un chofer de la lista");
-                    } else {
-                        input.setCustomValidity("");
-                    }
-                });
-            </script>
+                    </script>
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
         </div>
