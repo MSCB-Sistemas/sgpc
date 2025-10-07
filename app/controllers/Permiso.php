@@ -307,7 +307,7 @@ class Permiso extends Control
             $mpdf->AddPage();
 
             // insertar el mapa en la página nueva
-            $mpdf->Image(APP . '/../public/img/mapa.jpg', 0, 0, 210, 297, 'jpg', '', true, false);
+            $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
             
 
             $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
