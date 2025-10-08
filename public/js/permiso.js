@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
           // Tragio los horarios disponibles para ese punto de detencion en la fecha seleccionada
-          const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
+          const resHorarios = await fetch(`${_URL}/reservasPuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
           const horarios = await resHorarios.json();
 
           if (!Array.isArray(horarios) || horarios.length === 0) {
