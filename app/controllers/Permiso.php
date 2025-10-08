@@ -170,7 +170,12 @@ class Permiso extends Control
             $calles = $_POST['calles_permiso'];
             $calles = json_decode($calles, true);
             $pasajeros = $_POST['pasajeros'];
+            $cta_cte = $_POST['chk_cta_cte'];
             $errores = [];
+
+            if (!isset($cta_cte)) {
+                $cta_cte = 0; // No está seleccionado
+            }
 
             $modelRecorridosPermisos = $this->load_model('RecorridosPermisosModel');
             $modelPermisosCalles = $this->load_model('PermisosCallesModel');
@@ -193,7 +198,8 @@ class Permiso extends Control
                 $arribo_salida,
                 $observacion,
                 $pasajeros,
-                $id_lugar
+                $id_lugar,
+                $cta_cte
             );
 
             if (!$idPermiso) {

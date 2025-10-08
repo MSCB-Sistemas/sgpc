@@ -43,7 +43,6 @@
                 <label class="btn btn-outline-info" for="salida">Salida</label>
             </div>
         </div>
-
     </div>
     <div class="row mb-3">
 
@@ -356,6 +355,13 @@
                     $valorObservacion = htmlspecialchars($datos['values']['observacion']);
                 }
             ?></textarea>
+    </div>
+            
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="chk_cta_cte" value="1" id="chk_cta_cte">
+        <label class="form-check-label" for="chk_cta_cte">
+            Cuenta Corriente
+        </label>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
         <button type="submit" class="btn btn-success">

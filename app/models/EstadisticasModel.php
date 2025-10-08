@@ -219,7 +219,11 @@ class EstadisticasModel
                 p.*, 
                 CONCAT(c.apellido,' ',c.nombre) AS chofer_completo,
                 e.nombre AS empresa, 
-                l.nombre AS lugar
+                l.nombre AS lugar,
+                CASE p.cuenta_corriente 
+                    WHEN 1 THEN 'Si' 
+                    ELSE 'No' 
+                END AS 'cta_cte'
             FROM permisos p
             LEFT JOIN choferes c ON p.id_chofer = c.id_chofer
             LEFT JOIN servicios s ON p.id_servicio = s.id_servicio

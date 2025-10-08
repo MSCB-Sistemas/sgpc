@@ -43,6 +43,10 @@ class PermisoModel
             p.fecha_emision as 'Fecha emision',
             p.arribo_salida as 'Arribo / Salida',
             l.nombre as 'Origen / destino',
+            CASE p.cuenta_corriente 
+                WHEN 1 THEN 'Si' 
+                ELSE 'No' 
+            END AS 'Cta. Cte.',
 
             -- Datos del chofer
             CONCAT(c.dni,' - ',c.nombre,' ',c.apellido) AS Chofer,
@@ -160,10 +164,10 @@ class PermisoModel
      * @param string|null $observacion Observaciones adicionales (puede ser null).
      * @return bool|string ID del nuevo registro insertado o false en caso de error.
      */
-    public function insertPermiso($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion,$pasajeros,$id_lugar): bool|string
+    public function insertPermiso($id_chofer, $id_usuario, $id_servicio, $tipo, $fecha_reserva, $fecha_emision, $arribo_salida, $observacion,$pasajeros,$id_lugar,$cta_cte): bool|string
     {
-        $query = "INSERT INTO sgpc.permisos (id_chofer, id_usuario, id_servicio, tipo, fecha_reserva, fecha_emision, arribo_salida, observacion, pasajeros, id_lugar)
-                VALUES (:id_chofer, :id_usuario, :id_servicio, :tipo, :fecha_reserva, :fecha_emision, :arribo_salida, :observacion, :pasajeros, :id_lugar)";
+        $query = "INSERT INTO sgpc.permisos (id_chofer, id_usuario, id_servicio, tipo, fecha_reserva, fecha_emision, arribo_salida, observacion, pasajeros, id_lugar, cuenta_corriente)
+                VALUES (:id_chofer, :id_usuario, :id_servicio, :tipo, :fecha_reserva, :fecha_emision, :arribo_salida, :observacion, :pasajeros, :id_lugar , :cta_cte)";
         $stmt = $this->db->prepare($query);
 
         $params = [
@@ -176,7 +180,8 @@ class PermisoModel
             'arribo_salida' => $arribo_salida,
             'observacion' => $observacion,
             'pasajeros'=> $pasajeros,
-            'id_lugar'=> $id_lugar
+            'id_lugar'=> $id_lugar,
+            'cta_cte'=> $cta_cte
         ];
         $stmt->execute($params);
         $result = $this->db->lastInsertId();
