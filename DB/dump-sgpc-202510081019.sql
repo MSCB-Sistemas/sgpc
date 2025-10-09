@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 9.3.0, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sgpc
 -- ------------------------------------------------------
@@ -270,6 +270,7 @@ CREATE TABLE `permisos` (
   `activo` tinyint(1) DEFAULT '1',
   `pasajeros` int NOT NULL,
   `id_lugar` int NOT NULL,
+  `cuenta_corriente` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id_permiso`),
   KEY `permisos_FK` (`id_chofer`),
   KEY `permisos_FK_1` (`id_usuario`),
@@ -586,4 +587,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-23 11:20:23
+-- Dump completed on 2025-10-08 10:19:37
