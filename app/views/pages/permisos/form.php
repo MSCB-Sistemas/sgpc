@@ -174,7 +174,7 @@
 
                 <datalist id="choferes">
                     <?php foreach ($datos['choferes'] as $c): ?>
-                        <option value="<?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>" data-id="<?= $c['id_chofer'] ?>">
+                        <option value="<?= htmlspecialchars($c['dni'] . ' - ' . $c['apellido'] . ' ' . $c['nombre']) ?>" data-id="<?= $c['id_chofer'] ?>">
                     <?php endforeach; ?>
                 </datalist>
                 <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
