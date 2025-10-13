@@ -43,7 +43,6 @@
                 <label class="btn btn-outline-info" for="salida">Salida</label>
             </div>
         </div>
-
     </div>
     <div class="row mb-3">
 
@@ -229,7 +228,7 @@
 
                 <datalist id="choferes">
                     <?php foreach ($datos['choferes'] as $c): ?>
-                        <option value="<?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>" data-id="<?= $c['id_chofer'] ?>">
+                        <option value="<?= htmlspecialchars($c['dni'] . ' - ' . $c['apellido'] . ' ' . $c['nombre']) ?>" data-id="<?= $c['id_chofer'] ?>">
                     <?php endforeach; ?>
                 </datalist>
                 <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
@@ -414,13 +413,13 @@
                     </div>
                     <div class="col-md-6">
                         <h6>Puntos de Detención
-                        <button type="button" id="btnRefreshPuntos" class="btn">
+                        <!-- <button type="button" id="btnRefreshPuntos" class="btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
                             <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
                             </svg>
-                        </button>
-                        <a href="<?= URL ?>/puntosDetencion/create" target="_blank" id="btnNuevoPunto" class="btn btn-primary">Nuevo</a></h6>
+                        </button> -->
+                        <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalPunto">Nuevo</button></h6>
                         <table class="table table-hover align-middle mb-0" id="tablaPuntos">
                         <thead>
                             <tr>
@@ -451,6 +450,13 @@
                     $valorObservacion = htmlspecialchars($datos['values']['observacion']);
                 }
             ?></textarea>
+    </div>
+            
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="chk_cta_cte" value="1" id="chk_cta_cte">
+        <label class="form-check-label" for="chk_cta_cte">
+            Cuenta Corriente
+        </label>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
         <button type="submit" class="btn btn-success">

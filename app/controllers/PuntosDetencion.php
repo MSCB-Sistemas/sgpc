@@ -299,4 +299,30 @@ class PuntosDetencion extends Control
         ]);
         exit;
     }
+    public function saveAjax()
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $nombre = trim($_POST['nombre']);
+            $id_calle = $_POST['id_calle'];
+
+             // Validar campos
+
+            if ($nombre === '' || empty($id_calle)) {
+                echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+                return;
+            }
+            $idPuntoDetencion = $this->model->insertPuntoDetencion($nombre, $id_calle);
+             // Responder con éxito o error
+            if ($idPuntoDetencion) {
+                echo json_encode([
+                    'success' => true,
+                    'id_punto_detencion' => $idPuntoDetencion,
+                    'nombre' => $nombre
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al guardar el punto de detención']);
+            }
+        }
+    }
 }

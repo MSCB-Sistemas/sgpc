@@ -64,7 +64,7 @@ async function handleModalForm(formId, url, selectId, valueField, textField, typ
 
 
 /********************************************************************************
-  Manejo de formularios modales para agregar Chofer, Servicio, Recorrido y Lugar
+  Manejo de formularios modales para agregar Chofer, Servicio, Recorrido, Lugar y Punto
 *********************************************************************************/
 
 
@@ -79,6 +79,9 @@ handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido",
 
 // Lugar
 handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugares", "id_lugar", "nombre", "datalist", "id_lugar");
+
+// Punto -> espera JSON: { success: true, id_punto_detencion, nombre }
+handleModalForm("formNuevoPunto", _URL + "/PuntosDetencion/saveAjax", "puntos_detencion", "id_punto_detencion", "nombre", "table", "id_punto_detencion");
 
 
 /********************************************************************************
@@ -95,6 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const tablaPuntos = document.querySelector("#tablaPuntos tbody");
   const formPermiso = document.getElementById("permisoForm");
   let currentCalleId = null;
+  let currentCalleNombre = null;
 
   // Manejo del envío del formulario
   formPermiso.addEventListener("submit", function (event) {
@@ -232,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
           // Tragio los horarios disponibles para ese punto de detencion en la fecha seleccionada
-          const resHorarios = await fetch(`${_URL}/reservaspuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
+          const resHorarios = await fetch(`${_URL}/reservasPuntos/horariosDisponibles/${p.id_punto_detencion}/${fecha}`);
           const horarios = await resHorarios.json();
 
           if (!Array.isArray(horarios) || horarios.length === 0) {
@@ -265,7 +269,6 @@ document.addEventListener("DOMContentLoaded", function () {
         tr.appendChild(tdHorario);
         tablaPuntos.appendChild(tr);
       }
-
 
     } catch (err) {
       console.error("Error cargando puntos de detención:", err);
@@ -393,6 +396,7 @@ document.addEventListener('blur', function(e) {
     if (!idCalle) return; // evita llamar a cargarPuntos(undefined)
 
     currentCalleId = idCalle;
+    currentCalleNombre = td.textContent.trim();
     await cargarPuntos(idCalle);
   });// FIN Manejo evento click en tabla de calles
 
@@ -439,19 +443,36 @@ document.addEventListener('blur', function(e) {
     }
   });
 
-  // Botón para refrescar puntos de detención por si se hizo un cambio por fuera del form
-  document.getElementById("btnRefreshPuntos").addEventListener("click", async function () {
-    if (currentCalleId) {
-      await cargarPuntos(currentCalleId);
+  // // Botón para refrescar puntos de detención por si se hizo un cambio por fuera del form
+  // document.getElementById("btnRefreshPuntos").addEventListener("click", async function () {
+  //   if (currentCalleId) {
+  //     await cargarPuntos(currentCalleId);
+  //   }
+  // });
+
+  // // Botón para abrir en nueva pestaña el formulario de nuevo punto de detención, pasando la calle actual
+  // document.getElementById('btnNuevoPunto').addEventListener('click', function (e) {
+  //   e.preventDefault(); // evita que abra el href fijo
+  //   const baseUrl = this.getAttribute('href');
+  //   const url = `${baseUrl}/${currentCalleId}`;
+  //   window.open(url, '_blank'); // abre en nueva pestaña (igual que target="_blank")
+  // });
+
+  const modalPunto = document.getElementById('modalPunto');
+
+  modalPunto.addEventListener('show.bs.modal', function (event) {
+    if (!currentCalleId) {
+      alert("Seleccione una calle primero.");
+      event.preventDefault();
+      return;
     }
+    // Setear los campos del modal
+    document.getElementById('calle_modal_punto').value = currentCalleNombre;
+    document.getElementById('id_calle_modal_punto').value = currentCalleId;
   });
 
-  // Botón para abrir en nueva pestaña el formulario de nuevo punto de detención, pasando la calle actual
-  document.getElementById('btnNuevoPunto').addEventListener('click', function (e) {
-    e.preventDefault(); // evita que abra el href fijo
-    const baseUrl = this.getAttribute('href');
-    const url = `${baseUrl}/${currentCalleId}`;
-    window.open(url, '_blank'); // abre en nueva pestaña (igual que target="_blank")
+  modalPunto.addEventListener('hidden.bs.modal', async function (event) {
+    await cargarPuntos(currentCalleId);
   });
 
 });

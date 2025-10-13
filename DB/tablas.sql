@@ -142,6 +142,7 @@ CREATE TABLE `permisos` (
   `activo` tinyint(1) DEFAULT '1',
   `pasajeros` int NOT NULL,
   `id_lugar` int NOT NULL,
+  `cuenta_corriente` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id_permiso`),
   KEY `permisos_FK` (`id_chofer`),
   KEY `permisos_FK_1` (`id_usuario`),
@@ -151,7 +152,7 @@ CREATE TABLE `permisos` (
   CONSTRAINT `permisos_FK_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`),
   CONSTRAINT `permisos_FK_2` FOREIGN KEY (`id_servicio`) REFERENCES `servicios` (`id_servicio`),
   CONSTRAINT `permisos_lugares_FK` FOREIGN KEY (`id_lugar`) REFERENCES `lugares` (`id_lugar`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- sgpc.lugares definition
 

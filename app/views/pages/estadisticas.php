@@ -318,6 +318,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <th data-field="lugar" data-sortable="true">Lugar</th>
                     <th data-field="movimiento" data-sortable="true">Tipo de Movimiento</th>
                     <th data-field="pax" data-sortable="true">Cantidad de Pax</th>
+                    <th data-field="cta_cte" data-sortable="true">Cuenta Corriente</th>
                 </tr>
             </thead>
 
@@ -338,6 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td><?= htmlspecialchars($m['lugar']) ?></td>
                             <td><?= htmlspecialchars($m['arribo_salida']) ?></td>
                             <td><?= htmlspecialchars($m['pasajeros']) ?></td>
+                            <td><?= htmlspecialchars($m['cta_cte']) ?></td>
                         </tr>
                     <?php endforeach; ?>
 

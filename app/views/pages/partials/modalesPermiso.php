@@ -146,6 +146,29 @@
   </div>
 </div>
 
+<!-- Modal Punto de Detencion -->
+<div class="modal fade" id="modalPunto" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formNuevoPunto">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo Punto de Detención</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre" required>
+          <input type="text" class="form-control mb-2" name="calle" id="calle_modal_punto" placeholder="Calle" required disabled>
+          <input type="hidden" class="form-control mb-2" name="id_calle" id="id_calle_modal_punto">
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   const campoNuevaEmpresa = document.getElementById('campoNuevaEmpresa');
   const selectEmpresa = document.getElementById('selectEmpresa');
