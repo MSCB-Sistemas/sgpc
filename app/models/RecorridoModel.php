@@ -26,7 +26,7 @@ class RecorridoModel
      */
     public function getAllRecorridos(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM recorridos where activo = 1");
+        $stmt = $this->db->prepare("SELECT * FROM recorridos where activo = 1 order by nombre");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
