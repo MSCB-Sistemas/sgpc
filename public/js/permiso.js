@@ -24,19 +24,30 @@ async function handleModalForm(formId, url, selectId, valueField, textField, typ
           select.dispatchEvent(new Event('change'));
 
         } else if (type === "datalist" && inputID) {
+      // Si el datalist que estamos actualizando es el de 'servicios',
+      // usamos la función específica que ya actualiza las variables de estado.
+      if (selectId === 'servicios') {
+          agregarServicio(data[textField], data[valueField]);
+      } else if (selectId === 'lugares') { 
+      // Delega al experto en lugares
+      agregarLugar(data[textField], data[valueField]);
+      } else if (selectId === 'choferes') { 
+        // Delega al experto en choferes
+        agregarChofer(data[textField], data[valueField]);
+      } else {
+          // Para otros datalists, mantenemos la lógica genérica (si la hubiera)
           const datalist = document.getElementById(selectId);
           const input = document.querySelector(`input[list="${selectId}"]`);
-          const hidden = document.getElementById(inputID); // ej: id_chofer
-
+          const hidden = document.getElementById(inputID);
+          
           const option = document.createElement("option");
           option.value = data[textField];
           option.dataset.id = data[valueField];
-          option.selected = true;
           datalist.appendChild(option);
 
-          // setear input y hidden directamente
           input.value = data[textField];
           hidden.value = data[valueField];
+      }
         }
         // cerrar modal
         bootstrap.Modal.getInstance(form.closest(".modal")).hide();
@@ -57,16 +68,16 @@ async function handleModalForm(formId, url, selectId, valueField, textField, typ
 *********************************************************************************/
 
 
-// Chofer -> espera JSON: { success: true, id_chofer, nombre, apellido }
+// Chofer
 handleModalForm("formNuevoChofer", _URL + "/chofer/saveAjax", "choferes", "id_chofer", "nombreCompleto", "datalist", "id_chofer");
 
-// Servicio -> espera JSON: { success: true, id_servicio, interno, dominio }
+// Servicio
 handleModalForm("formNuevoServicio", _URL + "/servicio/saveAjax", "servicios", "id_servicio", "internoDominio", "datalist", "id_servicio");
 
-// Recorrido -> espera JSON: { success: true, id_recorrido, nombre }
+// Recorrido
 handleModalForm("formNuevoRecorrido", _URL + "/recorrido/saveAjax", "recorrido", "id_recorrido", "nombre", "select");
 
-// Lugar -> espera JSON: { success: true, id_recorrido, nombre }
+// Lugar
 handleModalForm("formNuevoLugar", _URL + "/lugar/saveAjax", "lugares", "id_lugar", "nombre", "datalist", "id_lugar");
 
 
@@ -278,7 +289,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (option) {
         // Caso: seleccionó un hotel válido del datalist
         hidden.value = option.dataset.id;
-
+        e.target.dataset.lastValidValue = option.value;
+        e.target.dataset.lastValidId = option.dataset.id;
         // Guardamos en puntosData
         puntosData[puntoId] = {
           ...(puntosData[puntoId] || {}),
@@ -300,7 +312,40 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   });
+  // NUEVO LISTENER: Manejo de restauración para inputs de hotel dinámicos
+document.addEventListener('blur', function(e) {
+    // Actuamos solo si el usuario sale de un input de hotel
+    if (e.target.classList.contains('punto-hotel-input')) {
+        const input = e.target;
+        const hidden = input.nextElementSibling; // El hidden está justo después
+        const datalistId = input.getAttribute('list');
+        const datalist = document.getElementById(datalistId);
+        
+        const currentValue = input.value.trim();
+        
+        // Verificamos si el valor actual es válido
+        const esValido = Array.from(datalist.options).some(opt => opt.value === currentValue);
 
+        // Si el campo está vacío o el valor no es válido...
+        if (currentValue === '' || !esValido) {
+            // ...buscamos en su "mochila" (dataset) el último valor guardado.
+            const lastValidValue = input.dataset.lastValidValue || ''; // Si no hay nada, queda vacío
+            const lastValidId = input.dataset.lastValidId || '';
+
+            // Restauramos los valores
+            input.value = lastValidValue;
+            hidden.value = lastValidId;
+
+            // Si se restauró un valor, actualizamos también puntosData
+            if(lastValidValue) {
+                const puntoId = input.dataset.id;
+                if (puntosData[puntoId]) {
+                    puntosData[puntoId].hotel = lastValidId;
+                }
+            }
+        }
+    }
+}, true); // Usamos 'true' para que el evento se capture de forma más fiable
 
   // Manejo evento cambio de fecha (recargar puntos si hay calle seleccionada)
   document.getElementById("fecha_reserva").addEventListener("change", async function () {

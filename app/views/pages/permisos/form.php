@@ -50,9 +50,7 @@
         <!-- Servicio -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="servicio_search" class="form-label">Servicio</label>
-                <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
-                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <!-- Servicio -->
                 <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." autocomplete="off" required>
                 <input type="hidden" name="id_servicio" id="id_servicio">
                 <datalist id="servicios">
@@ -60,6 +58,7 @@
                         <option value="<?= htmlspecialchars($s['interno'] . ' - ' . $s['dominio']) ?>" data-id="<?= $s['id_servicio'] ?>">
                     <?php endforeach; ?>
                 </datalist>
+
                 <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
                 <script>
                     const servicioInput = document.getElementById('servicio_search');
@@ -82,13 +81,13 @@
                         });
 
                         if (valid) {
-                            // ✅ Coincide con un servicio válido → actualizar ID y recordar valores
+                            //  Coincide con un servicio válido → actualizar ID y recordar valores
                             servicioHidden.value = newId;
                             lastValidServicio = val;
                             lastValidServicioId = newId;
                             servicioInput.setCustomValidity('');
                         } else {
-                            // ❌ No coincide → mantener último ID válido
+                            //  No coincide → mantener último ID válido
                             servicioHidden.value = lastValidServicioId;
                             servicioInput.setCustomValidity('Debe seleccionar un servicio de la lista');
 
@@ -106,23 +105,26 @@
 
                     //  Función para agregar un nuevo servicio al datalist
                     function agregarServicio(nombre, id) {
-                        const datalist = document.getElementById('servicios');
-                        const input = document.getElementById('servicio_search');
-                        const hidden = document.getElementById('id_servicio');
+                    const datalist = document.getElementById('servicios');
+                    const input = document.getElementById('servicio_search');
+                    const hidden = document.getElementById('id_servicio');
 
-                        // Crear nueva opción
-                        const option = document.createElement('option');
-                        option.value = nombre;
-                        option.dataset.id = id;
-                        datalist.appendChild(option);
+                    // Crear nueva opción
+                    const option = document.createElement('option');
+                    option.value = nombre;
+                    option.dataset.id = id;
+                    datalist.appendChild(option);
 
-                        // Actualizar valores válidos
-                        hidden.value = id;
-                        input.value = nombre;
-                        input.setCustomValidity('');
-                        lastValidServicio = nombre;
-                        lastValidServicioId = id;
-                    }
+                    // Actualizar input y hidden
+                    hidden.value = id;
+                    input.value = nombre;
+
+                    // actualizar los valores "último válido"
+                    lastValidServicio = nombre;
+                    lastValidServicioId = id;
+
+                    input.setCustomValidity('');
+                }
                     </script>
 
             </div>
@@ -149,7 +151,7 @@
                 <script>
                     const lugarInput = document.getElementById('lugar_search');
                     const lugarHidden = document.getElementById('id_lugar');
-                    const lugarOptions = document.querySelectorAll('#lugares option');
+                    let lugarOptions = document.querySelectorAll('#lugares option'); 
 
                     let lastValidLugar = ''; // Último texto válido
                     let lastValidLugarId = ''; // Último ID válido
@@ -189,24 +191,28 @@
                         }
                     });
 
-                    //  Función para agregar un nuevo lugar dinámicamente
+                    // Función para agregar un nuevo lugar dinámicamente
                     function agregarLugar(nombre, id) {
                         const datalist = document.getElementById('lugares');
                         const input = document.getElementById('lugar_search');
                         const hidden = document.getElementById('id_lugar');
 
-                        // Crear nueva opción
+                        // (código para crear y agregar la nueva opción)
                         const option = document.createElement('option');
                         option.value = nombre;
                         option.dataset.id = id;
                         datalist.appendChild(option);
 
-                        // Actualizar valores válidos
+                        // Actualizar valores e inputs
                         hidden.value = id;
                         input.value = nombre;
                         input.setCustomValidity('');
+
+                        // Actualizar variables de estado
                         lastValidLugar = nombre;
                         lastValidLugarId = id;
+
+                        lugarOptions = document.querySelectorAll('#lugares option');
                     }
                     </script>
 
@@ -230,7 +236,7 @@
                 <script>
                     const input = document.getElementById('chofer_search');
                     const hidden = document.getElementById('id_chofer');
-                    const options = document.querySelectorAll('#choferes option');
+                    let options = document.querySelectorAll('#choferes option');
 
                     let lastValidValue = ''; // texto del último chofer válido
                     let lastValidId = '';    // id del último chofer válido
@@ -267,6 +273,30 @@
                             }, { once: true });
                         }
                     });
+                    function agregarChofer(nombre, id) {
+                        // 1. Referencias a los elementos del DOM
+                        const datalist = document.getElementById('choferes');
+                        const input = document.getElementById('chofer_search');
+                        const hidden = document.getElementById('id_chofer');
+
+                        // 2. Crear y añadir la nueva opción al datalist
+                        const option = document.createElement('option');
+                        option.value = nombre;
+                        option.dataset.id = id;
+                        datalist.appendChild(option);
+
+                        // 3. Actualizar el input visible y el oculto
+                        hidden.value = id;
+                        input.value = nombre;
+                        input.setCustomValidity('');
+
+                        // 4. Actualizar la "memoria" de JavaScript (las variables de estado)
+                        lastValidValue = nombre;
+                        lastValidId = id;
+
+                        // 5. Actualizar la lista de opciones para futuras validaciones
+                        options = document.querySelectorAll('#choferes option');
+                    }
                     </script>
             </div>
             <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
