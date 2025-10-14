@@ -58,7 +58,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" class="form-control mb-2" name="interno" placeholder="Interno" required>
+          <input type="number" class="form-control mb-2" name="interno" placeholder="Interno" required>
           <input type="text" class="form-control mb-2" name="dominio" placeholder="Dominio" required>
 
           <div class="row mb-2 align-items-center">
