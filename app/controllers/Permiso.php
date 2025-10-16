@@ -288,7 +288,8 @@ class Permiso extends Control
                 'usuario_nombre' => $permiso['usuario_nombre'],
                 'usuario_apellido' => $permiso['usuario_apellido'],
                 'usuario_cargo' => $permiso['usuario_cargo'],
-                'usuario_sector' => $permiso['usuario_sector']
+                'usuario_sector' => $permiso['usuario_sector'],
+                'recorrido' => $permiso['recorrido']
             ];
 
             // Cargar plantilla

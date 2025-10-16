@@ -131,13 +131,15 @@ class PermisoModel
             u.nombre as usuario_nombre,
             u.apellido as usuario_apellido,
             u.cargo as usuario_cargo,
-            u.sector as usuario_sector
+            u.sector as usuario_sector,
+            r.nombre as recorrido
             from permisos p
             inner join choferes c on p.id_chofer = c.id_chofer
             inner join usuarios u on p.id_usuario = u.id_usuario
             inner join servicios s on p.id_servicio = s.id_servicio 
             inner join empresas e on s.id_empresa = e.id_empresa 
             inner join recorridos_permisos rp on p.id_permiso = rp.id_permiso
+            inner join recorridos r on rp.id_recorrido = r.id_recorrido
             where p.id_permiso = :id;
             ");
         $stmt->execute(['id' => $id]);

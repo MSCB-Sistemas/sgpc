@@ -37,7 +37,7 @@
     <?php endif; ?>
 
     <p class="medium" style="margin-bottom: 0pt;">
-        Recorrido: <?= htmlspecialchars($datos['calles_recorrido']) ?>
+        Recorrido: <b><?= htmlspecialchars($datos['recorrido']) ?></b> - Calles: <?= htmlspecialchars($datos['calles_recorrido']) ?>
         <?php if ($datos['tipo'] === 'linea'): ?>
             - horario derecho de dársena: <?php if(!empty($datos['paradas'])){echo $datos['paradas'][0]['horario'];}?>
         <?php endif; ?>
