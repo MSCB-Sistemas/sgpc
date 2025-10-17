@@ -50,6 +50,7 @@
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
                 <!-- Servicio -->
+                 <label for="servicio_search" class="form-label">Servicio</label>
                 <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." autocomplete="off" required>
                 <input type="hidden" name="id_servicio" id="id_servicio">
                 <datalist id="servicios">
