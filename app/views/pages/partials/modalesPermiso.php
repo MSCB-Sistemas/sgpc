@@ -1,3 +1,6 @@
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.css" rel="stylesheet">
+</head>
 <!-- Modal Chofer -->
 <div class="modal fade" id="modalChofer" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -168,17 +171,35 @@
     </div>
   </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
   const campoNuevaEmpresa = document.getElementById('campoNuevaEmpresa');
-  const selectEmpresa = document.getElementById('selectEmpresa');
+
+
+ document.addEventListener('DOMContentLoaded', () => {
+
+  // 1. Esta línea activa el buscador en tu select.
+  const tomSelectEmpresa = new TomSelect('#selectEmpresa', {
+    placeholder: 'Busca o selecciona una empresa...'
+  });
+
+  // 2. Este código adapta tu botón "+" para que funcione con el nuevo select.
+  const campoNuevaEmpresa = document.getElementById('campoNuevaEmpresa');
   const inputNuevaEmpresa = campoNuevaEmpresa.querySelector('input');
 
   document.getElementById('btnAgregarEmpresa').addEventListener('click', function() {
-    campoNuevaEmpresa.classList.toggle('d-none');
-    selectEmpresa.disabled = !selectEmpresa.disabled;
-    inputNuevaEmpresa.required = !inputNuevaEmpresa.required;
-    inputNuevaEmpresa.value = '';
+    // La nueva lógica que controla el componente Tom Select
+    if (tomSelectEmpresa.isDisabled) {
+      tomSelectEmpresa.enable();
+      campoNuevaEmpresa.classList.add('d-none');
+      inputNuevaEmpresa.required = false;
+    } else {
+      tomSelectEmpresa.disable();
+      tomSelectEmpresa.clear();
+      campoNuevaEmpresa.classList.remove('d-none');
+      inputNuevaEmpresa.required = true;
+      inputNuevaEmpresa.focus();
+    }
   });
 
   document.getElementById('btnRefreshCalles').addEventListener('click', async function() {
@@ -198,7 +219,7 @@
       console.log();
     }
   });
-
+});
   
   document.getElementById('addCalle').addEventListener('click', function () {
       const select = document.getElementById('selectCalle');
@@ -242,4 +263,5 @@
           document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
       }
   });
+
 </script>
