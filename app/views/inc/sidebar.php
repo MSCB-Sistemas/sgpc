@@ -1,9 +1,43 @@
 <h1 class="visually-hidden">Barra inicio</h1>
-<div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark " style="width: 289px; background-color: #ff6900 !important;">
-    <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="https://www.bariloche.gov.ar/" target="_blank">
-        <img src="<?= URL . '/img/logo_claro.png' ?>" alt="Logo" width="240" height="80" class="pe-none me-2">
-    </a>
-    <hr>
+<style>
+    :root {
+    --sidebar-width: 289px;
+}
+
+/* Contenedor principal para que la sidebar y el contenido estén a la par */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    min-height: 100vh;
+    transition: all 0.3s;
+    background-color: #ff6900 !important;
+}
+
+/* Clase para ocultar */
+#sidebar.active {
+    margin-left: calc(var(--sidebar-width) * -1);
+}
+
+/* Ajuste para que el texto no se rompa al cerrar */
+#sidebar .nav-link {
+    white-space: nowrap;
+}
+</style>
+<div class="wrapper">
+    <nav id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <a href="https://www.bariloche.gov.ar/" target="_blank">
+                <img src="<?= URL . '/img/logo_claro.png' ?>" alt="Logo" width="200">
+            </a>
+            </div>
+        
+        <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item ">
             <a class="nav-link text-white" href="/sgpc" aria-current="page">
@@ -99,4 +133,37 @@
             <li><a class="dropdown-item text-danger" href="<?= URL ?>/auth/logout">Cerrar sesión</a></li>
         </ul>
     </div>
+</nav>
+    <div id="content" class="sm-0">
+            <nav class="navbar navbar">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-secondary btn-sm sm-0">
+                        <i class="bi"></i> ☰
+                    </button>
+                </div>
+            </nav>
 </div>
+
+<script>
+    // Script para manejar el estado de la sidebar usando localStorage
+    document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById('sidebar');
+    const btn = document.getElementById('sidebarCollapse');
+    
+    // 1. Comprobar si hay una preferencia guardada
+    const sidebarStatus = localStorage.getItem('sidebar-active');
+    
+    // Si estaba "activo" (oculto) en la sesión anterior, lo ocultamos
+    if (sidebarStatus === 'true') {
+        sidebar.classList.add('active');
+    }
+
+    // 2. Evento Click
+    btn.addEventListener('click', function () {
+        sidebar.classList.toggle('active');
+        
+        // Guardar la preferencia (true si está oculto, false si está visible)
+        localStorage.setItem('sidebar-active', sidebar.classList.contains('active'));
+    });
+});
+</script>
