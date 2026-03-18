@@ -1,7 +1,7 @@
 <h1 class="visually-hidden">Barra inicio</h1>
 <style>
     :root {
-    --sidebar-width: 289px;
+    --sidebar-width: 225px;
 }
 
 /* Contenedor principal para que la sidebar y el contenido estén a la par */
@@ -33,9 +33,9 @@
     <nav id="sidebar" class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <a href="https://www.bariloche.gov.ar/" target="_blank">
-                <img src="<?= URL . '/img/logo_claro.png' ?>" alt="Logo" width="200">
+                <img src="<?= URL . '/img/logo_claro.png' ?>" alt="Logo" width="180">
             </a>
-            </div>
+        </div>
         
         <hr>
     <ul class="nav nav-pills flex-column mb-auto">
