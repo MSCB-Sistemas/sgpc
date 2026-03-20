@@ -331,6 +331,40 @@ class Usuarios extends Control
         }
     }
 
+
+    // Funcion para que cualquier usuario pueda cambiar su propia clave sin necesidad de permisos especiales
+    public function miClave()
+    {
+        // Solo exigimos estar logueado, no checamos permisos de 'editar usuarios'
+        $this->requireLogin(); 
+        
+        // Obtenemos el ID directamente de la sesión 
+        $miId = $_SESSION['usuario_id'];
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $password = trim($_POST["password"]);
+            
+            if (empty($password)) {
+                // Manejar error de campo vacío...
+            } else {
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                if ($this->model->updatePassword($miId, $passwordHash)) {
+                    // devolvemos el mensaje 
+                    $_SESSION['mensaje_exito'] = "Tu contraseña ha sido actualizada correctamente.";
+                    header("Location: " . URL . "/inicio");
+                    exit;
+                }
+            }
+        }
+
+        // Cargar la vista
+        $this->load_view('usuarios/formPass', [
+            'title' => 'Cambiar mi contraseña',
+            'action' => URL . '/usuarios/miClave', // La URL no lleva ID
+            'errores' => []
+        ]);
+    }
+
     public function ajaxList()
     {
         // Solo permitir acceso con permisos
@@ -367,13 +401,13 @@ class Usuarios extends Control
             $orderDir = $_GET['order'][0]['dir'];
         }
 
-        // Definí las columnas en el mismo orden que en tu JS
         $columnas = ['usuario', 'nombre', 'apellido', 'cargo', 'sector', 'tipo_usuario', 'activo'];
 
         $orderColumn = 'usuario';
         if (isset($columnas[$orderColumnIndex])) {
             $orderColumn = $columnas[$orderColumnIndex];
         }
+        
         // Total de registros (sin filtro)
         $recordsTotal = $this->model->contarUsuarios();
 
@@ -385,42 +419,73 @@ class Usuarios extends Control
 
         // Preparar data con botones de acciones
         $data = [];
+        
+        // Variables de sesión para jerarquía
+        $tipoSesion = isset($_SESSION['usuario_tipo']) ? (int)$_SESSION['usuario_tipo'] : 0;
+        $idSesion = isset($_SESSION['usuario']) ? (int)$_SESSION['usuario'] : 0;
+
         foreach ($records as $fila) {
             $acciones = '';
             $id = $fila['id_usuario'];
             $url = URL . '/usuarios';
             
+            // Evaluamos la jerarquía por el nombre del texto para evitar errores de SQL
+            $tipoStr = strtolower($fila['tipo_usuario']);
+            $esAdmin = ($tipoStr === 'admin');
+            $esDirector = ($tipoStr === 'director');
+            $esAdminODirector = ($esAdmin || $esDirector);
+            
             if ($fila['activo']) {
                 if ($this->tienePermiso('editar usuarios')) {
-                    $acciones .= '
-                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
-                        <a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-warning">Cambiar clave</a>';
+                    
+                    // --- BOTÓN EDITAR ---
+                    // Director no edita a Admin ni a otros Directores (solo a sí mismo)
+                    if ($tipoSesion === 2 && $esAdminODirector && $id !== $idSesion) {
+                        // No mostramos nada
+                    } else {
+                        $acciones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a> ';
+                    }
 
-                        if ($this->tienePermiso('eliminar usuarios') && $fila['tipo_usuario'] != 'admin') {
-                        $acciones .= '
-                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
-                        } else if ($fila['tipo_usuario'] == 'admin' && $this->tienePermiso('god')) {
-                            $acciones .= '
-                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
+                    // --- BOTÓN CAMBIAR CLAVE ---
+                    // Director no cambia clave a Admin, Directores ni a sí mismo (usa miClave)
+                    if ($tipoSesion === 2 && $esAdminODirector) {
+                        // No mostramos nada
+                    } else {
+                        $acciones .= '<a href="'.$url.'/changePass/'.$id.'" class="btn btn-sm btn-warning">Cambiar clave</a> ';
+                    }
+
+                    // --- BOTÓN DESACTIVAR ---
+                    if ($this->tienePermiso('eliminar usuarios') && !$esAdmin) {
+                        // Director no desactiva directores
+                        if (!($tipoSesion === 2 && $esAdminODirector)) {
+                            $acciones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
                         }
+                    } else if ($esAdmin && $this->tienePermiso('god')) {
+                        $acciones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este usuario?\');">Desactivar</a>';
+                    }
                 }
             } else {
                 if ($this->tienePermiso('editar usuarios')) {
-                    $acciones .= '
-                        <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
-                        <a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>
-                    ';
+                    // --- BOTONES REACTIVAR (Inactivos) ---
+                    // Director no reactiva a Admin ni Directores
+                    if ($tipoSesion === 2 && $esAdminODirector) {
+                        // No mostramos nada
+                    } else {
+                        $acciones .= '<a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a> ';
+                        $acciones .= '<a href="'.$url.'/activate/'.$id.'" class="btn btn-sm btn-success" onclick="return confirm(\'¿Activar este usuario?\');">Activar</a>';
+                    }
                 }
             }
 
+            // Agregamos (string) para que valores Nulos de la BD no rompan el JSON
             $data[] = [
-                'usuario' => htmlspecialchars($fila['usuario']),
-                'nombre' => ucfirst(htmlspecialchars($fila['nombre'])),
-                'apellido' => ucfirst(htmlspecialchars($fila['apellido'])),
-                'cargo' => htmlspecialchars($fila['cargo']),
-                'sector' => htmlspecialchars($fila['sector']),
-                'tipo_usuario' => htmlspecialchars($fila['tipo_usuario']),
-                'activo' => htmlspecialchars($fila['activo']),
+                'usuario' => htmlspecialchars((string)$fila['usuario']),
+                'nombre' => ucfirst(htmlspecialchars((string)$fila['nombre'])),
+                'apellido' => ucfirst(htmlspecialchars((string)$fila['apellido'])),
+                'cargo' => htmlspecialchars((string)$fila['cargo']),
+                'sector' => htmlspecialchars((string)$fila['sector']),
+                'tipo_usuario' => htmlspecialchars((string)$fila['tipo_usuario']),
+                'activo' => htmlspecialchars((string)$fila['activo']),
                 'acciones' => $acciones
             ];
         }
