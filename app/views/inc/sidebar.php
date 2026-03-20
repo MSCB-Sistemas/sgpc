@@ -129,20 +129,25 @@
             <?= ucfirst($_SESSION['usuario_nombre'])." ".ucfirst($_SESSION['usuario_apellido']); ?>
         </a>
         <ul class="dropdown-menu text-small shadow">
-            <li><button class="dropdown-item" id="toggleTheme">Cambiar tema</button></li>
-            <li><a class="dropdown-item text-danger" href="<?= URL ?>/auth/logout">Cerrar sesión</a></li>
+            <!-- OPCIONES DE CUENTA/PREFERENCIAS -->
+            <li>
+                <a class="dropdown-item" href="<?= URL ?>/usuarios/miClave">Cambiar contraseña</a>
+            </li>
+            <li>
+                <button class="dropdown-item" id="toggleTheme">Cambiar tema</button>
+            </li>
+            
+            <!-- SEPARADOR VISUAL PARA LA ACCIÓN DE SALIDA -->
+            <li><hr class="dropdown-divider"></li>
+            
+            <!-- CERRAR SESIÓN -->
+            <li>
+                <a class="dropdown-item text-danger" href="<?= URL ?>/auth/logout">Cerrar sesión</a>
+            </li>
         </ul>
     </div>
 </nav>
-    <div id="content" class="sm-0">
-            <nav class="navbar navbar">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-secondary btn-sm sm-0">
-                        <i class="bi"></i> ☰
-                    </button>
-                </div>
-            </nav>
-</div>
+
 
 <script>
     // Script para manejar el estado de la sidebar usando localStorage

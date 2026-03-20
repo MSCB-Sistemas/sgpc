@@ -11,7 +11,13 @@
     <h1 class="mb-4 text-center"style="font-family: 'Lexend';">Bienvenido al Sistema SGPC</h1>
     
     <input type="text" id="buscarReservas" class="form-control mb-3" placeholder="🔍 Buscar reservas...">
-
+                <?php if (isset($_SESSION['mensaje_exito'])): //Codigo para lanzar mensaje de contraseña cambiada?>
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <?= $_SESSION['mensaje_exito']; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['mensaje_exito']); // Lo borramos para que no aparezca si recarga la página ?>
+            <?php endif; ?>
     <div class="row mb-4">
         <div class="col-md-12 mb-3">
             <div class="card shadow-sm h-100">
