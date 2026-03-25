@@ -147,6 +147,15 @@
         </ul>
     </div>
 </nav>
+    <div id="content" class="sm-0">
+            <nav class="navbar navbar">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-secondary btn-sm sm-0">
+                        <i class="bi"></i> ☰
+                    </button>
+                </div>
+            </nav>
+    </div>
 
 
 <script>
