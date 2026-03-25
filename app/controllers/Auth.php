@@ -47,8 +47,11 @@ class Auth extends Control
                 $this->load_view('login', $datos, false);
             }
         } else {
-            // $this->checkRememberMeToken();
-            $this->load_view('login', $datos, false);
+            if (isset($_SESSION['usuario_id'])) {
+                header("Location: " . URL . "/inicio");
+          } else {
+                $this->load_view('login', $datos, false);
+          }
         }
     }
 
