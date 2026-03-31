@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -35,7 +37,8 @@ class PuntosDetencionModel {
         FROM 
             puntos_detencion pd
         JOIN 
-            calles c ON pd.id_calle = c.id_calle;");
+            calles c ON pd.id_calle = c.id_calle
+        where pd.activo = 1;");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -61,9 +64,23 @@ class PuntosDetencionModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updatePuntoDetencion($id_punto_detencion, $nombre, $id_calle) : bool {
-        $stmt = $this->db->prepare("UPDATE puntos_detencion SET nombre = :nombre, id_calle = :id_calle WHERE id_punto_detencion = :id_punto_detencion");
-        $stmt->execute(['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle]);
-        return $stmt->rowCount() > 0;
+        $query = "UPDATE puntos_detencion SET nombre = :nombre, id_calle = :id_calle WHERE id_punto_detencion = :id_punto_detencion";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_punto_detencion' => $id_punto_detencion, 'nombre' => $nombre, 'id_calle' => $id_calle];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el punto de detencion con id ".$id_punto_detencion." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -74,9 +91,23 @@ class PuntosDetencionModel {
      * @return int|string ID del punto de detención insertado.
      */
     public function insertPuntoDetencion($nombre, $id_calle) {
-        $stmt = $this->db->prepare("INSERT INTO puntos_detencion (nombre, id_calle) VALUES (:nombre, :id_calle)");
-        $stmt->execute(['nombre' => $nombre, 'id_calle' => $id_calle]);
-        return $this->db->lastInsertId();
+        
+        $query = "INSERT INTO puntos_detencion (nombre, id_calle) VALUES (:nombre, :id_calle)";
+        $stmt = $this->db->prepare($query);
+        $params = ['nombre' => $nombre, 'id_calle' => $id_calle];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el punto de detencion ".$nombre." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -86,16 +117,118 @@ class PuntosDetencionModel {
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
     public function deletePuntoDetencion($id_punto_detencion) : bool {
-        $stmt = $this->db->prepare("DELETE FROM puntos_detencion WHERE id_punto_detencion = :id_punto_detencion");
-        $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
+        $query = "DELETE FROM puntos_detencion WHERE id_punto_detencion = :id_punto_detencion";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_punto_detencion' => $id_punto_detencion];
+        $stmt->execute($params);
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el punto de detencion ".$id_punto_detencion." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
     public function getPuntosByCalle($id_calle): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM puntos_detencion WHERE id_calle = :id_calle");
+        $stmt = $this->db->prepare("SELECT * FROM puntos_detencion WHERE id_calle = :id_calle order by nombre asc");
         $stmt->execute(['id_calle' => $id_calle]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getReservaByPunto($id_punto_detencion): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM reservas_puntos WHERE id_punto_detencion = :id_punto_detencion");
+        $stmt->execute(['id_punto_detencion' => $id_punto_detencion]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarPuntoDetencion($id_punto_detencion): bool
+    {
+        $query = "UPDATE puntos_detencion SET activo = 0 WHERE id_punto_detencion = :id_punto_detencion";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_punto_detencion' => $id_punto_detencion];
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el punto de detencion con id ".$id_punto_detencion." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
+    }
+
+    public function getPuntosDetencionServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT 
+            pd.id_punto_detencion,
+            pd.nombre AS nombre_punto,
+            c.nombre AS nombre_calle
+            FROM puntos_detencion pd inner join calles c on pd.id_calle = c.id_calle ";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE pd.nombre LIKE :search
+                    OR c.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarPuntosDetencionFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM puntos_detencion pd inner join calles c on pd.id_calle = c.id_calle";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE pd.nombre LIKE :search
+                    OR c.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarPuntosDetencion()
+    {
+        $sql = "SELECT COUNT(*) as total FROM puntos_detencion";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }
 

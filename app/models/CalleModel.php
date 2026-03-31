@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /*
@@ -59,13 +61,25 @@ class CalleModel
     */
     public function updateCalle($id_calle, $nombre_calle): bool
     {
-        $stmt = $this->db->prepare("UPDATE calles SET nombre = :nombre 
-        WHERE id_calle = :id_calle");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_calle' => $id_calle,'nombre' => $nombre_calle ]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        $query = "UPDATE calles SET nombre = :nombre WHERE id_calle = :id_calle";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_calle' => $id_calle,'nombre' => $nombre_calle ];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar la calle con id ".$id_calle." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
+
     /** 
         * Funcion que ejecuta una query para insertar una nueva calle en la base de datos.
         * PRE: Recibe el nombre de la nueva calle a ser almacenada en la base de datos.
@@ -75,10 +89,22 @@ class CalleModel
     */
     public function insertCalle($nombre_calle)
     {
-        $stmt = $this->db->prepare("INSERT INTO calles (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_calle]);
-        return $this->db->lastInsertId();
+        $query = "INSERT INTO calles (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_calle];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar la calle ".$nombre_calle." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /** 
@@ -91,10 +117,90 @@ class CalleModel
     */
     public function deleteCalle($id_calle): bool
     {
-        $stmt = $this->db->prepare("DELETE from calles WHERE id_calle = :id_calle");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_calle' => $id_calle]);
+        $query = "DELETE from calles WHERE id_calle = :id_calle";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_calle' => $id_calle];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la calle con id ".$id_calle." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByCalle($id_calle): array
+    {
+        $stmt = $this->db->prepare("SELECT p.* 
+        FROM permisos p
+        JOIN recorridos_permisos rp ON rp.id_permiso = p.id_permiso
+        JOIN calles_recorridos cr ON cr.id_recorrido = rp.id_recorrido
+        WHERE cr.id_calle = :id_calle");
+        $stmt->execute(['id_calle' => $id_calle]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getCallesServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT * FROM calles c ";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE c.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarCallesFiltradas($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM calles c";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE c.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarCalles()
+    {
+        $sql = "SELECT COUNT(*) as total FROM calles";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }
 

@@ -1,5 +1,8 @@
 <?php
 
+require_once __DIR__ . '/../helpers/DerechosUsuariosHelper.php';
+
+require_once __DIR__ . '/../helpers/logHelper.php';
 class Control
 {
 
@@ -47,7 +50,10 @@ class Control
                 require_once $viewFile;
             }
         } else {
-            die($viewFile);
+            $_SESSION['error_inicio'] = "Error: La vista {$viewFile} no existe.";
+            writeLog("❌ Error: La vista {$viewFile} no existe.");
+            header("Location: " . URL);
+            exit;
         }
     }
 
@@ -56,32 +62,33 @@ class Control
      */
     protected function checkRememberMeToken()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        // if (session_status() === PHP_SESSION_NONE) {
+        //     session_start();
+        // }
 
-        if (!isset($_SESSION['usuario_id']) &&
-            isset($_COOKIE['remember_token']) &&
-            isset($_COOKIE['id_usuario'])) {
+        // if (!isset($_SESSION['usuario_id']) &&
+        //     isset($_COOKIE['remember_token']) &&
+        //     isset($_COOKIE['id_usuario'])) {
 
-            $token = $_COOKIE['remember_token'];
-            $usuarioId = $_COOKIE['id_usuario'];
+        //     $token = $_COOKIE['remember_token'];
+        //     $usuarioId = $_COOKIE['id_usuario'];
 
-            $tokenModel = $this->load_model('RememberTokensModel');
-            $usuarioData = $tokenModel->validateRememberMeToken($usuarioId, $token);
+        //     $tokenModel = $this->load_model('RememberTokensModel');
+        //     $usuarioData = $tokenModel->validateRememberMeToken($usuarioId, $token);
 
-            if ($usuarioData) {
-                $_SESSION['usuario_id'] = $usuarioData['id_usuario'];
-                $_SESSION['usuario_nombre'] = $usuarioData['nombre'];
-                $_SESSION['usuario_apellido'] = $usuarioData['apellido'];
-                $_SESSION['usuario_tipo'] = $usuarioData['id_tipo_usuario'];
+        //     if ($usuarioData) {
+        //         $_SESSION['usuario_id'] = $usuarioData['id_usuario'];
+        //         $_SESSION['usuario_nombre'] = $usuarioData['nombre'];
+        //         $_SESSION['usuario_apellido'] = $usuarioData['apellido'];
+        //         $_SESSION['usuario_tipo'] = $usuarioData['id_tipo_usuario'];
+        //         $_SESSION['usuario_derechos'] = DerechosUsuariosHelper::getDerechos($usuarioData['id_tipo_usuario']);
 
-                $this->createRememberMeToken($usuarioData['id_usuario']); // renovar token
+        //         $this->createRememberMeToken($usuarioData['id_usuario']); // renovar token
 
-                header("Location: " . URL . "/inicio");
-                exit;
-            }
-        }
+        //         header("Location: " . URL . "/inicio");
+        //         exit;
+        //     }
+        // }
     }
 
     /**
@@ -92,15 +99,15 @@ class Control
      */
     protected function createRememberMeToken($id_usuario)
     {
-        $token = bin2hex(random_bytes(32));
-        $expiry = time() + 60 * 60 * 24 * 30;
+        // $token = bin2hex(random_bytes(32));
+        // $expiry = time() + 60 * 60 * 24 * 30;
 
-        $tokenModel = $this->load_model('RememberTokensModel');
-        $tokenModel->insertRememberMeToken($id_usuario, $token, $expiry);
+        // $tokenModel = $this->load_model('RememberTokensModel');
+        // $tokenModel->insertRememberMeToken($id_usuario, $token, $expiry);
 
-        $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
-        setcookie('remember_token', $token, $expiry, '/', '', $secure, true);
-        setcookie('id_usuario', $id_usuario, $expiry, '/', '', $secure, true);
+        // $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        // setcookie('remember_token', $token, $expiry, '/', '', $secure, true);
+        // setcookie('id_usuario', $id_usuario, $expiry, '/', '', $secure, true);
     }
 
     //**
@@ -117,6 +124,10 @@ class Control
             header("Location: " . URL . "/auth/login");
             exit;
         }
+    }
+
+    protected function tienePermiso($permiso){
+        return (in_array($permiso,$_SESSION['usuario_derechos']));
     }
 }
 

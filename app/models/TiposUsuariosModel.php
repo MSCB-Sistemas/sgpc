@@ -67,9 +67,8 @@ class TiposUsuariosModel
         $stmt = $this->db->prepare("UPDATE tipos_usuarios SET tipo_usuario = :tipo_usuario
         WHERE id_tipo_usuario = :id_tipo_usuario");
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_tipo_usuario' => $id_tipo_usuario,'tipo_usuario' => $tipo_usuario ]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        
+        return $stmt->execute(['id_tipo_usuario' => $id_tipo_usuario,'tipo_usuario' => $tipo_usuario ]);
     }
  
     /**

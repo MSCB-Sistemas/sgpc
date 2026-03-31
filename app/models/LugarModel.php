@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /*    Clase para manejar las operaciones sobre la tabla lugares en la base de datos.
@@ -23,7 +25,7 @@ class LugarModel
     */
     public function getAllLugares(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM lugares");
+        $stmt = $this->db->prepare("SELECT * FROM lugares where activo = 1");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
@@ -58,12 +60,24 @@ class LugarModel
     */
     public function updateLugar($id_lugar, $nombre_lugar): bool
     {
-        $stmt = $this->db->prepare("UPDATE lugares SET nombre = :nombre 
-        WHERE id_lugar = :id_lugar");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_lugar' => $id_lugar,'nombre' => $nombre_lugar]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        $query = "UPDATE lugares SET nombre = :nombre WHERE id_lugar = :id_lugar";
+        $stmt = $this->db->prepare($query);
+        
+        $params = ['id_lugar' => $id_lugar,'nombre' => $nombre_lugar];
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
     /** 
      * Funcion que ejecuta una query para insertar un nuevo lugar.
@@ -74,10 +88,23 @@ class LugarModel
     */
     public function insertLugar($nombre_lugar)
     {
-        $stmt = $this->db->prepare("INSERT INTO lugares (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_lugar]);
-        return $this->db->lastInsertId();
+        $query = "INSERT INTO lugares (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_lugar];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el lugar ".$nombre_lugar." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /** 
@@ -90,10 +117,118 @@ class LugarModel
     */
     public function deleteLugar($id_lugar): bool
     {
-        $stmt = $this->db->prepare("DELETE from lugares WHERE id_lugar = :id_lugar");
+        $query = "DELETE from lugares WHERE id_lugar = :id_lugar";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_lugar' => $id_lugar];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
+        return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByLugarId($id_lugar): array 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM permisos WHERE id_lugar = :id_lugar");
+        $stmt->execute(['id_lugar' => $id_lugar]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarLugar($id_lugar): bool
+    {
+        $query = "UPDATE lugares SET activo = 0 WHERE id_lugar = :id_lugar";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_lugar' => $id_lugar];
+
+        auditoriaHelper::Log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el lugar con id ".$id_lugar." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
+    }
+
+    public function getPermisosByLugar($id_lugar): array
+    {
+        $stmt = $this->db->prepare("SELECT p.* FROM permisos p
+                                    WHERE p.id_lugar = :id_lugar");
         // Ejecuta la consulta pasando los valores
         $stmt->execute(['id_lugar' => $id_lugar]);
-        return $stmt->rowCount() > 0;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getLugaresServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT * FROM lugares l where activo = 1";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " AND l.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarLugaresFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM lugares l where activo = 1";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " AND l.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarLugares()
+    {
+        $sql = "SELECT COUNT(*) as total FROM lugares where activo = 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }
 

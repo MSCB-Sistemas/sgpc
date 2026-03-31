@@ -1,11 +1,3 @@
-  <div class="position-fixed bottom-0 end-0 mb-3 me-3 d-flex align-items-center gap-2">
-    <button type="button" class="btn btn-outline-secondary" id="toggleTheme">Cambiar tema</button>
-    <?php 
-      if (isset($datos['title']) && $datos['title'] != "Login"){
-        echo "<a href='" . URL . "/auth/logout' class='btn btn-danger'>Cerrar sesión</a>";
-      }
-    ?>
-  </div>
 
   <!-- ✅ Solo una vez Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -40,7 +32,12 @@
 
           toggleBtn.addEventListener('click', () => {
               const currentTheme = html.getAttribute('data-bs-theme');
-              const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+              const themeMap = {
+                  'light': 'dark',
+                  'dark': 'light'
+              };
+              const newTheme = themeMap[currentTheme] || 'light';
+              
               setTheme(newTheme);
               localStorage.setItem('theme', newTheme);
           });

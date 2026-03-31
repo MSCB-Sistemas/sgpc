@@ -20,7 +20,7 @@
 <form action="<?= $datos['action'] ?>" method="POST" id="permisoForm">
 
     <div class="mb-3 row">
-        <div class="col-md-5">
+        <div class="col-md-10">
             <label class="form-label d-block">Tipo de Permiso</label>
             <div class="btn-group" role="group" aria-label="Tipo de permiso">
                 <input type="radio" class="btn-check" name="tipo_permiso" id="charter" autocomplete="off" value="charter" checked>
@@ -28,6 +28,9 @@
 
                 <input type="radio" class="btn-check" name="tipo_permiso" id="linea" autocomplete="off" value="linea">
                 <label class="btn btn-outline-primary" for="linea">Línea</label>
+
+                <input type="radio" class="btn-check" name="tipo_permiso" id="convalidaciones" autocomplete="off" value="convalidaciones">
+                <label class="btn btn-outline-primary" for="convalidaciones">Convalidaciones</label>
 
                 <input type="radio" class="btn-check" name="tipo_permiso" id="otros" autocomplete="off" value="otros">
                 <label class="btn btn-outline-primary" for="otros">Otros</label>
@@ -40,60 +43,263 @@
                 <label class="btn btn-outline-info" for="salida">Salida</label>
             </div>
         </div>
-
     </div>
     <div class="row mb-3">
 
         <!-- Servicio -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="servicio" class="form-label">Servicio</label>
-                <select class="form-select" id="servicio" name="id_servicio" required>
-                    <option value="">Seleccione...</option>
+                <!-- Servicio -->
+                 <label for="servicio_search" class="form-label">Servicio</label>
+                <input list="servicios" id="servicio_search" name="servicio_search" class="form-control" placeholder="Buscar servicio..." autocomplete="off" required>
+                <input type="hidden" name="id_servicio" id="id_servicio">
+                <datalist id="servicios">
                     <?php foreach ($datos['servicios'] as $s): ?>
-                        <option value="<?= $s['id_servicio'] ?>"
-                            <?= ($datos['values']['id_servicio'] ?? '') == $s['id_servicio'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($s['interno'] . ' - ' . $s['dominio']) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($s['interno'] . ' - ' . $s['dominio']) ?>" data-id="<?= $s['id_servicio'] ?>">
                     <?php endforeach; ?>
-                </select>
+                </datalist>
+
+                <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                    const servicioInput = document.getElementById('servicio_search');
+                    const servicioHidden = document.getElementById('id_servicio');
+                    const servicioOptions = document.querySelectorAll('#servicios option');
+
+                    let lastValidServicio = '';  // Último texto válido
+                    let lastValidServicioId = ''; // Último ID válido
+
+                    servicioInput.addEventListener('input', () => {
+                        const val = servicioInput.value.trim();
+                        let valid = false;
+                        let newId = '';
+
+                        servicioOptions.forEach(opt => {
+                            if (opt.value === val) {
+                                valid = true;
+                                newId = opt.dataset.id;
+                            }
+                        });
+
+                        if (valid) {
+                            //  Coincide con un servicio válido → actualizar ID y recordar valores
+                            servicioHidden.value = newId;
+                            lastValidServicio = val;
+                            lastValidServicioId = newId;
+                            servicioInput.setCustomValidity('');
+                        } else {
+                            //  No coincide → mantener último ID válido
+                            servicioHidden.value = lastValidServicioId;
+                            servicioInput.setCustomValidity('Debe seleccionar un servicio de la lista');
+
+                            // Al salir del campo, restaurar si quedó vacío o con texto no válido
+                            servicioInput.addEventListener('blur', () => {
+                                const currentVal = servicioInput.value.trim();
+                                const match = Array.from(servicioOptions).some(o => o.value === currentVal);
+                                if (currentVal === '' || !match) {
+                                    servicioInput.value = lastValidServicio;
+                                    servicioInput.setCustomValidity('');
+                                }
+                            }, { once: true });
+                        }
+                    });
+
+                    //  Función para agregar un nuevo servicio al datalist
+                    function agregarServicio(nombre, id) {
+                    const datalist = document.getElementById('servicios');
+                    const input = document.getElementById('servicio_search');
+                    const hidden = document.getElementById('id_servicio');
+
+                    // Crear nueva opción
+                    const option = document.createElement('option');
+                    option.value = nombre;
+                    option.dataset.id = id;
+                    datalist.appendChild(option);
+
+                    // Actualizar input y hidden
+                    hidden.value = id;
+                    input.value = nombre;
+
+                    // actualizar los valores "último válido"
+                    lastValidServicio = nombre;
+                    lastValidServicioId = id;
+
+                    input.setCustomValidity('');
+                }
+                    </script>
+
             </div>
-            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalServicio">+</button>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalServicio">+</button>
         </div>
 
         <!-- Lugar -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="lugar" class="form-label">Origen/Destino</label>
-                <select class="form-select" data-live-search="true" id="lugar" name="id_lugar" required>
-                    <option value="">Seleccione...</option>
+                 <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
+                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <label for="lugar_search" class="form-label">Origen/Destino</label>
+                <input list="lugares" id="lugar_search" name="lugar_search" class="form-control" placeholder="Buscar lugar..." autocomplete="off" required>
+                <input type="hidden" name="id_lugar" id="id_lugar">
+                <datalist id="lugares">
                     <?php foreach ($datos['lugares'] as $l): ?>
-                        <option value="<?= $l['id_lugar'] ?>"
-                            <?= ($datos['values']['id_lugar'] ?? '') == $l['id_lugar'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($l['nombre']) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($l['nombre']) ?>" data-id="<?= $l['id_lugar'] ?>">
                     <?php endforeach; ?>
-                </select>
-            </div>
-            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
+                </datalist>
         </div>
+        <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalLugar">+</button>
+    </div>
+            <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                    const lugarInput = document.getElementById('lugar_search');
+                    const lugarHidden = document.getElementById('id_lugar');
+                    let lugarOptions = document.querySelectorAll('#lugares option'); 
+
+                    let lastValidLugar = ''; // Último texto válido
+                    let lastValidLugarId = ''; // Último ID válido
+
+                    lugarInput.addEventListener('input', () => {
+                        const val = lugarInput.value.trim();
+                        let valid = false;
+                        let newId = '';
+
+                        lugarOptions.forEach(opt => {
+                            if (opt.value === val) {
+                                valid = true;
+                                newId = opt.dataset.id;
+                            }
+                        });
+
+                        if (valid) {
+                            //  Coincide con un lugar válido → actualizar ID y guardar
+                            lugarHidden.value = newId;
+                            lastValidLugar = val;
+                            lastValidLugarId = newId;
+                            lugarInput.setCustomValidity('');
+                        } else {
+                            //  No coincide → mantener último ID válido
+                            lugarHidden.value = lastValidLugarId;
+                            lugarInput.setCustomValidity('Debe seleccionar un lugar de la lista');
+
+                            // Cuando salga del campo, restaurar texto si no coincide
+                            lugarInput.addEventListener('blur', () => {
+                                const currentVal = lugarInput.value.trim();
+                                const match = Array.from(lugarOptions).some(o => o.value === currentVal);
+                                if (currentVal === '' || !match) {
+                                    lugarInput.value = lastValidLugar;
+                                    lugarInput.setCustomValidity('');
+                                }
+                            }, { once: true });
+                        }
+                    });
+
+                    // Función para agregar un nuevo lugar dinámicamente
+                    function agregarLugar(nombre, id) {
+                        const datalist = document.getElementById('lugares');
+                        const input = document.getElementById('lugar_search');
+                        const hidden = document.getElementById('id_lugar');
+
+                        // (código para crear y agregar la nueva opción)
+                        const option = document.createElement('option');
+                        option.value = nombre;
+                        option.dataset.id = id;
+                        datalist.appendChild(option);
+
+                        // Actualizar valores e inputs
+                        hidden.value = id;
+                        input.value = nombre;
+                        input.setCustomValidity('');
+
+                        // Actualizar variables de estado
+                        lastValidLugar = nombre;
+                        lastValidLugarId = id;
+
+                        lugarOptions = document.querySelectorAll('#lugares option');
+                    }
+                    </script>
+
     </div>
     <div class="row mb-3">
         <!-- Chofer -->
         <div class="col-md-6 d-flex align-items-end">
             <div class="flex-grow-1">
-                <label for="chofer" class="form-label">Chofer</label>
-                <select class="form-select" data-live-search="true" id="chofer" name="id_chofer" required>
-                    <option value="">Seleccione...</option>
+                <!-- SE CAMBIO EL SELECT POR UN INPUT CON DATALIST PARA BUSQUEDA PARA QUE SEA MAS EFICIENTE
+                 Y SE TUVO QUE AGREGAR UNA FUNCION EN JAVA SCRIPT PARA QUE ENVIE LA ID Y NO ROMPA EL RESTO DEL CODIGO -->
+                <label for="chofer_search" class="form-label">Chofer</label>
+                <input list="choferes" id="chofer_search" name="chofer_search" class="form-control" placeholder="Buscar chofer..." autocomplete="off" required>
+                <input type="hidden" name="id_chofer" id="id_chofer">
+
+                <datalist id="choferes">
                     <?php foreach ($datos['choferes'] as $c): ?>
-                        <option value="<?= $c['id_chofer'] ?>"
-                            <?= ($datos['values']['id_chofer'] ?? '') == $c['id_chofer'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($c['dni'] . ' - ' . $c['nombre'] . ' ' . $c['apellido']) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($c['dni'] . ' - ' . $c['apellido'] . ' ' . $c['nombre']) ?>" data-id="<?= $c['id_chofer'] ?>">
                     <?php endforeach; ?>
-                </select>
+                </datalist>
+                <!-- SCRIPT PARA QUE FUNCIONE EL DATALIST Y ENVIE LA ID CORRECTA -->
+                <script>
+                    const input = document.getElementById('chofer_search');
+                    const hidden = document.getElementById('id_chofer');
+                    let options = document.querySelectorAll('#choferes option');
+
+                    let lastValidValue = ''; // texto del último chofer válido
+                    let lastValidId = '';    // id del último chofer válido
+
+                    input.addEventListener('input', () => {
+                        const val = input.value.trim();
+                        let valid = false;
+                        let newId = '';
+
+                        options.forEach(opt => {
+                            if (opt.value === val) {
+                                valid = true;
+                                newId = opt.dataset.id;
+                            }
+                        });
+
+                        if (valid) {
+                            // Si Coincide con un chofer válido → actualizar id y guardar como última selección
+                            hidden.value = newId;
+                            lastValidId = newId;
+                            lastValidValue = val;
+                            input.setCustomValidity("");
+                        } else {
+                            //  No coincide, mantener el último id válido
+                            hidden.value = lastValidId;
+                            input.setCustomValidity("Debe seleccionar un chofer de la lista");
+
+                            // Vuelve a mostrar el ultimo valor seleccionado
+                            input.addEventListener('blur', () => {
+                                if (input.value.trim() === '' || !Array.from(options).some(o => o.value === input.value.trim())) {
+                                    input.value = lastValidValue;
+                                    input.setCustomValidity("");
+                                }
+                            }, { once: true });
+                        }
+                    });
+                    function agregarChofer(nombre, id) {
+                        // 1. Referencias a los elementos del DOM
+                        const datalist = document.getElementById('choferes');
+                        const input = document.getElementById('chofer_search');
+                        const hidden = document.getElementById('id_chofer');
+
+                        // 2. Crear y añadir la nueva opción al datalist
+                        const option = document.createElement('option');
+                        option.value = nombre;
+                        option.dataset.id = id;
+                        datalist.appendChild(option);
+
+                        // 3. Actualizar el input visible y el oculto
+                        hidden.value = id;
+                        input.value = nombre;
+                        input.setCustomValidity('');
+
+                        // 4. Actualizar la "memoria" de JavaScript (las variables de estado)
+                        lastValidValue = nombre;
+                        lastValidId = id;
+
+                        // 5. Actualizar la lista de opciones para futuras validaciones
+                        options = document.querySelectorAll('#choferes option');
+                    }
+                    </script>
             </div>
-            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
+            <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#modalChofer">+</button>
         </div>
 
     <!-- Fecha -->
@@ -116,8 +322,7 @@
             <select class="form-select" id="recorrido" name="id_recorrido" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($datos['recorridos'] as $r): ?>
-                    <option value="<?= $r['id_recorrido'] ?>"
-                        <?= ($datos['values']['id_recorrido'] ?? '') == $r['id_recorrido'] ? 'selected' : '' ?>>
+                    <option value="<?= $r['id_recorrido'] ?>">
                         <?= htmlspecialchars($r['nombre']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -125,7 +330,7 @@
 
         </div>
             <div class="col-sm-2 d-flex align-items-end mb-2">
-                <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
+                <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalRecorrido">+</button>
             </div>
             <!-- Accordion de Recorrido -->
             <div class="accordion mb-3 d-none" id="accordionRecorrido">
@@ -140,9 +345,67 @@
                     <div class="row">
                     <div class="col-md-6">
                         <h6>Calles del Recorrido</h6>
+                        <!-- Selector de calles -->
+                        <div class="mb-3 d-flex gap-2 align-items-end">
+                            <div class="flex-grow-1">
+                                <input list="callesList" id="inputCalleForm" class="form-control" placeholder="Escriba para buscar una calle">
+                                <datalist id="callesList">
+                                <?php foreach ($datos['calles'] as $c): ?>
+                                    <option value="<?= htmlspecialchars($c['nombre']) ?>" data-id="<?= $c['id_calle'] ?>">
+                                <?php endforeach; ?>
+                                </datalist>
+                            </div>
+                            <div>
+                                <button type="button" id="addCalleForm" class="btn btn-primary">+</button>
+                            </div>
+                        </div>
+                        <!-- Script para agregar calles al recorrido con el boton + -->
+                        <script>
+                        document.getElementById('addCalleForm').addEventListener('click', function () {
+                            const input = document.getElementById('inputCalleForm');
+                            const nombre = input.value.trim();
+                            
+                            if (!nombre) return;
+
+                            // Buscar el option correspondiente para obtener el id
+                            const option = document.querySelector(`#callesList option[value="${nombre}"]`);
+                            const id = option ? option.dataset.id : null;
+
+                            if (!id) {
+                                alert("La calle no existe en la lista");
+                                return;
+                            }
+
+                            // Evitar duplicados
+                            if (document.querySelector(`#tablaCalles tbody tr[data-id="${id}"]`)) {
+                                alert("Esa calle ya fue agregada.");
+                                return;
+                            }
+
+                            // Crear fila
+                            const tbody = document.querySelector('#tablaCalles tbody');
+                            const tr = document.createElement('tr');
+                            tr.setAttribute('data-id', id);
+                            tr.innerHTML = `
+                            <td class="calle-item">${nombre}</td>
+                            <td><button type="button" class="btn btn-sm btn-danger removeCalle float-end">-</button></td>
+                            `;
+                            tbody.appendChild(tr);
+
+                            input.value = ""; // limpiar input
+                        });
+
+                        // Manejo del botón de eliminar
+                        document.querySelector('#tablaCalles tbody').addEventListener('click', function(e) {
+                        if(e.target.classList.contains('removeCalle')) {
+                            e.target.closest('tr').remove();
+                        }
+                        });
+                        </script>
                         <table class="table table-hover align-middle mb-0" id="tablaCalles">
                         <thead>
-                            <tr><th>Nombre</th></tr>
+                            <tr><th>Nombre</th><th></th></tr>
+                            
                         </thead>
                         <tbody>
                             <!-- Se cargan dinámicamente -->
@@ -150,7 +413,14 @@
                         </table>
                     </div>
                     <div class="col-md-6">
-                        <h6>Puntos de Detención</h6>
+                        <h6>Puntos de Detención
+                        <!-- <button type="button" id="btnRefreshPuntos" class="btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                            </svg>
+                        </button> -->
+                        <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#modalPunto">Nuevo</button></h6>
                         <table class="table table-hover align-middle mb-0" id="tablaPuntos">
                         <thead>
                             <tr>
@@ -175,14 +445,44 @@
     <!-- Observación -->
     <div class="mb-3">
         <label for="observacion" class="form-label">Observación</label>
-        <textarea class="form-control" id="observacion" name="observacion" rows="3"><?= htmlspecialchars($datos['values']['observacion'] ?? '') ?></textarea>
+        <textarea class="form-control" id="observacion" name="observacion" rows="3"><?php 
+                if (isset($datos['values']['observacion'])) 
+                { 
+                    $valorObservacion = htmlspecialchars($datos['values']['observacion']);
+                }
+            ?></textarea>
     </div>
-
-    <button type="submit" class="btn btn-success">Guardar</button>
-    <a href="<?= URL ?>/permiso" class="btn btn-secondary">Cancelar</a>
+            
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="chk_cta_cte" value="1" id="chk_cta_cte">
+        <label class="form-check-label" for="chk_cta_cte">
+            Cuenta Corriente
+        </label>
+    </div>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> Guardar</button>
+        <a href="<?= URL ?>" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancelar</a>
+    </div>
 </form>
+<style>
+    #tablaCalles td button {
+        display: inline-block;
+    }
+
+    #tablaCalles td:last-child {
+        width: 1%;
+        white-space: nowrap;
+    }
+</style>
 
 <?php include APP.'/views/pages/partials/modalesPermiso.php'; ?>
+<?php if(!empty($datos['imprimir'])): ?>
+<script>
+    window.open('/sgpc/permiso/imprimir/<?= $datos['imprimir'] ?>', '_blank');
+</script>
+<?php endif; ?>
 <script>
     _URL = '<?= URL ?>';
     window._HOTELES = <?= json_encode($datos['hoteles']) ?>;

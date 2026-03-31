@@ -14,23 +14,38 @@
     <form action="<?= $datos['action'] ?>" method="POST">
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre</label>
+            <?php
+                if (isset($datos['values']['nombre'])) {
+                    $valuesNombre = htmlspecialchars($datos['values']['nombre']);
+                } else {
+                    $valuesNombre = '';
+                }
+            ?>
             <input type="text" class="form-control" id="nombre" name="nombre" 
-                   value="<?= htmlspecialchars($datos['values']['nombre'] ?? '') ?>" required>
+                   value="<?= $valuesNombre ?>" required>
         </div>
         <div class="mb-3">
             <label for="calle" class="form-label">Calle</label>
             <select class="form-select" id="calle" name="calle" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($datos['calles'] as $n): ?>
-                    <option value="<?= $n['id_calle'] ?>"
-                        <?= ($datos['values']['nombre'] ?? '') == $n['id_calle'] ? 'selected' : '' ?>>
+                    <?php
+                        $selected = '';
+                        if (isset($datos['calle']) && $datos['calle'] == $n['id_calle']) {
+                            $selected = 'selected';
+                        }
+                    ?>
+                    <option value="<?= $n['id_calle'] ?>" <?= $selected ?>>
                         <?= htmlspecialchars($n['nombre']) ?>
                     </option>
                 <?php endforeach ?>
             </select>
         </div>
-
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="<?= URL ?>/puntosDetencion" class="btn btn-secondary">Cancelar</a>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar</button>
+            <a href="<?= URL ?>/puntosdetencion" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar</a>
+        </div>
     </form>
 </div>

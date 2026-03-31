@@ -15,8 +15,15 @@
         <!-- Nombre del recorrido -->
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre del recorrido</label>
+            <?php
+                if (isset($datos['values']['nombre'])) {
+                    $valuesNombre = htmlspecialchars($datos['values']['nombre']);
+                } else {
+                    $valuesNombre = '';
+                }
+            ?>
             <input type="text" class="form-control" id="nombre" name="nombre"
-                   value="<?= htmlspecialchars($datos['values']['nombre'] ?? '') ?>" required>
+                   value="<?= $valuesNombre ?>" required>
         </div>
 
         <!-- Selector de calles -->
@@ -61,8 +68,12 @@
         </div>
 
         <!-- Botones -->
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="<?= URL ?>/recorrido" class="btn btn-secondary">Cancelar</a>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar</button>
+            <a href="<?= URL ?>/recorrido" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar</a>
+        </div>
     </form>
 </div>
 
@@ -98,4 +109,12 @@
             document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
         }
     });
+
+    document.getElementById('tablaCalles').addEventListener('click', function (e) {
+        if (e.target.classList.contains('removeCalle')) {
+            e.target.closest('tr').remove();
+        }
+    });
+
+    selectCalle.focus();
 </script>

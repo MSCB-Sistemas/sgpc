@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /*
@@ -7,10 +9,8 @@ require_once 'Database.php';
 */
 class EmpresaModel
 {
-    // Instancia de conexion la base de datos.
     private PDO $db;
 
-    // Establece la conexion la base de datos.
     public function __construct()
     {
         $this->db = Database::connect();
@@ -24,7 +24,7 @@ class EmpresaModel
     */
     public function getAllEmpresas(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM empresas");
+        $stmt = $this->db->prepare("SELECT * FROM empresas where activo = 1");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
@@ -59,12 +59,22 @@ class EmpresaModel
     */
     public function updateEmpresa($id_empresa, $nombre_empresa): bool 
     {
-        $stmt = $this->db->prepare("UPDATE empresas SET nombre = :nombre 
-        WHERE id_empresa = :id_empresa");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_empresa' => $id_empresa,'nombre' => $nombre_empresa]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
+        $query = "UPDATE empresas SET nombre = :nombre WHERE id_empresa = :id_empresa";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_empresa' => $id_empresa,'nombre' => $nombre_empresa];
+
+        auditoriaHelper::log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        );
+        if($stmt->execute($params)){
+            return true;
+        } else {
+            writeLog("❌ Error: No se pudo actualizar la empresa con id " . $id_empresa . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
+            return false;
+        }
     }
 
     /** 
@@ -76,10 +86,22 @@ class EmpresaModel
     */
     public function insertEmpresa($nombre_empresa)
     {
-        $stmt = $this->db->prepare("INSERT INTO empresas (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_empresa]);
-        return $this->db->lastInsertId();
+        $query = "INSERT INTO empresas (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['nombre' => $nombre_empresa];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar la empresa " . $nombre_empresa . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
+        }
+
+        return $result;
     }
 
     /** 
@@ -91,9 +113,107 @@ class EmpresaModel
     */
     public function deleteEmpresa($id_empresa): bool
     {
-        $stmt = $this->db->prepare("DELETE from empresas WHERE id_empresa = :id_empresa");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_empresa' => $id_empresa]);
+        $query = "DELETE from empresas WHERE id_empresa = :id_empresa";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_empresa' => $id_empresa];
+        $stmt->execute($params);
+
+        auditoriaHelper::Log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        );
+        if($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la empresa con id " . $id_empresa . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByEmpresa($id_empresa): array
+    {
+        $stmt = $this->db->prepare("SELECT p.* FROM permisos p
+                                    INNER JOIN servicios s ON p.id_servicio = s.id_servicio
+                                    WHERE s.id_empresa = :id_empresa");
+        $stmt->execute(['id_empresa' => $id_empresa]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function desactivarEmpresa($id_empresa): bool
+    {
+        $query = "UPDATE empresas SET activo = 0 WHERE id_empresa = :id_empresa";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_empresa' => $id_empresa];
+
+        auditoriaHelper::Log(
+            $_SESSION['id_usuario'],
+            $query,
+            $params
+        );
+        if (!$stmt->execute($params)) {
+            writeLog("❌ Error: No se pudo desactivar la empresa con id " . $id_empresa . " en la base de datos. Query: " . $query . "parametros: " . json_encode($params));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function getEmpresasServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT * FROM empresas e ";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE e.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarEmpresasFiltradas($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM empresas e";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE e.nombre LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarEmpresas()
+    {
+        $sql = "SELECT COUNT(*) as total FROM empresas";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }

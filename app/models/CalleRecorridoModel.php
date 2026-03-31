@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /**
@@ -60,14 +62,19 @@ class CalleRecorridoModel
      */
     public function insertCalleRecorrido($id_recorrido, $id_calle): bool|string
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO calles_recorridos (id_recorrido, id_calle) VALUES (:id_recorrido, :id_calle)"
+        $query = "INSERT INTO calles_recorridos (id_recorrido, id_calle) VALUES (:id_recorrido, :id_calle)";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id_recorrido' => $id_recorrido, 'id_calle' => $id_calle];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
         );
-        $stmt->execute([
-            'id_recorrido' => $id_recorrido,
-            'id_calle' => $id_calle
-        ]);
-        return $this->db->lastInsertId();
+
+        return $result;
     }
 
     /**
@@ -80,17 +87,26 @@ class CalleRecorridoModel
      */
     public function updateCalleRecorrido($id, $id_recorrido, $id_calle): bool|string
     {
-        $stmt = $this->db->prepare(
-            "UPDATE calles_recorridos 
-             SET id_recorrido = :id_recorrido, id_calle = :id_calle 
-             WHERE id_calle_recorrido = :id"
-        );
-        $stmt->execute([
+        $query = "UPDATE calles_recorridos SET id_recorrido = :id_recorrido, id_calle = :id_calle WHERE id_calle_recorrido = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = [
             'id' => $id,
             'id_recorrido' => $id_recorrido,
             'id_calle' => $id_calle
-        ]);
-        return $stmt->rowCount() > 0;
+        ];
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if ($stmt->execute($params)){
+            return true;
+        } else {
+            writeLog("❌ Error: No se pudo actualizar la relación con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+            return false;
+        }
     }
 
     /**
@@ -101,8 +117,21 @@ class CalleRecorridoModel
      */
     public function deleteCalleRecorrido($id): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM calles_recorridos WHERE id_calle_recorrido = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "DELETE FROM calles_recorridos WHERE id_calle_recorrido = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id' => $id];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la relación con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
     
@@ -122,6 +151,17 @@ class CalleRecorridoModel
         $stmt->execute(['id_recorrido' => $id_recorrido]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getRecorridosByCalle($id_calle): bool|array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT r.nombre FROM recorridos r
+             JOIN calles_recorridos ON r.id_recorrido = calles_recorridos.id_recorrido 
+             WHERE calles_recorridos.id_calle = :id_calle"
+        );
+        $stmt->execute(['id_calle' => $id_calle]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
     /**
      * Elimina todas las calles asociadas a un recorrido específico.
@@ -131,8 +171,21 @@ class CalleRecorridoModel
      */
     public function deleteByRecorrido($id): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM calles_recorridos WHERE id_recorrido = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "DELETE FROM calles_recorridos WHERE id_recorrido = :id";
+        $stmt = $this->db->prepare($query);
+
+        $params = ['id' => $id];
+        $stmt->execute($params);
+
+        auditoriaHelper::log(
+            $_SESSION['ususario_id'],
+            $query,
+            $params
+        );
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar las calles asociadas al recorrido con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 }

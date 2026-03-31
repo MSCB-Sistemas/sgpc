@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../helpers/logHelper.php';
   class Core
   {
     protected $controller;
@@ -8,20 +9,18 @@
     public function __construct()
     {
       $url = $this->getUrl();
-      session_set_cookie_params([
-            'lifetime' => 0,       // Expira al cerrar el navegador
-            'path' => '/',
-            'secure' => true,      // Solo HTTPS (false en desarrollo local)
-            'httponly' => true,   // Protección contra JS malicioso
-            'samesite' => 'Lax'   // Seguridad CSRF
-        ]);
+      // session_set_cookie_params([
+      //       'lifetime' => 0,       // Expira al cerrar el navegador
+      //       'path' => '/',
+      //       'secure' => true,      // Solo HTTPS (false en desarrollo local)
+      //       'httponly' => true,   // Protección contra JS malicioso
+      //       'samesite' => 'Lax'   // Seguridad CSRF
+      // ]);
+      session_start();
       // Si no hay controlador definido en la URL, redirigir según el login
       if (!$url || empty($url[0])) {
-          if (session_status() === PHP_SESSION_NONE) {
-              session_start();
-          }
           if (isset($_SESSION['usuario_id'])) {
-              $this->controller = 'inicio';
+              $this->controller = 'Inicio';
               $this->method = 'index';
           } else {
               $this->controller = 'Auth';
@@ -31,8 +30,12 @@
           $this->controller = ucwords($url[0]);
           unset($url[0]);
       } else {
-          // Controlador no encontrado
-          die("Controlador no encontrado");
+        if ($url[0]!='css'){
+          $_SESSION['error_inicio'] = "Error: Controlador no encontrado: " . $url[0] ;
+          writeLog("❌ Error: Controlador no encontrado: " . $url[0]);
+        }
+        header("Location: " . URL);
+        exit;
       }
 
       // Cargar el controlador
@@ -55,7 +58,14 @@
       }
 
       // Llamar al método con parámetros
-      call_user_func_array([$this->controller, $this->method], $this->parameters);
+      try{
+        call_user_func_array([$this->controller, $this->method], $this->parameters);
+      }
+      catch (Exception $e) {
+        writeLog("❌ Error: Parámetros incorrectos para el método " . $this->method . " del controlador " . $this->controller::class . ". Mensaje: " . $e->getMessage());
+        header("Location: " . URL);
+        exit;
+      }
     }
 
     public function getUrl()

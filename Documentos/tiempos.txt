@@ -4,4 +4,19 @@ abm recorridos
 
 form principal permisos
     complejidad: alta
-    tiempo: 1h +
+    tiempo: 14h +
+
+-------------------------------------------------
+    Rami
+
+    Tiempo correcciones en el login: 8hs
+    Datos estadisticas:
+    Querys 8hs
+    View 8 hs
+    Controller 8hs
+    Resumen: View 12hs Controllers 12hs models 8hs
+    Inicio: 8hs
+
+    Otros:
+    Controllers: 8hs
+    models(6):(4hs)  

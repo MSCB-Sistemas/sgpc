@@ -37,9 +37,9 @@
     <?php endif; ?>
 
     <p class="medium" style="margin-bottom: 0pt;">
-        Recorrido: <?= htmlspecialchars($datos['calles_recorrido']) ?>
+        Recorrido: <b><?= htmlspecialchars($datos['recorrido']) ?></b> - Calles: <?= htmlspecialchars($datos['calles_recorrido']) ?>
         <?php if ($datos['tipo'] === 'linea'): ?>
-            - horario derecho de dársena: {hora_ocupa_darsena}
+            - horario derecho de dársena: <?php if(!empty($datos['paradas'])){echo $datos['paradas'][0]['horario'];}?>
         <?php endif; ?>
     </p>
     <?php if (!empty($datos['paradas'])): ?>
@@ -99,7 +99,7 @@
     </p>
 
     <p class="notice">
-        LA UNIDAD NO ESTÁ AUTORIZADA A ESTACIONARSE SIN REALIZAR ACTIVIDAD Y/O PERNOCTAR EN LA VÍA PÚBLICA.<br>
+        <b>PROHIBIDO EL USO DE GPS.</b> LA UNIDAD NO ESTÁ AUTORIZADA A ESTACIONARSE SIN REALIZAR ACTIVIDAD Y/O PERNOCTAR EN LA VÍA PÚBLICA.<br>
         POR LEY PROVINCIAL N° 651 Y ORD. MUNICIPAL 500-CM-90 Y 506-CM-90 NO SE AUTORIZA LA CIRCULACIÓN DE UNIDADES DE MÁS DE 10 MTS. DE LARGO PARA LA REALIZACIÓN DE EXCURSIONES A LOS CIRCUITOS TURÍSTICOS: CIRCUITO CHICO, CERRO CATEDRAL, CERRO OTTO, PUERTO PAÑUELO Y TODAS LAS ALTERNATIVAS RELACIONADAS.
     </p>
 

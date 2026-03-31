@@ -6,34 +6,22 @@ class Inicio extends Control
     public function __construct()
     {
         $this->requireLogin();
-        $this->modelo = $this->load_model('PermisoModel');
+        $this->modelo = $this->load_model('EstadisticasModel');
     }
 
     public function index()
     {
-        // Capturar fechas desde GET
-        if (isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
-            $fecha_inicio = $_GET['fecha_inicio'];
-            $fecha_fin = $_GET['fecha_fin'];
-        } else {
-            $fecha_fin = date('Y-m-d');
-            $fecha_inicio = date('Y-m-d', strtotime('-1 month', strtotime($fecha_fin)));
+        $errores = [];
+        if (isset($_SESSION['error_inicio'])) {
+            $errores[] = $_SESSION['error_inicio'];
+            unset($_SESSION['error_inicio']); // Borramos el mensaje después de usarlo
         }
-        
-        // Obtener datos del modelo de permiso que contiene las query para calcular las métricas
-        // y estadísticas de la página de inicio
         $datos = [
-
-
             'title' => 'Inicio',
-            'por_tipo' => $this->modelo->getCantidadPorTipo($fecha_inicio, $fecha_fin),
-            'hoteles_usados' => $this->modelo->getHotelesMasUsados($fecha_inicio, $fecha_fin),
-            'empresas_frecuentes' => $this->modelo->getEmpresasMasFrecuentes($fecha_inicio, $fecha_fin),
-            'promedio_ingresos' => $this->modelo->getPromediosPermisos($fecha_inicio, $fecha_fin),
-            'reservas_desde_hoy' => $this->modelo->getReservasDesdeHoy()
-            
+            'reservas_desde_hoy' => $this->modelo->getReservasDesdeHoy(),
+            'errores' => $errores
         ];
 
-        $this->load_view('Inicio', $datos);
+        $this->load_view('inicio', $datos);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -70,15 +72,26 @@ class ServicioModel
      */
     public function insertServicio($id_empresa, $interno, $dominio): bool|string
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO servicios (id_empresa, interno, dominio) VALUES (:id_empresa, :interno, :dominio)"
-        );
-        $stmt->execute([
+        $query = "INSERT INTO servicios (id_empresa, interno, dominio) VALUES (:id_empresa, :interno, :dominio)";
+        $stmt = $this->db->prepare($query);
+        $params = [
             'id_empresa' => $id_empresa,
             'interno' => $interno,
             'dominio' => $dominio
-        ]);
-        return $this->db->lastInsertId();
+        ];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el servicio "." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -92,18 +105,33 @@ class ServicioModel
      */
     public function updateServicio($id, $id_empresa, $interno, $dominio): bool|string
     {
-        $stmt = $this->db->prepare(
+        $query = $this->db->prepare(
             "UPDATE servicios 
              SET id_empresa = :id_empresa, interno = :interno, dominio = :dominio 
              WHERE id_servicio = :id"
         );
-        $stmt->execute([
+        
+        $stmt = $this->db->prepare($query);
+        $params = [
             'id' => $id,
             'id_empresa' => $id_empresa,
             'interno' => $interno,
             'dominio' => $dominio
-        ]);
-        return $stmt->rowCount() > 0;
+        ];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el servicio con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -114,8 +142,84 @@ class ServicioModel
      */
     public function deleteServicio($id): bool
     {
-        $stmt = $this->db->prepare("DELETE FROM servicios WHERE id_servicio = :id");
-        $stmt->execute(['id' => $id]);
+        $query = "DELETE FROM servicios WHERE id_servicio = :id";
+        
+        $stmt = $this->db->prepare($query);
+        $params = ['id' => $id];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el servicio con id ".$id." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
+    }
+
+    public function getServiciosServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT s.*, e.nombre as nombre_empresa 
+                FROM servicios s 
+                JOIN empresas e ON s.id_empresa = e.id_empresa";
+        $params = [];
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " WHERE e.nombre LIKE :search 
+                    OR s.interno LIKE :search 
+                    OR s.dominio LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarServiciosFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM servicios s 
+                JOIN empresas e ON s.id_empresa = e.id_empresa";
+        $params = [];
+
+        if (!empty($searchValue)) {
+            $sql .= " WHERE e.nombre LIKE :search 
+                    OR s.interno LIKE :search 
+                    OR s.dominio LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarServicios()
+    {
+        $sql = "SELECT COUNT(*) as total FROM servicios";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }

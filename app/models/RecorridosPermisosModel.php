@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /*
@@ -51,27 +53,6 @@ class RecorridosPermisosModel
         $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso]);
         return $stmt->fetch();
     }
-
-    /**
-        * 
-        * PRE: Funcion para modificar un recorrido_permiso ya existente en la tabla de la base de datos.
-        * @param int $id_recorrido_permiso es el id de la fila en la tabla recorridos_permisos.
-        * @param int $id_permiso es el id del permiso asignado que va a ser modificado.
-        * @param int $id_recorrido es el id del recorrido asignado que va a ser modificado.
-        * @return bool $stmt es un valor bool que indica el estado de ejecucion.
-        * POST: Devuelve el estado de ejecucion con un true en caso de ser exitoso, o false en caso de lo contrario.
-     */ 
-    public function updateRecorrido($id_recorrido_permiso, $id_permiso, $id_recorrido): bool
-    {
-        $stmt = $this->db->prepare("UPDATE recorridos SET id_recorrido = :id_recorrido, id_permiso =
-        :id_permiso WHERE id_recorrido_permiso = :id_recorrido_permiso");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso,'id_permiso' => $id_permiso, 
-        'id_recorrido' => $id_recorrido]);
-        // Verifica si la actualización fue exitosa (si se afectaron filas)
-        return $stmt->rowCount() > 0;
-    }
- 
     /**
          * Inserta un nuevo registro en la tabla `recorridos_permisos`.
          * PRE: Deben existir los IDs de permiso y recorrido en sus respectivas tablas.
@@ -82,10 +63,22 @@ class RecorridosPermisosModel
      */
     public function insertRecorrido($id_permiso, $id_recorrido)
     {
-        $stmt = $this->db->prepare("INSERT INTO recorridos_permisos (id_permiso,id_recorrido) VALUES (:id_permiso,:id_recorrido)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_permiso' => $id_permiso,'id_recorrido' => $id_recorrido]);
-        return $this->db->lastInsertId();
+        $query = "INSERT INTO recorridos_permisos (id_permiso,id_recorrido) VALUES (:id_permiso,:id_recorrido)";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_permiso' => $id_permiso,'id_recorrido' => $id_recorrido];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el recorrido en el permiso "." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -97,10 +90,29 @@ class RecorridosPermisosModel
      */
     public function deleteRecorrido($id_recorrido_permiso): bool
     {
-        $stmt = $this->db->prepare("DELETE from recorridos_permisos WHERE id_recorrido_permiso = :id_recorrido_permiso");
+        $query = "DELETE from recorridos_permisos WHERE id_recorrido_permiso = :id_recorrido_permiso";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido_permiso' => $id_recorrido_permiso];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido_permiso' => $id_recorrido_permiso]);
+        $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la asociacion de recorrido permiso id ".$id_recorrido_permiso." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
+    }
+
+    public function getPermisosByRecorrido($id_recorrido): array 
+    {
+        $stmt = $this->db->prepare("SELECT * FROM recorridos_permisos WHERE id_recorrido = :id_recorrido");
+        $stmt->execute(['id_recorrido' => $id_recorrido]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 

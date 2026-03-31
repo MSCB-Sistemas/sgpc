@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
 require_once 'Database.php';
 
 /**
@@ -66,9 +68,25 @@ class ReservasPuntosModel {
      * @return bool True si se actualizó al menos un registro, false en caso contrario.
      */
     public function updateReservaPunto($id_reserva_punto, $fecha_horario, $id_hotel, $id_permiso, $id_punto_detencion) : bool {
-        $stmt = $this->db->prepare("UPDATE reservas_puntos SET fecha_horario = :fecha_horario, id_hotel = :id_hotel, id_permiso = :id_permiso, id_punto_detencion = :id_punto_detencion WHERE id_reserva_punto = :id_reserva_punto");
-        $stmt->execute(['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion]);
-        return $stmt->rowCount() > 0;
+        $query = "UPDATE reservas_puntos SET fecha_horario = :fecha_horario, id_hotel = :id_hotel, id_permiso = :id_permiso, id_punto_detencion = :id_punto_detencion 
+        WHERE id_reserva_punto = :id_reserva_punto";
+        
+        $stmt = $this->db->prepare($query);
+        $params = ['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar la reserva con id ".$id_reserva_punto." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
 
     /**
@@ -81,9 +99,21 @@ class ReservasPuntosModel {
      * @return int|string ID de la reserva de punto insertada.
      */
     public function insertReservaPunto($fecha_horario, $id_hotel, $id_permiso, $id_punto_detencion) {
-        $stmt = $this->db->prepare("INSERT INTO reservas_puntos (fecha_horario, id_hotel, id_permiso, id_punto_detencion) VALUES (:fecha_horario, :id_hotel, :id_permiso, :id_punto_detencion)");
-        $stmt->execute(['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion]);
-        return $this->db->lastInsertId();
+        $query = "INSERT INTO reservas_puntos (fecha_horario, id_hotel, id_permiso, id_punto_detencion) VALUES (:fecha_horario, :id_hotel, :id_permiso, :id_punto_detencion)";
+        $stmt = $this->db->prepare($query);
+        $params = ['fecha_horario'=> $fecha_horario, 'id_hotel' => $id_hotel, 'id_permiso' => $id_permiso, 'id_punto_detencion' => $id_punto_detencion];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar la reserva en el permiso ".$id_permiso."con hotel".$id_hotel."y punto de detencion".$id_punto_detencion." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -93,8 +123,21 @@ class ReservasPuntosModel {
      * @return bool True si se eliminó al menos un registro, false en caso contrario.
      */
     public function deleteReservaPunto($id_reserva_punto) : bool {
-        $stmt = $this->db->prepare("DELETE FROM reservas_puntos WHERE id_reserva_punto = :id_reserva_punto");
-        $stmt->execute(['id_reserva_punto' => $id_reserva_punto]);
+        $query = "DELETE FROM reservas_puntos WHERE id_reserva_punto = :id_reserva_punto";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_reserva_punto' => $id_reserva_punto];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar la reserva ".$id_reserva_punto." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
 
@@ -108,9 +151,36 @@ class ReservasPuntosModel {
             inner join puntos_detencion pd on rp.id_punto_detencion = pd.id_punto_detencion 
             inner join calles c on pd.id_calle = c.id_calle 
             left outer join hoteles h ON rp.id_hotel = h.id_hotel
-            where rp.id_permiso = :id_permiso;"
+            where rp.id_permiso = :id_permiso
+            order by 4 asc;"
         );
         $stmt->execute(['id_permiso' => $id_permiso]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getHorariosPunto($id_punto, $fecha): array {
+        $stmt = $this->db->prepare("
+            SELECT TIME(fecha_horario) as hora
+            FROM reservas_puntos
+            WHERE id_punto_detencion = :id_punto
+            AND DATE(fecha_horario) = :fecha;"
+        );
+        $stmt->execute([
+            'id_punto' => $id_punto,
+            'fecha' => $fecha
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getReservasPuntosByHotel($id_hotel): array {
+        $stmt = $this->db->prepare("
+            SELECT TIME(fecha_horario) as hora
+            FROM reservas_puntos
+            WHERE id_hotel = :id_hotel"
+        );
+        $stmt->execute([
+            'id_hotel' => $id_hotel,
+        ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

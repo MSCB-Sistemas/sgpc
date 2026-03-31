@@ -1,3 +1,6 @@
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.css" rel="stylesheet">
+</head>
 <!-- Modal Chofer -->
 <div class="modal fade" id="modalChofer" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -27,7 +30,7 @@
   </div>
 </div>
 
-<!-- Modal Chofer -->
+<!-- Modal Lugar -->
 <div class="modal fade" id="modalLugar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -58,7 +61,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="text" class="form-control mb-2" name="interno" placeholder="Interno" required>
+          <input type="number" class="form-control mb-2" name="interno" placeholder="Interno" required>
           <input type="text" class="form-control mb-2" name="dominio" placeholder="Dominio" required>
 
           <div class="row mb-2 align-items-center">
@@ -71,7 +74,7 @@
               </select>
             </div>
             <div class="col-2">
-              <button type="button" class="btn btn-outline-success w-100" id="btnAgregarEmpresa">+</button>
+              <button type="button" class="btn btn-success w-100" id="btnAgregarEmpresa">+</button>
             </div>
           </div>
 
@@ -117,9 +120,9 @@
                       <?php endforeach; ?>
                   </select>
               </div>
-              <div>
-                  <button type="button" id="addCalle" class="btn btn-primary">↓</button>
-                  <a href="<?= URL ?>/calle/create" target="_blank"><button type="button" id="newCalle" class="btn btn-primary">Nueva</button></a>
+              <div class="d-flex gap-2">
+                <button type="button" id="addCalle" class="btn btn-primary">↓</button>
+                <a href="<?= URL ?>/calle/create" target="_blank" class="btn btn-primary">Nueva</a>
               </div>
           </div>
 
@@ -146,16 +149,57 @@
   </div>
 </div>
 
+<!-- Modal Punto de Detencion -->
+<div class="modal fade" id="modalPunto" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formNuevoPunto">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo Punto de Detención</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre" required>
+          <input type="text" class="form-control mb-2" name="calle" id="calle_modal_punto" placeholder="Calle" required disabled>
+          <input type="hidden" class="form-control mb-2" name="id_calle" id="id_calle_modal_punto">
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
   const campoNuevaEmpresa = document.getElementById('campoNuevaEmpresa');
-  const selectEmpresa = document.getElementById('selectEmpresa');
+
+
+ document.addEventListener('DOMContentLoaded', () => {
+
+  // 1. Esta línea activa el buscador en tu select.
+  const tomSelectEmpresa = new TomSelect('#selectEmpresa', {
+    placeholder: 'Busca o selecciona una empresa...'
+  });
+
+  // 2. Este código adapta tu botón "+" para que funcione con el nuevo select.
+  const campoNuevaEmpresa = document.getElementById('campoNuevaEmpresa');
   const inputNuevaEmpresa = campoNuevaEmpresa.querySelector('input');
 
   document.getElementById('btnAgregarEmpresa').addEventListener('click', function() {
-    campoNuevaEmpresa.classList.toggle('d-none');
-    selectEmpresa.disabled = !selectEmpresa.disabled;
-    inputNuevaEmpresa.required = !inputNuevaEmpresa.required;
-    inputNuevaEmpresa.value = '';
+    // La nueva lógica que controla el componente Tom Select
+    if (tomSelectEmpresa.isDisabled) {
+      tomSelectEmpresa.enable();
+      campoNuevaEmpresa.classList.add('d-none');
+      inputNuevaEmpresa.required = false;
+    } else {
+      tomSelectEmpresa.disable();
+      tomSelectEmpresa.clear();
+      campoNuevaEmpresa.classList.remove('d-none');
+      inputNuevaEmpresa.required = true;
+      inputNuevaEmpresa.focus();
+    }
   });
 
   document.getElementById('btnRefreshCalles').addEventListener('click', async function() {
@@ -175,7 +219,7 @@
       console.log();
     }
   });
-
+});
   
   document.getElementById('addCalle').addEventListener('click', function () {
       const select = document.getElementById('selectCalle');
@@ -201,6 +245,16 @@
       `;
       tbody.appendChild(tr);
   });
+    //* Funcion para eliminar una calle cuando se hace click en el boton eliminar en crear un recorrido
+    // al crear un permiso
+    /*
+    Se usa event delegation para que funcione en los elementos creados dinamicamente
+    */
+    document.querySelector('#tablaCallesModal tbody').addEventListener('click', function(e) {
+      if (e.target.classList.contains('removeCalle')) {
+          e.target.closest('tr').remove();
+      }
+  });
   
   // capturar ENTER en el select
   document.getElementById('selectCalle').addEventListener('keydown', function (e) {
@@ -209,4 +263,5 @@
           document.getElementById('addCalle').click(); // dispara el mismo evento del botón +
       }
   });
+
 </script>

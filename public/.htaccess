@@ -1,9 +1,10 @@
 <IfModule mod_rewrite.c>
-Options -Multiviews
-RewriteEngine on
-RewriteBase /sgpc  # coincide con $projectFolder
+    Options -Multiviews
+    Options -Indexes
+    RewriteEngine on
+    RewriteBase /sgpc/public
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+    RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
 </IfModule>

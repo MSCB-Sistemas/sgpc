@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ .'/../helpers/auditoriaHelper.php';
+require_once __DIR__ . '/../helpers/logHelper.php';
 require_once 'Database.php';
 
 /*
@@ -17,14 +19,14 @@ class RecorridoModel
     }
 
     /**
-     * Funcion para obtener todos los datos de la tabla recorridos.
+     * Funcion para obtener todos los datos de la tabla recorridos de aquellos que estén activos.
      * PRE: La base de datos debe estar disponible y la tabla 'recorridos' debe existir.
      * @return array Arreglo asociativo con todos los registros de la tabla recorridos.
      * POST: Retorna todos los registros existentes en la tabla recorridos.
      */
     public function getAllRecorridos(): array
     {
-        $stmt = $this->db->prepare("SELECT * FROM recorridos");
+        $stmt = $this->db->prepare("SELECT * FROM recorridos where activo = 1 order by nombre");
         // Ejecución de la consulta
         $stmt->execute(); 
         // Devuelve el resultado como un arreglo asociativo
@@ -55,10 +57,23 @@ class RecorridoModel
      */
     public function updateRecorrido($id_recorrido, $nombre_recorrido): bool
     {
-        $stmt = $this->db->prepare("UPDATE recorridos SET nombre = :nombre 
-        WHERE id_recorrido = :id_recorrido");
+        $query = "UPDATE recorridos SET nombre = :nombre WHERE id_recorrido = :id_recorrido";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido' => $id_recorrido,'nombre' => $nombre_recorrido ];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        return $stmt->execute(['id_recorrido' => $id_recorrido,'nombre' => $nombre_recorrido ]);
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo actualizar el recorrido con id ".$id_recorrido." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
     }
  
     /**
@@ -70,10 +85,22 @@ class RecorridoModel
      */
     public function insertRecorrido($nombre_recorrido)
     {
-        $stmt = $this->db->prepare("INSERT INTO recorridos (nombre) VALUES (:nombre)");
-        // Ejecuta la consulta pasando los valores
-        $stmt->execute(['nombre' => $nombre_recorrido]);
-        return $this->db->lastInsertId();
+        $query = "INSERT INTO recorridos (nombre) VALUES (:nombre)";
+        $stmt = $this->db->prepare($query);
+        $params = ['nombre' => $nombre_recorrido];
+        $stmt->execute($params);
+        $result = $this->db->lastInsertId();
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+
+        if (!$result) {
+            writeLog("❌ Error: No se pudo insertar el recorrido ".$nombre_recorrido." en la base de datos. Query: ".$query."parametros: ".$params);
+        }
+
+        return $result;
     }
 
     /**
@@ -85,11 +112,120 @@ class RecorridoModel
      */
     public function deleteRecorrido($id_recorrido): bool
     {
-        $stmt = $this->db->prepare("DELETE from recorridos WHERE id_recorrido = :id_recorrido");
+        $query = "DELETE from recorridos WHERE id_recorrido = :id_recorrido";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido' => $id_recorrido];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
         // Ejecuta la consulta pasando los valores
-        $stmt->execute(['id_recorrido' => $id_recorrido]);
+        $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            writeLog("❌ Error: No se pudo eliminar el recorrido con id ".$id_recorrido." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+        }
+
         return $stmt->rowCount() > 0;
     }
-}
 
-  
+    public function desactivarRecorrido($id_recorrido): bool
+    {
+        $query = "UPDATE recorridos SET activo = 0 WHERE id_recorrido = :id_recorrido";
+        $stmt = $this->db->prepare($query);
+        $params = ['id_recorrido' => $id_recorrido];
+        
+        auditoriaHelper::log(
+            $_SESSION['usuario_id'],
+            $query,
+            $params
+        );
+        // Ejecuta la consulta pasando los valores
+        if($stmt->execute($params)){
+            return true;
+        }else{
+            writeLog("❌ Error: No se pudo desactivar el recorrido con id ".$id_recorrido." en la base de datos. Query: ".$query."parametros: ".json_encode($params));
+
+            return false;
+        }
+    }
+
+    public function getRecorridosServerSide($start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $sql = "SELECT 
+            r.id_recorrido,
+            r.nombre AS nombre_recorrido,
+            COALESCE(GROUP_CONCAT(c.nombre SEPARATOR ', '),'Sin calles') AS calles
+            FROM recorridos r
+            LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
+            LEFT JOIN calles c ON cr.id_calle = c.id_calle
+            WHERE r.activo = 1
+            GROUP BY r.id_recorrido, r.nombre";
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " HAVING calles like :search or nombre_recorrido like :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        // Orden
+        $sql .= " ORDER BY $orderColumn $orderDir";
+
+        // Paginación
+        $sql .= " LIMIT :start, :length";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':start', (int) $start, PDO::PARAM_INT);
+        $stmt->bindValue(':length', (int) $length, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function contarRecorridosFiltrados($searchValue)
+    {
+        $sql = "SELECT COUNT(*) as total FROM (
+                    SELECT 
+                        r.id_recorrido,
+                        r.nombre AS nombre_recorrido,
+                        GROUP_CONCAT(c.nombre SEPARATOR ', ') AS calles
+                    FROM recorridos r
+                    LEFT JOIN calles_recorridos cr ON r.id_recorrido = cr.id_recorrido
+                    LEFT JOIN calles c ON cr.id_calle = c.id_calle
+                    WHERE r.activo = 1
+                    GROUP BY r.id_recorrido, r.nombre";
+
+        $params = [];
+
+        // Si hay búsqueda
+        if (!empty($searchValue)) {
+            $sql .= " HAVING calles LIKE :search OR nombre_recorrido LIKE :search";
+            $params[':search'] = "%$searchValue%";
+        }
+
+        $sql .= ") as subquery"; // <- cerramos el subselect
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+    
+    public function contarRecorridos()
+    {
+        $sql = "SELECT COUNT(*) as total FROM recorridos";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+}

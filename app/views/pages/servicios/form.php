@@ -17,8 +17,13 @@
             <select class="form-select" id="empresa" name="empresa" required>
                 <option value="">Seleccione...</option>
                 <?php foreach ($datos['empresas'] as $n): ?>
-                    <option value="<?= $n['id_empresa'] ?>"
-                        <?= ($datos['values']['nombre'] ?? '') == $n['id_empresa'] ? 'selected' : '' ?>>
+                    <?php
+                        $selected = '';
+                        if (isset($datos['values']['empresa']) && $datos['values']['empresa'] == $n['id_empresa']) {
+                            $selected = 'selected';
+                        }
+                    ?>
+                    <option value="<?= $n['id_empresa'] ?>" <?= $selected ?>>
                         <?= htmlspecialchars($n['nombre']) ?>
                     </option>
                 <?php endforeach ?>
@@ -28,16 +33,32 @@
         <div class="mb-3">
             <label for="interno" class="form-label">Interno</label>
             <input type="text" class="form-control" id="interno" name="interno" 
-                   value="<?= htmlspecialchars($datos['values']['interno'] ?? '') ?>" required>
+                value="<?php
+                    $internoValue = '';
+                    if (isset($datos['values']['interno'])) {
+                        $internoValue = $datos['values']['interno'];
+                    }
+                    echo htmlspecialchars($internoValue);
+                ?>" required>
         </div>
 
         <div class="mb-3">
             <label for="dominio" class="form-label">Dominio</label>
             <input type="text" class="form-control" id="dominio" name="dominio" 
-                   value="<?= htmlspecialchars($datos['values']['dominio'] ?? '') ?>" required>
+                value="<?php
+                    $dominioValue = '';
+                    if (isset($datos['values']['dominio'])) {
+                        $dominioValue = $datos['values']['dominio'];
+                    }
+                    echo htmlspecialchars($dominioValue);
+                ?>" required>
         </div>
-
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="<?= URL ?>/servicio/index" class="btn btn-secondary">Cancelar</a>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar</button>
+            <a href="<?= URL ?>/servicio" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar</a>
+        </div>
     </form>
+
 </div>

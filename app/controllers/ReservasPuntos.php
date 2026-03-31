@@ -15,39 +15,39 @@ class ReservasPuntos extends Control
     // Mostrar todas las reservas
     public function index()
     {
-        $reservas = $this->model->getAllReservasPuntos();
-        $datos = [
-            'title' => 'Listado de Puntos Reservados',
-            'urlCrear' => URL . '/reservaspuntos/create',
-            'columnas' => ['Fecha', 'Hotel','Punto de Detencion'.'Permiso'],
-            'columnas_claves' => ['fecha_horario','hotel','punto_detencion','id_permiso'],
-            'data' => $reservas,
-            'acciones' => function($fila) {
-                $id = $fila['id_reserva_punto'];
-                $url = URL . '/reservaspuntos';
-                return '
-                    <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-outline-primary">Editar</a>
-                    <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-outline-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
-                ';
-            }
-        ];    
-        $this->load_view('partials/tablaAbm', $datos);
-    }
+        if(in_array('ver abm', $_SESSION['usuario_derechos'])) {
+            $reservas = $this->model->getAllReservasPuntos();
+            $datos = [
+                'title' => 'Listado de Puntos Reservados',
+                'urlCrear' => URL . '/reservaspuntos/create',
+                'columnas' => ['Fecha', 'Hotel', 'Punto de Detencion', 'Permiso'],
+                'columnas_claves' => ['fecha_horario','hotel','punto_detencion','id_permiso'],
+                'data' => $reservas,
+                'acciones' => function($fila) {
+                    $id = $fila['id_reserva_punto'];
+                    $url = URL . '/reservaspuntos';
+                    $botones = '';
 
-    // Mostrar una reserva específica
-    public function show($id)
-    {
-        $reserva = $this->model->getReservaPunto($id);
+                    if ($this->tienePermiso('editar abm')) {
+                        $botones .= '
+                            <a href="'.$url.'/edit/'.$id.'" class="btn btn-sm btn-primary">Editar</a>
+                        ';
+                    }
 
-        if (!$reserva) {
-            $this->load_view('reservas_puntos/index', [
-                'error' => 'Reserva no encontrada.',
-                'reservas' => $this->model->getAllReservasPuntos()
-            ]);
-            return;
+                    if ($this->tienePermiso('borrar abm')) {
+                        $botones .= '
+                            <a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Eliminar esta reservacion?\');">Eliminar</a>
+                        ';
+                    }
+
+                    return $botones;
+                }
+            ];    
+            $this->load_view('partials/tablaAbm', $datos);
+        } else {
+            header("Location: " . URL);
+            exit;
         }
-
-        $this->load_view('reservas_puntos/show', ['reserva' => $reserva]);
     }
 
     // Formulario de creación
@@ -67,10 +67,27 @@ class ReservasPuntos extends Control
     // Procesar la creación
     public function store()
     {
-        $fecha_horario = trim($_POST['fecha_horario'] ?? '');
-        $id_hotel = $_POST['id_hotel'] ?? '';
-        $id_permiso = $_POST['id_permiso'] ?? '';
-        $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
+        if (isset($_POST['fecha_horario'])) {
+            $fecha_horario = trim($_POST['fecha_horario']);
+        } else {
+            $fecha_horario = '';
+        }   
+
+        if(isset($_POST['id_hotel'])) {
+            $id_hotel = $_POST['id_hotel'];
+        } else {
+            $id_hotel = '';
+        }
+        if(isset($_POST['id_permiso'])) {
+            $id_permiso = $_POST['id_permiso'];
+        } else {
+            $id_permiso = '';
+        }
+        if(isset($_POST['id_punto_detencion'])) {
+            $id_punto_detencion = $_POST['id_punto_detencion'];
+        } else {
+            $id_punto_detencion = '';
+        }
 
         if ($fecha_horario === '' || $id_hotel === '' || $id_permiso === '' || $id_punto_detencion === '') {
             $this->create(); // reutiliza el mismo formulario
@@ -112,10 +129,29 @@ class ReservasPuntos extends Control
     // Procesar actualización
     public function update($id)
     {
-        $fecha_horario = trim($_POST['fecha_horario'] ?? '');
-        $id_hotel = $_POST['id_hotel'] ?? '';
-        $id_permiso = $_POST['id_permiso'] ?? '';
-        $id_punto_detencion = $_POST['id_punto_detencion'] ?? '';
+        if(isset($_POST['fecha_horario'])) {
+            $fecha_horario = trim($_POST['fecha_horario']);
+        } else {
+            $fecha_horario = '';
+        }
+
+        if(isset($_POST['id_hotel'])) {
+            $id_hotel = $_POST['id_hotel'];
+        } else {
+            $id_hotel = '';
+        }
+
+        if(isset($_POST['id_permiso'])) {
+            $id_permiso = $_POST['id_permiso'];
+        } else {
+            $id_permiso = '';
+        }
+     
+        if(isset($_POST['id_punto_detencion'])) {
+            $id_punto_detencion = $_POST['id_punto_detencion'];
+        } else {
+            $id_punto_detencion = '';
+        }
 
         if ($fecha_horario === '' || $id_hotel === '' || $id_permiso === '' || $id_punto_detencion === '') {
             $this->edit($id); // reutiliza formulario con datos
@@ -155,6 +191,31 @@ class ReservasPuntos extends Control
             'message' => 'Reserva eliminada correctamente.',
             'reservas' => $reservas
         ]);
+    }
+
+    public function horariosDisponibles($id_punto, $fecha)
+    {
+        // Generar todos los horarios fijos (06:00 a 23:30)
+        $horarios = [];
+        $horaInicio = strtotime('06:00');
+        $horaFin = strtotime('23:30');
+
+        for ($t = $horaInicio; $t <= $horaFin; $t += 1800) { // 1800 seg = 30 min
+            $horarios[] = date('H:i', $t);
+        }
+
+        // Consultar horarios ocupados
+        $ocupados = $this->model->getHorariosPunto($id_punto, $fecha);
+        $ocupadosFormateados = array_map(function($r) {
+            return date('H:i', strtotime($r['hora']));
+        }, $ocupados);
+
+        // Filtrar horarios libres
+        $libres = array_values(array_diff($horarios, $ocupadosFormateados));
+
+        header('Content-Type: application/json');
+        echo json_encode($libres);
+        exit;
     }
 
 
