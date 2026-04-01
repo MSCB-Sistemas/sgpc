@@ -1,3 +1,4 @@
+php_value extension mbstring.so
 <IfModule mod_rewrite.c>
 RewriteEngine on
 
