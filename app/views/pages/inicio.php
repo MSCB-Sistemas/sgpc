@@ -27,7 +27,7 @@
                         <ul id="listaReservas" class="list-group list-group-flush">
                             <?php if (!empty($datos['reservas_desde_hoy'])): ?>
                                 <?php foreach ($datos['reservas_desde_hoy'] as $r): ?>
-                                    <li class="list-group-item" style="height:90px; ">
+                                    <li class="list-group-item" style="height:105px; ">
                                         <span style="font-size:1rem; font-weight:500; " style=> 🕜 <?= date('d/m/Y H:i', strtotime($r['fecha_horario'])) ?></span>
                                         <br><br>
                                         <span style=" text-transform: capitalize; font-size:1rem; font-weight:500; letter-spacing: 0px; word-spacing: 10px;" >
