@@ -82,7 +82,7 @@ class Permiso extends Control
                             $botones .= '<a href="'.$url.'/delete/'.$id.'" class="btn btn-sm btn-danger" onclick="return confirm(\'¿Desactivar este permiso?\');">Eliminar</a> ';
                         }
                         if ($this->tienePermiso("cargar permiso")){
-                            $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_blank">Imprimir</a> ';
+                            $botones .= '<a href="'.$url.'/imprimir/'.$id.'" class="btn btn-sm btn-primary" onclick="return confirm(\'¿Imprimir este permiso?\');" target="_self">Imprimir</a> ';
                         }
                     }
                                 
