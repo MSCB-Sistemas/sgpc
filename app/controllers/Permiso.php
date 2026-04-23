@@ -265,9 +265,12 @@ class Permiso extends Control
     }
 
     public function imprimir($idPermiso) {
-        var_dump($this->tienePermiso("cargar permiso"));
-        exit;
+        
         if ($this->tienePermiso("cargar permiso")) {
+            var_dump($this->tienePermiso("cargar permiso"));
+            echo "Ingrese al true";
+            exit;
+            
             $permiso = $this->model->getPermisoPdf($idPermiso);
             $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($idPermiso);
             $nombres_calles = $calles_permiso ? array_column($calles_permiso, 'nombre') : [];
@@ -320,9 +323,7 @@ class Permiso extends Control
             
 
            // $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
-            var_dump($this->tienePermiso("cargar permiso"));
-            echo "Ingrese al true";
-            exit;
+            
         } else {
             header("Location: " . URL);
             exit;
