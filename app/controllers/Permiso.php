@@ -305,9 +305,7 @@ class Permiso extends Control
             $cssPath = APP . '/../public/css/permisoPdf.css';
             $css = file_get_contents($cssPath);
 
-            var_dump($this->tienePermiso("cargar permiso"));
-            echo "Ingrese al true";
-            exit;
+           
             
             // Generar PDF
             $mpdf = new Mpdf([
@@ -322,10 +320,10 @@ class Permiso extends Control
             $mpdf->AddPage();
 
             // insertar el mapa en la página nueva
-           // $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
+           $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
             
 
-           // $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
+           $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
             
         } else {
             header("Location: " . URL);
