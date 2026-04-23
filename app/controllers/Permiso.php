@@ -267,10 +267,8 @@ class Permiso extends Control
     public function imprimir($idPermiso) {
         
         if ($this->tienePermiso("cargar permiso")) {
-            var_dump($this->tienePermiso("cargar permiso"));
-            echo "Ingrese al true";
-            exit;
             
+
             $permiso = $this->model->getPermisoPdf($idPermiso);
             $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($idPermiso);
             $nombres_calles = $calles_permiso ? array_column($calles_permiso, 'nombre') : [];
@@ -313,6 +311,10 @@ class Permiso extends Control
                 'format' => 'A4',
             ]);
 
+            var_dump($this->tienePermiso("cargar permiso"));
+            echo "Ingrese al true";
+            exit;
+            
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
             $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
             // salto de página
