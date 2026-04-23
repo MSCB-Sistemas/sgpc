@@ -265,6 +265,8 @@ class Permiso extends Control
     }
 
     public function imprimir($idPermiso) {
+        var_dump($this->tienePermiso("cargar permiso"));
+        exit;
         if ($this->tienePermiso("cargar permiso")) {
             $permiso = $this->model->getPermisoPdf($idPermiso);
             $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($idPermiso);
@@ -314,10 +316,12 @@ class Permiso extends Control
             $mpdf->AddPage();
 
             // insertar el mapa en la página nueva
-            $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
+           // $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
             
 
-            $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
+           // $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
+            header("Location: " . URL);
+            exit;
         } else {
             header("Location: " . URL);
             exit;
