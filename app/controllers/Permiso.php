@@ -265,7 +265,8 @@ class Permiso extends Control
     }
 
     public function imprimir($idPermiso) {
-        
+        var_dump($this->tienePermiso("cargar permiso"));
+        exit;
         if ($this->tienePermiso("cargar permiso")) {
             $permiso = $this->model->getPermisoPdf($idPermiso);
             $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($idPermiso);
