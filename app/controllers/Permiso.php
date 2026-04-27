@@ -313,8 +313,7 @@ class Permiso extends Control
                 'format' => 'A4',
             ]);
 
-            var_dump($this->tienePermiso("cargar permiso"));
-            exit;
+            
 
             
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
@@ -324,6 +323,9 @@ class Permiso extends Control
 
             // insertar el mapa en la página nueva
            $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
+
+           var_dump($this->tienePermiso("cargar permiso"));
+            exit;
             
 
            $mpdf->Output("permiso_$idPermiso.pdf", \Mpdf\Output\Destination::INLINE);
