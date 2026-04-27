@@ -314,8 +314,7 @@ class Permiso extends Control
                 'tempDir' => '/var/www/html/sgpc/tmp',
             ]);
 
-            var_dump($this->tienePermiso("cargar permiso"));
-            exit("despues");
+            
             
             
             
