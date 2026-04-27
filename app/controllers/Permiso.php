@@ -266,6 +266,9 @@ class Permiso extends Control
 
     public function imprimir($idPermiso) {
         
+        var_dump($this->tienePermiso("cargar permiso"));
+        exit;
+
         if ($this->tienePermiso("cargar permiso")) {
             
 
