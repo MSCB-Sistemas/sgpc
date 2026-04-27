@@ -318,10 +318,12 @@ class Permiso extends Control
             
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
             $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
-            // salto de página
-            $mpdf->AddPage();
+
             var_dump($this->tienePermiso("cargar permiso"));
             exit;
+            // salto de página
+            $mpdf->AddPage();
+            
 
             // insertar el mapa en la página nueva
            $mpdf->Image(APP . '/../public/img/mapa.jpeg', 0, 0, 210, 297, 'jpg', '', true, false);
