@@ -306,15 +306,15 @@ class Permiso extends Control
             $css = file_get_contents($cssPath);
 
            
-            var_dump($this->tienePermiso("cargar permiso"));
-            exit;
+            
             // Generar PDF
             $mpdf = new Mpdf([
                 'mode' => 'utf-8',
                 'format' => 'A4',
             ]);
 
-            
+            var_dump($this->tienePermiso("cargar permiso"));
+            exit;
 
             
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
