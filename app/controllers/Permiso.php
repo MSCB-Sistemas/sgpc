@@ -313,8 +313,7 @@ class Permiso extends Control
                 'format' => 'A4',
             ]);
 
-            var_dump($this->tienePermiso("cargar permiso"));
-            exit;
+            
 
             
             //$mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
@@ -322,6 +321,8 @@ class Permiso extends Control
             
 
             $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+            var_dump($this->tienePermiso("cargar permiso"));
+            exit;
 
             
             // salto de página
