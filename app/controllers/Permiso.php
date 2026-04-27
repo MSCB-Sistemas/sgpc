@@ -266,9 +266,6 @@ class Permiso extends Control
 
     public function imprimir($idPermiso) {
         
-        var_dump($this->tienePermiso("cargar permiso"));
-        exit;
-
         if ($this->tienePermiso("cargar permiso")) {
             
 
@@ -308,7 +305,8 @@ class Permiso extends Control
             $cssPath = APP . '/../public/css/permisoPdf.css';
             $css = file_get_contents($cssPath);
 
-           
+           var_dump($this->tienePermiso("cargar permiso"));
+            exit;
             
             // Generar PDF
             $mpdf = new Mpdf([
