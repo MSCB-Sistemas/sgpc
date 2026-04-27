@@ -317,7 +317,7 @@ class Permiso extends Control
             exit;
 
             
-            $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
+            //$mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
 
             
 
