@@ -311,7 +311,7 @@ class Permiso extends Control
             $mpdf = new Mpdf([
                 'mode' => 'utf-8',
                 'format' => 'A4',
-                'tempDir' => '/var/www/html/sgpc/app',
+                'tempDir' => '/var/www/html/sgpc/tmp',
             ]);
 
             var_dump($this->tienePermiso("cargar permiso"));
