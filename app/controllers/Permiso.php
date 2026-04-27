@@ -306,13 +306,16 @@ class Permiso extends Control
             $css = file_get_contents($cssPath);
 
            
-            var_dump($this->tienePermiso("cargar permiso"));
-            exit("antes del new");
+            
             // Generar PDF
             $mpdf = new Mpdf([
                 'mode' => 'utf-8',
                 'format' => 'A4',
+                'tempDir' => __DIR__ . '/tmp',
             ]);
+
+            var_dump($this->tienePermiso("cargar permiso"));
+            exit("despues");
             
             
             
