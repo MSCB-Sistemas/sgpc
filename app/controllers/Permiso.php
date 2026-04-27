@@ -320,7 +320,7 @@ class Permiso extends Control
 
             
 
-            $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
+            //$mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::HTML_BODY);
             var_dump($this->tienePermiso("cargar permiso"));
             exit;
 
