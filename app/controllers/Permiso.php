@@ -306,6 +306,7 @@ class Permiso extends Control
             $mpdf = new Mpdf([
                 'mode' => 'utf-8',
                 'format' => 'A4',
+                'tempDir' => APP . '/../tmp',
             ]);
 
             $mpdf->WriteHTML($css, \Mpdf\HTMLParserMode::HEADER_CSS);
