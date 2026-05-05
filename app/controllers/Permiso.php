@@ -16,7 +16,7 @@ class Permiso extends Control
     }
 
     // Mostrar lista de permisos
-    public function index($fecha_desde = null, $fecha_hasta = null)
+    public function index($fecha_desde = null, $fecha_hasta = null, $empresa = null)
     {
         if ($this->tienePermiso("ver abm")){
             if (!$fecha_desde && !$fecha_hasta) {
@@ -28,10 +28,14 @@ class Permiso extends Control
                 $fecha_desde = null; // Caso "0" para omitir fecha desde
             }
 
+            if ($fecha_hasta === '0') {
+                $fecha_hasta = null; // Caso "0" para omitir fecha desde
+            }
+
             if ($this->tienePermiso("eliminar permiso")) {
-                $permisos = $this->model->getAllPermisos(false, $fecha_desde, $fecha_hasta);
+                $permisos = $this->model->getAllPermisos(false, $fecha_desde, $fecha_hasta, $empresa);
             } else {
-                $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta);
+                $permisos = $this->model->getAllPermisos(true, $fecha_desde, $fecha_hasta, $empresa);
             }
             foreach ($permisos as &$permiso) {
                 $calles_permiso = $this->load_model('PermisosCallesModel')->getCallesByPermiso($permiso['Permiso Nro.']);
@@ -59,7 +63,10 @@ class Permiso extends Control
                     'Fecha Emisión',
                     'Chofer',
                     'Dominio',
-                    'Empresa'
+                    'Empresa',
+                    'Lugar',
+                    'Tipo de movimiento',
+                    'Cant. Pax'
                 ],
                 'columnas_claves' => [
                     'Permiso Nro.',
@@ -68,11 +75,16 @@ class Permiso extends Control
                     'Fecha emision',
                     'Chofer',
                     'Dominio',
-                    'Empresa'
+                    'Empresa',
+                    'Origen / destino',
+                    'arribo_salida',
+                    'Pasajeros'
                 ],
                 'data' => $permisos,
                 'fecha_desde' => $fecha_desde,
                 'fecha_hasta' => $fecha_hasta,
+                'empresa' => $empresa,
+                'empresas' => $this->load_model('EmpresaModel')->getAllEmpresas(),
                 'acciones' => function($fila) {
                     $id = $fila['Permiso Nro.'];
                     $url = URL . '/permiso';

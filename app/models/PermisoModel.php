@@ -34,14 +34,14 @@ class PermisoModel
      *
      * @return array Arreglo asociativo con todos los registros de la tabla `permisos`.
      */
-    public function getAllPermisos($activos, $fecha_desde = null, $fecha_hasta = null): array
+    public function getAllPermisos($activos, $fecha_desde = null, $fecha_hasta = null, $empresa = null): array
     {
         $sql = "SELECT
             p.id_permiso as 'Permiso Nro.',
             p.tipo as 'Tipo',
             DATE(p.fecha_reserva) as 'Fecha reserva',
             p.fecha_emision as 'Fecha emision',
-            p.arribo_salida as 'Arribo / Salida',
+            p.arribo_salida,
             l.nombre as 'Origen / destino',
             CASE p.cuenta_corriente 
                 WHEN 1 THEN 'Si' 
@@ -90,6 +90,10 @@ class PermisoModel
         if ($fecha_hasta) {
             $sql .= " AND DATE(p.fecha_emision) <= :hasta";
             $params[':hasta'] = $fecha_hasta;
+        }
+        if ($empresa) {
+            $sql .= " AND e.id_empresa = :empresa";
+            $params[':empresa'] = $empresa;
         }
 
         $sql .= " ORDER BY p.fecha_emision DESC";
